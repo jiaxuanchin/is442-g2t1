@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS Booking (
   user_id INT NOT NULL,
   event_id INT NOT NULL,
   number_of_tickets INT,
-  booking_timestamp TIMESTAMP NOT NULL
+  booking_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- --------------------------------------------------------\
