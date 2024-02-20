@@ -83,7 +83,8 @@ DROP TABLE IF EXISTS Ticket;
 
 CREATE TABLE IF NOT EXISTS Ticket (
   ticket_id INT(8) ZEROFILL NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  booking_id INT NOT NULL
+  booking_id INT NOT NULL,
+  attendance BOOLEAN DEFAULT FALSE
 );
 
 -- --------------------------------------------------------
@@ -123,15 +124,15 @@ INSERT INTO Booking VALUES
 
 
 INSERT INTO Ticket VALUES
-(00000001, 1),
-(00000002, 1),
-(00000003, 2),
-(00000004, 3),
-(00000005, 3),
-(00000006, 3),
-(00000007, 4),
-(00000008, 4),
-(00000009, 4),
-(00000010, 4),
-(00000011, 5),
-(00000012, 5);
+(00000001, 1, false),
+(00000002, 1, false),
+(00000003, 2, false),
+(00000004, 3, false),
+(00000005, 3, false),
+(00000006, 3, false),
+(00000007, 4, false),
+(00000008, 4, false),
+(00000009, 4, false),
+(00000010, 4, false),
+(00000011, 5, false),
+(00000012, 5, false);
