@@ -1,5 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,6 +13,7 @@ import lombok.ToString;
 import java.sql.Timestamp;
 import java.util.List;
 
+
 import io.micrometer.common.lang.NonNull;
 
 @Entity
@@ -23,22 +25,29 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "booking_id")
     private int bookingId;
 
+    @Column(name = "user_id")
     @NonNull
     private int userId;
     
+    @Column(name = "event_id")
     @NonNull
     private int eventId;
     
+    @Column(name = "number_of_tickets")
     @NonNull
     private int numOfTickets;
 
-    @OneToMany(mappedBy = "bookingId")
+    @Column(name = "booking_timestamp", nullable = false, updatable = false, insertable = false)
+    private Timestamp booking_timestamp;
+
+    @OneToMany(mappedBy = "booking")
     private List<Ticket> tickets;
 
-
-    private Timestamp booking_timestamp;
+    public Booking() {
+    }
 
     public Booking(int userId, int eventId, int numOfTickets) {
         this.userId = userId;
