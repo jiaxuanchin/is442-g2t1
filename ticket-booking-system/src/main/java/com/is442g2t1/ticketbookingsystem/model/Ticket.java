@@ -1,6 +1,11 @@
 package com.is442g2t1.ticketbookingsystem.model;
 
 
+import org.springframework.data.annotation.Transient;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,15 +31,19 @@ public class Ticket {
     @Column(name = "ticket_id")
     private int ticketId;
 
-    // @Column(name = "booking_id", nullable = false)
-    // private int bookingId;
-
     @Column(name = "attendance")
     private boolean attendance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id", nullable = false)
+    @JsonBackReference
     private Booking booking;
+
+    @Transient
+    @JsonProperty("bookingId")
+    private int getBookingId() {
+        return this.booking.getBookingId();
+    }
 
     @Override
     public String toString() {
@@ -47,5 +56,12 @@ public class Ticket {
                     '}';
         }
         return "error: bookingId is null";
+    }
+
+    public Ticket() {
+    }
+
+    public Ticket(Booking bookingInstance) {
+        this.booking = bookingInstance;
     }
 }

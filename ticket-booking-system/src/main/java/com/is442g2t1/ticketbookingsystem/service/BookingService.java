@@ -1,5 +1,8 @@
 package com.is442g2t1.ticketbookingsystem.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.is442g2t1.ticketbookingsystem.model.Booking;
@@ -14,12 +17,27 @@ public class BookingService {
         this.bookingRepository = bookingRepository;
     }
 
-    public String getAllBookings() {
+    public List<Booking> getAllBookings() {
         try {
             System.out.println(this.bookingRepository.findAll());
-            return "success";
+            
+            List<Booking> bookings = this.bookingRepository.findAll();
+            return bookings;
+
         } catch(Exception e) {
-            return "Error: " + e;
+            System.err.println("Error: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public Optional<Booking> getOneBooking(int bookingId) {
+        try {
+            Optional<Booking> booking = this.bookingRepository.findById(bookingId);
+            return booking;
+            
+        } catch(Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            throw e;
         }
     }
     
@@ -31,27 +49,38 @@ public class BookingService {
         return "";
     }
 
-    public String cancelBooking() {
-        return "";
-    }
-
     public String createBooking(Booking booking) {
         try {
             System.out.println("Booking:" + booking);
             bookingRepository.save(booking);
-            return "{ statusCode: 200, headers: { 'content-type': 'application/json' }, body: { 'message': 'booking created successfully' }";
+
+            purchaseTicket(booking.getBookingId());
+
+            return """
+                {
+                    "status": 200,
+                    "message": "Booking created"
+                }
+                """;
 
         } catch(Exception e) {
             System.out.println("Error: " + e);
-            return "{ statusCode: 500, headers: { 'content-type': 'application/json' }, body: { 'message': 'unable to create booking' }";
+            return """
+                {
+                    "status": 500,
+                    "message": "Error creating booking"
+                }
+                """;
         }
     }
 
-    public String purchaseTicket() {
+    public String cancelBooking() {
         return "";
     }
 
-    public String cancelTicket() {
-        return "";
+    public void purchaseTicket(int bookingId) {
+        System.out.println("Purchasing ticket for bookingId: " + bookingId + "...");
+        // return "";
     }
+
 }

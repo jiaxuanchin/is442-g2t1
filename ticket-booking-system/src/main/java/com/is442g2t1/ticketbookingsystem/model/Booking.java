@@ -13,6 +13,7 @@ import lombok.ToString;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import io.micrometer.common.lang.NonNull;
 
@@ -32,6 +33,7 @@ public class Booking {
     @NonNull
     private int userId;
     
+    // to be edited when we integrate with events class
     @Column(name = "event_id")
     @NonNull
     private int eventId;
@@ -44,39 +46,20 @@ public class Booking {
     private Timestamp booking_timestamp;
 
     @OneToMany(mappedBy = "booking")
+    @JsonManagedReference
     private List<Ticket> tickets;
 
     public Booking() {
     }
 
+    public Booking(int bookingId) {
+        this.bookingId = bookingId;
+    }
+    
     public Booking(int userId, int eventId, int numOfTickets) {
         this.userId = userId;
         this.eventId = eventId;
         this.numOfTickets = numOfTickets;
     }
 
-    // public int getBooking_id() {
-    //     return bookingId;
-    // }
-    // public int getUser_id() {
-    //     return userId;
-    // }
-    // public void setUser_id(int userId) {
-    //     this.userId = userId;
-    // }
-    // public int getEvent_id() {
-    //     return eventId;
-    // }
-    // public void setEvent_id(int eventId) {
-    //     this.eventId = eventId;
-    // }
-    // public int getNumber_of_tickets() {
-    //     return numOfTickets;
-    // }
-    // public void setNumber_of_tickets(int numOfTickets) {
-    //     this.numOfTickets = numOfTickets;
-    // }
-    // public Timestamp getBooking_timestamp() {
-    //     return booking_timestamp;
-    // }
 }

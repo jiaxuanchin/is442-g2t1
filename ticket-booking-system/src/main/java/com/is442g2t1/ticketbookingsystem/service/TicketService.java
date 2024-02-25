@@ -1,10 +1,11 @@
 package com.is442g2t1.ticketbookingsystem.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.is442g2t1.ticketbookingsystem.model.Ticket;
+import com.is442g2t1.ticketbookingsystem.model.*;
 import com.is442g2t1.ticketbookingsystem.repository.TicketRepository;
 
 public class TicketService {
@@ -16,31 +17,7 @@ public class TicketService {
         this.ticketRepository = ticketRepository;
     }
 
-    public String findTicketById(int ticketId) {
-        try {
-            String ticket = ticketRepository.findById(ticketId).toString();
-            System.out.println(ticket.toString());
-            return """
-                {
-                "status": 200,
-                "data": """ 
-                    + ticket +
-                """
-                \n} """;
-
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            return """
-                {
-                    "status": 500,
-                    "data": {},
-                    "message": "Error retrieving ticket"
-                }
-                """;
-        }
-    }
-
-    public String getAllTickets() {
+    public List<Ticket> getAllTickets() {
         try {
             List<Ticket> tickets = ticketRepository.findAll();
             System.out.println("Tickets retrieved");
@@ -49,28 +26,43 @@ public class TicketService {
             // }
 
             System.out.println(tickets.toString());
-            return """
-                {
-                    "status": 200,
-                    "data": """
-                    + tickets.toString() +
-                            """
-                }
-                """;
+            return tickets;
             
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
-            return """
-                {
-                    "status": 500,
-                    "message": "Error retrieving tickets"
-                \n}
-                """;
+            throw e;
         }
     }
 
-    public String createTicket(Ticket ticket) {
+    public Optional<Ticket> findTicketById(int ticketId) {
         try {
+            Optional<Ticket> ticket = ticketRepository.findById(ticketId);
+            System.out.println(ticket.toString());
+            return ticket;
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public List<Ticket> findTicketsByBookingId(Booking booking) {
+        try {
+            List<Ticket> tickets = ticketRepository.findTicketsByBooking(booking);
+            System.out.println(tickets.toString());
+            return tickets;
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public String createTicket(Booking booking) {
+        try {
+            // only need to send bookingId from BookingService class
+            Ticket ticket = new Ticket(booking);
+            System.out.println("Ticket: " + ticket.toString());
             ticketRepository.save(ticket);
             System.out.println("Ticket created");
             return """
@@ -89,4 +81,5 @@ public class TicketService {
                 """;
         }
     }
+    
 }
