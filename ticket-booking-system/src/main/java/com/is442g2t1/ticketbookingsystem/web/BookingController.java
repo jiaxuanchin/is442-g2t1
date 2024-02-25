@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.is442g2t1.ticketbookingsystem.model.*;
 import com.is442g2t1.ticketbookingsystem.service.*;
 import com.is442g2t1.ticketbookingsystem.repository.*;
-
-import io.micrometer.common.lang.NonNull;
-
 
 @RestController
 @RequestMapping("/booking")
@@ -46,6 +43,7 @@ public class BookingController {
         return result;
     }
 
+    // -------------------- TO BE DONEEEEE --------------------
     @GetMapping("/user/{userId}")
     public String getUserBooking(int userId) {
         // Get all booking
@@ -58,10 +56,12 @@ public class BookingController {
         return result;
     }
 
-    @PutMapping("/update")
-    public void updateBooking() {
-        // Update booking
-
+    // -------------------- TO BE DONEEEEE --------------------
+    @DeleteMapping("/delete")
+    public String cancelBooking(@PathVariable int bookingId) {
+        // Delete booking
+        String result = this.bookingService.cancelBooking(bookingId);
+        return result;
     }
 
 }

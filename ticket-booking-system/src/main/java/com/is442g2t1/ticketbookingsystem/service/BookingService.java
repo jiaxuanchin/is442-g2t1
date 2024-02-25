@@ -45,16 +45,13 @@ public class BookingService {
         return "";
     }
 
-    public String updateBooking() {
-        return "";
-    }
-
     public String createBooking(Booking booking) {
         try {
             System.out.println("Booking:" + booking);
             bookingRepository.save(booking);
 
-            purchaseTicket(booking.getBookingId());
+            // -------------------- TO BE DONEEEEE --------------------
+            purchaseTicket(booking.getBookingId(), booking.getNumOfTickets());
 
             return """
                 {
@@ -74,11 +71,21 @@ public class BookingService {
         }
     }
 
-    public String cancelBooking() {
+    // -------------------- TO BE DONEEEEE --------------------
+    public String cancelBooking(int bookingId) {
+        try {
+            System.out.println("Cancelling booking...");
+
+
+        } catch(Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            throw e;
+        }
         return "";
     }
 
-    public void purchaseTicket(int bookingId) {
+    // -------------------- TO BE DONEEEEE --------------------
+    public void purchaseTicket(int bookingId, int numOfTickets) {
         System.out.println("Purchasing ticket for bookingId: " + bookingId + "...");
         // return "";
     }

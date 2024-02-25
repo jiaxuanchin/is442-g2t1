@@ -34,9 +34,12 @@ public class TicketService {
         }
     }
 
-    public Optional<Ticket> findTicketById(int ticketId) {
+    public Optional<Ticket> getTicketById(int ticketId) {
         try {
             Optional<Ticket> ticket = ticketRepository.findById(ticketId);
+            if (!ticket.isPresent()) {
+                throw new RuntimeException("Ticket not found");
+            }
             System.out.println(ticket.toString());
             return ticket;
 
@@ -46,8 +49,9 @@ public class TicketService {
         }
     }
 
-    public List<Ticket> findTicketsByBookingId(Booking booking) {
+    public List<Ticket> getTicketsByBookingId(int bookingId) {
         try {
+            Booking booking = new Booking(bookingId);
             List<Ticket> tickets = ticketRepository.findTicketsByBooking(booking);
             System.out.println(tickets.toString());
             return tickets;
@@ -63,14 +67,18 @@ public class TicketService {
             // only need to send bookingId from BookingService class
             Ticket ticket = new Ticket(booking);
             System.out.println("Ticket: " + ticket.toString());
-            ticketRepository.save(ticket);
-            System.out.println("Ticket created");
+            Ticket createdTicket = ticketRepository.save(ticket);
+            System.out.println(createdTicket.toString());
             return """
                 {
                     "status": 200,
-                    "message": "Ticket created"
+                    "message": "Ticket created",
+                    "ticket": """
+                    + createdTicket.toString() +
+                            """
                 }
                 """;
+
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             return """
@@ -79,6 +87,24 @@ public class TicketService {
                     "message": "Error creating ticket"
                 }
                 """;
+        }
+    }
+
+    public Ticket updateTicketAttendance(int ticketId) {
+        try {
+            Optional<Ticket> ticketOptional = ticketRepository.findById(ticketId);
+            if (!ticketOptional.isPresent()) {
+                throw new RuntimeException("Ticket not found");
+            }
+            Ticket ticket = ticketOptional.get();
+            ticket.setAttendance(true);
+            Ticket newTicket = ticketRepository.save(ticket);
+            System.out.println(newTicket.toString());
+            return ticket;
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            throw e;
         }
     }
     

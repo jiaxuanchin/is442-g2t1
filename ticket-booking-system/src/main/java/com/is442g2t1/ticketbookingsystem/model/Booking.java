@@ -1,5 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import io.micrometer.common.lang.NonNull;
 
+
 @Entity
 @ToString
 @Getter
@@ -33,7 +35,7 @@ public class Booking {
     @NonNull
     private int userId;
     
-    // to be edited when we integrate with events class
+    // ----------------------- to be edited when we integrate with events class -----------------------
     @Column(name = "event_id")
     @NonNull
     private int eventId;
@@ -45,7 +47,7 @@ public class Booking {
     @Column(name = "booking_timestamp", nullable = false, updatable = false, insertable = false)
     private Timestamp booking_timestamp;
 
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<Ticket> tickets;
 

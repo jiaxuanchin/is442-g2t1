@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +38,7 @@ public class TicketController {
     @GetMapping("/{ticketId}")
     public Optional<Ticket> getTicketById(@PathVariable int ticketId) {
         // Get all tickets
-        Optional<Ticket> result = this.ticketService.findTicketById(ticketId);
+        Optional<Ticket> result = this.ticketService.getTicketById(ticketId);
 
         // If ticket does not exist: {"data":Optional.empty} is returned
         return result;
@@ -46,8 +47,7 @@ public class TicketController {
     @GetMapping("/booking/{bookingId}")
     public List<Ticket> getTicketsByBookingId(@PathVariable int bookingId) {
         // Get all tickets
-        Booking booking = new Booking(bookingId);
-        List<Ticket> result = this.ticketService.findTicketsByBookingId(booking);
+        List<Ticket> result = this.ticketService.getTicketsByBookingId(bookingId);
         return result;
     }
 
@@ -57,6 +57,13 @@ public class TicketController {
         String result = this.ticketService.createTicket(booking);
         return result;
     }
+
+    @PutMapping("/update/attendance/{ticketId}")
+    public Ticket updateTicketAttendance(@PathVariable int ticketId) {
+        // Update a ticket by sending Ticket instance
+        Ticket result = this.ticketService.updateTicketAttendance(ticketId);
+        return result;
+    }
     
-        // don't need to implement deleteTicket? ideal should be cascading delete
+    // don't need to implement deleteTicket? ideal should be cascading delete
 }
