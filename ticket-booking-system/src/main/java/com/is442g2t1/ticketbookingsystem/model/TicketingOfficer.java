@@ -1,39 +1,32 @@
 package com.is442g2t1.ticketbookingsystem.model;
 
-@Entity
-@Table(name = "ticketing_officers")
 
+// import javax.persistence.Entity;
+// import javax.persistence.Table;
+
+// @Entity
+// @Table(name = "ticketing_officers") // Specifies the table in the database
 public class TicketingOfficer extends User {
 
-    
+    private String assignedVenue;
 
-    @OneToMany(mappedBy = "ticketingOfficer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<TicketSale> ticketSales = new HashSet<>();
-
-
-    public TicketingOfficer(String email, String password) {
-        super(email, password);
+    //Default Constructor
+    public TicketingOfficer() {
     }
 
-    
-    public boolean validateTicket(Ticket ticket) {
-        // Placeholder for ticket validation logic
-        return true;
+    public TicketingOfficer(String id, String email, String password, String name, String assignedVenue) {
+        super(id, email, password, name); // Call user superclass
+        this.assignedVenue = assignedVenue;
     }
 
-    public void sellTicket(Event event, int numTickets) {
-        // Placeholder for the logic to sell tickets
-        
+    // Getters and setters
+    public String getAssignedVenue() {
+        return assignedVenue;
     }
 
-    // Getters and Setters
-    public Set<TicketSale> getTicketSales() {
-        return ticketSales;
+    public void setAssignedVenue(String assignedVenue) {
+        this.assignedVenue = assignedVenue;
     }
 
-    public void setTicketSales(Set<TicketSale> ticketSales) {
-        this.ticketSales = ticketSales;
-    }
-
-   
 }
+
