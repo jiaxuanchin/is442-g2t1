@@ -10,8 +10,8 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Integer> {
 
-    // @SuppressWarnings("NullableProblems")
-    // List<Event> findAll();
+    @Query("SELECT e FROM Event e")
+    List<Event> findAllEvents();
     
     @Query("SELECT e FROM Event e WHERE e.eventId = :eventId")
     Event searchById(@Param("eventId") Integer eventId);

@@ -22,7 +22,7 @@ public class EventController {
     public List<Event> getAllEvent() { return eventService.getAllEvent();}
 
     @PostMapping("/createEvent")
-    public ResponseEntity<?> createEvent(@ModelAttribute EventCreateDTO eventDTO) {
+    public ResponseEntity<?> createEvent(@RequestBody EventCreateDTO eventDTO) {
         return eventService.createEvent(eventDTO);
     }
     

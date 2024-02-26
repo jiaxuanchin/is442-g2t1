@@ -32,12 +32,13 @@ public class EventService {
     }
 
     public List<Event> getAllEvent() {
-        return eventRepository.findAll();
+        return eventRepository.findAllEvents();
     }
 
     @Transactional
     public ResponseEntity<?> createEvent(EventCreateDTO eventCreateDTO) {
         try {
+            System.out.println("Creating event with input data: " + eventCreateDTO);
             // Validation
             // empty fields
             if (eventCreateDTO.getEventTitle() == null || eventCreateDTO.getEventTitle().isBlank() ||
@@ -67,6 +68,9 @@ public class EventService {
             Event savedEvent = eventRepository.save(event);
 
             Integer eventId = savedEvent.getEventId();
+
+            SuccessResponse successResponse = new SuccessResponse("Event created successfully", HttpStatus.SC_OK, savedEvent);
+            return ResponseEntity.ok().body(successResponse);
 
         } catch (Exception e) {
 
