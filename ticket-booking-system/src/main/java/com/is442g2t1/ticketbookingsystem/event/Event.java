@@ -1,4 +1,5 @@
 package com.is442g2t1.ticketbookingsystem.event;
+// model class
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,8 +14,8 @@ import java.time.LocalDate;
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
-    @Column(name="event_id")
+
+    @Column(name = "event_id")
     private Integer eventId;
 
     @Column(name = "event_title")
