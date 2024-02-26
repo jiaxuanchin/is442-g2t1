@@ -12,7 +12,7 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
 
     @Query("SELECT e FROM Event e")
     List<Event> findAllEvents();
-    
+
     @Query("SELECT e FROM Event e WHERE e.eventId = :eventId")
     Event searchById(@Param("eventId") Integer eventId);
 
@@ -20,7 +20,7 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     Event searchByTitle(String eventTitle);
 
     @Query("SELECT e FROM Event e WHERE e.eventLoc = :eventLoc")
-    Event searchByLocation(@Param("eventLoc") String location);
+    List<Event> searchByLocation(@Param("eventLoc") String location);
 
     @Transactional
     @Modifying

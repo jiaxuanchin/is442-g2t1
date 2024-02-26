@@ -69,7 +69,8 @@ public class EventService {
 
             Integer eventId = savedEvent.getEventId();
 
-            SuccessResponse successResponse = new SuccessResponse("Event created successfully", HttpStatus.SC_OK, savedEvent);
+            SuccessResponse successResponse = new SuccessResponse("Event created successfully", HttpStatus.SC_OK,
+                    savedEvent);
             return ResponseEntity.ok().body(successResponse);
 
         } catch (Exception e) {
@@ -180,8 +181,8 @@ public class EventService {
 
     public ResponseEntity<?> searchByLocation(String eventLoc) {
         try {
-            Event event = eventRepository.searchByLocation(eventLoc);
-            if (event != null) {
+            List<Event> event = eventRepository.searchByLocation(eventLoc);
+            if (!event.isEmpty()) {
                 SuccessResponse successResponse = new SuccessResponse("Success", HttpStatus.SC_OK, event);
                 return ResponseEntity.ok().body(successResponse);
             } else {

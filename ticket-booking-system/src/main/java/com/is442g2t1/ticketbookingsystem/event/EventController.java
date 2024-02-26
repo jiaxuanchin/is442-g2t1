@@ -19,15 +19,17 @@ public class EventController {
     }
 
     @GetMapping
-    public List<Event> getAllEvent() { return eventService.getAllEvent();}
+    public List<Event> getAllEvent() {
+        return eventService.getAllEvent();
+    }
 
     @PostMapping("/createEvent")
     public ResponseEntity<?> createEvent(@RequestBody EventCreateDTO eventDTO) {
         return eventService.createEvent(eventDTO);
     }
-    
+
     @PutMapping("/editEvent/{eventId}")
-    public ResponseEntity<?> createEvent(@ModelAttribute EventCreateDTO eventDTO, @PathVariable Integer eventId) {
+    public ResponseEntity<?> editEvent(@RequestBody EventCreateDTO eventDTO, @PathVariable Integer eventId) {
         return eventService.editEvent(eventDTO, eventId);
     }
 
