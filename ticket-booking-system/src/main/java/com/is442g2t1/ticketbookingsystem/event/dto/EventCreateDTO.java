@@ -6,7 +6,6 @@ import java.time.LocalDate;
 
 @Data
 public class EventCreateDTO {
-    private Integer eventId;
     private String eventTitle;
     private LocalDate eventDate;
     private String eventDesc;
