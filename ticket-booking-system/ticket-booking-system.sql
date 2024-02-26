@@ -29,12 +29,27 @@ DROP TABLE IF EXISTS Users;
 
 CREATE TABLE IF NOT EXISTS Users (
   user_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  role_name VARCHAR(50) NOT NULL,
+  role_id INT NOT NULL,
   user_fname VARCHAR(50) NOT NULL,
   user_lname VARCHAR(50) NOT NULL,
   email VARCHAR(255) NOT NULL,
 --   salt VARCHAR(50) NOT NULL,
-  password VARCHAR(255) NOT NULL
+  password VARCHAR(255) NOT NULL,
+  FOREIGN KEY (role_id) REFERENCES Roles(role_id)
+
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Roles`
+--
+
+DROP TABLE IF EXISTS Roles;
+
+CREATE TABLE IF NOT EXISTS Roles (
+  role_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  role_name VARCHAR(50) NOT NULL
 );
 
 -- --------------------------------------------------------
