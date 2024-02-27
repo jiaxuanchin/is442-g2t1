@@ -29,13 +29,43 @@ DROP TABLE IF EXISTS Users;
 
 CREATE TABLE IF NOT EXISTS Users (
   user_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  role_name VARCHAR(50) NOT NULL,
   user_fname VARCHAR(50) NOT NULL,
   user_lname VARCHAR(50) NOT NULL,
   email VARCHAR(255) NOT NULL,
 --   salt VARCHAR(50) NOT NULL,
-  password VARCHAR(255) NOT NULL
+  password VARCHAR(255) NOT NULL,
+  balance DOUBLE NOT NULL DEFAULT 1000.0
 );
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Roles`
+--
+
+DROP TABLE IF EXISTS Roles;
+
+CREATE TABLE IF NOT EXISTS Roles (
+  role_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  role_name VARCHAR(50) NOT NULL
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_roles`
+--
+
+DROP TABLE IF EXISTS user_roles;
+
+CREATE TABLE IF NOT EXISTS user_roles (
+  user_id INT,
+  role_id INT,
+  PRIMARY KEY (user_id, role_id),
+  FOREIGN KEY (user_id) REFERENCES User(user_id),
+  FOREIGN KEY (role_id) REFERENCES role(role_id)
+);
+
 
 -- --------------------------------------------------------
 
@@ -70,7 +100,7 @@ CREATE TABLE IF NOT EXISTS Booking (
   user_id INT NOT NULL,
   event_id INT NOT NULL,
   number_of_tickets INT,
-  booking_timestamp TIMESTAMP NOT NULL
+  booking_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- --------------------------------------------------------\
@@ -103,10 +133,22 @@ ALTER TABLE `Ticket`
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-INSERT INTO Users (role_name,user_fname,user_lname,email,password) VALUES
-('Customer','Eunice','Ong','euniceong.2021@scis.smu.edu.sg', 'password'),
-('Event Manager','Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', 'password'),
-('Ticketing Officer','Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', 'password');
+INSERT INTO Users (user_fname,user_lname,email,password,balance) VALUES
+('Eunice','Ong','euniceong.2021@scis.smu.edu.sg', 'password',1000.0),
+('Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', 'password',300),
+('Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', 'password',500);
+
+INSERT INTO Roles (role_name) VALUES
+("USER"),
+("ADMIN"),
+("OFFICER");
+
+INSERT INTO user_roles (user_id,role_id) VALUES
+(1,1),
+(2,2),
+(2,1),
+(3,1),
+(3,3);
 
 INSERT INTO Event (event_id, event_title, event_date, event_description, event_location, event_start_time, event_end_time, filled, capacity) VALUES
 (1, 'Musical', '2023-09-15', 'Disney is coming to town', 'The Capitol', '18:00', '21:00', 0, 2000),
