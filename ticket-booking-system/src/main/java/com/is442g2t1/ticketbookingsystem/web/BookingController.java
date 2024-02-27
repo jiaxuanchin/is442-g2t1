@@ -28,7 +28,7 @@ public class BookingController {
 
     @GetMapping("/all")
     public List<Booking> getAllBookings() {
-        // Get all booking
+
         List<Booking> result = this.bookingService.getAllBookings();
         
         return result;
@@ -36,16 +36,22 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     public Optional<Booking> getOneBooking(@PathVariable int bookingId) {
-        // Get all booking
+
         Optional<Booking> result = this.bookingService.getOneBooking(bookingId);
         return result;
     }
 
-    // -------------------- TO BE DONEEEEE --------------------
     @GetMapping("/user/{userId}")
     public List<Booking> getUserBooking(@PathVariable int userId) {
-        // Get all booking
+
         List<Booking> result = this.bookingService.getUserBooking(userId);
+        return result;
+    }
+
+    @GetMapping("/event/{eventId}")
+    public List<Booking> getEventBooking(@PathVariable int eventId) {
+
+        List<Booking> result = this.bookingService.getEventBooking(eventId);
         return result;
     }
 
@@ -57,7 +63,7 @@ public class BookingController {
 
     @DeleteMapping("/delete/{bookingId}")
     public String cancelBooking(@PathVariable int bookingId) {
-        // Delete booking
+
         String result = this.bookingService.cancelBooking(bookingId);
         return result;
     }

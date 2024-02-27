@@ -57,12 +57,26 @@ public class BookingService {
         }
     }
 
+    public List<Booking> getEventBooking(int eventId) {
+        try {
+            List<Booking> booking = this.bookingRepository.findByEventId(eventId);
+            return booking;
+
+        } catch(Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            throw e;
+        }
+    } 
+
     public String createBooking(Booking booking) {
         try {
-            System.out.println("Booking:" + booking);
+            System.out.println("Create booking:" + booking);
             bookingRepository.save(booking);
 
             boolean result = purchaseTicket(booking.getBookingId(), booking.getNumOfTickets());
+            // need to update event service? (TBD AFTER MERGE)
+            // need to trigger emailer (TBD AFTER MERGE)
+
             if (!result) {
                 return """
                     {
