@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.is442g2t1.ticketbookingsystem.model.*;
 import com.is442g2t1.ticketbookingsystem.repository.TicketRepository;
 
+@Service
 public class TicketService {
     
     private TicketRepository ticketRepository;
@@ -46,6 +48,7 @@ public class TicketService {
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             throw e;
+
         }
     }
 
@@ -64,7 +67,6 @@ public class TicketService {
 
     public String createTicket(Booking booking) {
         try {
-            // only need to send bookingId from BookingService class
             Ticket ticket = new Ticket(booking);
             System.out.println("Ticket: " + ticket.toString());
             Ticket createdTicket = ticketRepository.save(ticket);
@@ -107,5 +109,28 @@ public class TicketService {
             throw e;
         }
     }
+
+    // ------------- try deleting ticket, not necessary but to make sure deletion works without cascade removal from booking
+    // public String deleteTicket(int ticketId) {
+    //     try {
+    //         Optional<Ticket> ticketOptional = ticketRepository.findById(ticketId);
+    //         if (!ticketOptional.isPresent()) {
+    //             throw new RuntimeException("Ticket not found");
+    //         }
+    //         Ticket ticket = ticketOptional.get();
+    //         ticketRepository.delete(ticket);
+    //         System.out.println("Ticket deleted");
+    //         return """
+    //             {
+    //                 "status": 200,
+    //                 "message": "Ticket deleted"
+    //             }
+    //             """;
+
+    //     } catch (Exception e) {
+    //         System.err.println("Error: " + e.getMessage());
+    //         throw e;
+    //     }
+    // }
     
 }

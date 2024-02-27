@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.is442g2t1.ticketbookingsystem.model.*;
 import com.is442g2t1.ticketbookingsystem.service.*;
-import com.is442g2t1.ticketbookingsystem.repository.*;
 
 @RestController
 @RequestMapping("/ticket")
@@ -23,8 +23,8 @@ public class TicketController {
     private TicketService ticketService;
 
     @Autowired
-    public TicketController(TicketRepository ticketRepository) {
-        this.ticketService = new TicketService(ticketRepository);
+    public TicketController(TicketService ticketService) {
+        this.ticketService = ticketService;
     }
 
     @GetMapping("/all")
@@ -66,4 +66,11 @@ public class TicketController {
     }
     
     // don't need to implement deleteTicket? ideal should be cascading delete
+    // @DeleteMapping("/delete/{ticketId}")
+    // public String deleteTicket(@PathVariable int ticketId) {
+    //     // Delete a ticket by sending Ticket instance
+    //     String result = this.ticketService.deleteTicket(ticketId);
+    //     return result;
+
+    // }
 }

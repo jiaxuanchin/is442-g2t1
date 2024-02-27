@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.is442g2t1.ticketbookingsystem.model.*;
 import com.is442g2t1.ticketbookingsystem.service.*;
-import com.is442g2t1.ticketbookingsystem.repository.*;
 
 @RestController
 @RequestMapping("/booking")
@@ -23,9 +22,8 @@ public class BookingController {
     private BookingService bookingService;
 
     @Autowired
-    public BookingController(BookingRepository bookingRepository) {
-        this.bookingService = new BookingService
-        (bookingRepository);
+    public BookingController(BookingService bookingService) {
+        this.bookingService = bookingService;
     }
 
     @GetMapping("/all")
@@ -45,9 +43,10 @@ public class BookingController {
 
     // -------------------- TO BE DONEEEEE --------------------
     @GetMapping("/user/{userId}")
-    public String getUserBooking(int userId) {
+    public List<Booking> getUserBooking(@PathVariable int userId) {
         // Get all booking
-        return "success";
+        List<Booking> result = this.bookingService.getUserBooking(userId);
+        return result;
     }
 
     @PostMapping("/new")
@@ -56,8 +55,7 @@ public class BookingController {
         return result;
     }
 
-    // -------------------- TO BE DONEEEEE --------------------
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{bookingId}")
     public String cancelBooking(@PathVariable int bookingId) {
         // Delete booking
         String result = this.bookingService.cancelBooking(bookingId);
