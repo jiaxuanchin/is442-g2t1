@@ -1,7 +1,8 @@
-package com.is442g2t1.ticketbookingsystem.service;
+package com.is442g2t1.ticketbookingsystem.User;
 
-import com.is442g2t1.ticketbookingsystem.model.Event;
-import com.is442g2t1.ticketbookingsystem.repository.EventRepository;
+// import com.is442g2t1.ticketbookingsystem.User.Event;
+// import com.is442g2t1.ticketbookingsystem.repository.EventRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

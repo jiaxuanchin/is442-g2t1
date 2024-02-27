@@ -1,4 +1,4 @@
-package com.is442g2t1.ticketbookingsystem.model;
+package com.is442g2t1.ticketbookingsystem.User;
 
 public class EventManager extends User {
 

@@ -1,4 +1,4 @@
-package com.is442g2t1.ticketbookingsystem.model;
+package com.is442g2t1.ticketbookingsystem.User;
 
 
 // import javax.persistence.Entity;
@@ -29,4 +29,6 @@ public class TicketingOfficer extends User {
     }
 
 }
+
+
 

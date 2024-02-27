@@ -1,6 +1,5 @@
-package com.is442g2t1.ticketbookingsystem.model;
+package com.is442g2t1.ticketbookingsystem.User;
 
-import com.is442g2t1.ticketbookingsystem.service.EventManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

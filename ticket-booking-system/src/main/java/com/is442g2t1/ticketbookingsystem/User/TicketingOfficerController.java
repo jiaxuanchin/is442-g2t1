@@ -1,4 +1,4 @@
-package com.is442g2t1.ticketbookingsystem.model;
+package com.is442g2t1.ticketbookingsystem.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.is442g2t1.ticketbookingsystem.service.*; 
+// import com.is442g2t1.ticketbookingsystem.service.*; 
 
 @RestController
 public class TicketingOfficerController {

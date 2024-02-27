@@ -1,12 +1,11 @@
-package com.is442g2t1.ticketbookingsystem.service;
+package com.is442g2t1.ticketbookingsystem.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.is442g2t1.ticketbookingsystem.model.Event;
-import com.is442g2t1.ticketbookingsystem.model.SalesReport;
-import com.is442g2t1.ticketbookingsystem.repository.EventRepository;
-import com.is442g2t1.ticketbookingsystem.repository.SalesReportRepository;
+// import com.is442g2t1.ticketbookingsystem.User.Event;
+// import com.is442g2t1.ticketbookingsystem.repository.EventRepository;
+// import com.is442g2t1.ticketbookingsystem.repository.SalesReportRepository;
 
 import java.util.Optional;
 
@@ -44,7 +43,7 @@ public class SalesReportService {
         salesReport.setTotalRevenue(totalRevenue);
         salesReport.setCancellationRate(cancellationRate);
 
-        // Save  report
+        // Save  report --> generate as excel
         return salesReportRepository.save(salesReport);
     }
 

@@ -1,14 +1,14 @@
-package com.is442g2t1.ticketbookingsystem.service;
+package com.is442g2t1.ticketbookingsystem.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
-import com.is442g2t1.ticketbookingsystem.model.Event;
-import com.is442g2t1.ticketbookingsystem.model.Ticket;
-import com.is442g2t1.ticketbookingsystem.repository.TicketRepository;
-import com.is442g2t1.ticketbookingsystem.repository.EventRepository;
+// import com.is442g2t1.ticketbookingsystem.repository.TicketRepository;
+// import com.is442g2t1.ticketbookingsystem.User.Event;
+// import com.is442g2t1.ticketbookingsystem.User.Ticket;
+// import com.is442g2t1.ticketbookingsystem.repository.EventRepository;
 
 import java.time.LocalDateTime;
 
