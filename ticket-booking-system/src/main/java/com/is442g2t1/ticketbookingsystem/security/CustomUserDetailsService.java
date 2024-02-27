@@ -1,8 +1,8 @@
 package com.is442g2t1.ticketbookingsystem.security;
 
-import com.is442g2t1.ticketbookingsystem.model.Role;
-import com.is442g2t1.ticketbookingsystem.model.UserEntity;
-import com.is442g2t1.ticketbookingsystem.repository.UserRepository;
+import com.is442g2t1.ticketbookingsystem.User.Role;
+import com.is442g2t1.ticketbookingsystem.User.UserEntity;
+import com.is442g2t1.ticketbookingsystem.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

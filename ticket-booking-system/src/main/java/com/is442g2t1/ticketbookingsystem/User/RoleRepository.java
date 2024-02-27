@@ -1,6 +1,6 @@
-package com.is442g2t1.ticketbookingsystem.repository;
+package com.is442g2t1.ticketbookingsystem.User;
 
-import com.is442g2t1.ticketbookingsystem.model.Role;
+import com.is442g2t1.ticketbookingsystem.User.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
