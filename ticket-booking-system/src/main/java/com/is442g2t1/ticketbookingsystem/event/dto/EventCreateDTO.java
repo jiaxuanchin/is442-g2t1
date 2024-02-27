@@ -14,4 +14,6 @@ public class EventCreateDTO {
     private String endTime;
     private Integer filled;
     private Integer capacity;
+    private Double ticketPrice;
+    private Double cancelFee;
 }

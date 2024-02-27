@@ -47,7 +47,7 @@ public class EventService {
                     eventCreateDTO.getEventLoc() == null || eventCreateDTO.getEventLoc().isBlank() ||
                     eventCreateDTO.getStartTime() == null || eventCreateDTO.getStartTime().isBlank() ||
                     eventCreateDTO.getEndTime() == null || eventCreateDTO.getEndTime().isBlank() ||
-                    eventCreateDTO.getCapacity() == null) {
+                    eventCreateDTO.getCapacity() == null || eventCreateDTO.getTicketPrice() == null) {
                 StatusResponse statusResponse = new StatusResponse("Fields cannot be empty", HttpStatus.SC_BAD_REQUEST);
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(statusResponse);
             }
@@ -59,11 +59,30 @@ public class EventService {
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(invalidCapacityResponse);
             }
 
+            if (eventCreateDTO.getTicketPrice() <= 0) {
+                StatusResponse invalidCapacityResponse = new StatusResponse("Ticket price must be greater than 0",
+                        HttpStatus.SC_BAD_REQUEST);
+                return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(invalidCapacityResponse);
+            }
+
+            // optional to set cancel fee
+            if (eventCreateDTO.getCancelFee() != null && eventCreateDTO.getCancelFee() <= 0) {
+                StatusResponse invalidCapacityResponse = new StatusResponse("Cancel fee must be greater than 0",
+                        HttpStatus.SC_BAD_REQUEST);
+                return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(invalidCapacityResponse);
+            }
+
             // Mappping dto to entity
             Event event = eventMapper.mapToEvent(eventCreateDTO);
 
-            // filled
-            event.setFilled(0);
+            if (eventCreateDTO.getFilled() == null) {
+                event.setFilled(0);
+            }
+
+            // cancel fee  -> must set to 0 if not will have error
+            if (eventCreateDTO.getCancelFee() == null) {
+                event.setCancelFee(0.00);
+            }
 
             Event savedEvent = eventRepository.save(event);
 
@@ -105,7 +124,7 @@ public class EventService {
                     eventCreateDTO.getEventLoc() == null || eventCreateDTO.getEventLoc().isBlank() ||
                     eventCreateDTO.getStartTime() == null || eventCreateDTO.getStartTime().isBlank() ||
                     eventCreateDTO.getEndTime() == null || eventCreateDTO.getEndTime().isBlank() ||
-                    eventCreateDTO.getCapacity() == null) {
+                    eventCreateDTO.getCapacity() == null || eventCreateDTO.getTicketPrice() == null) {
                 // rewardPoints can be 0, this is dependent on the admin
                 StatusResponse statusResponse = new StatusResponse("Fields cannot be empty", HttpStatus.SC_BAD_REQUEST);
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(statusResponse);
@@ -118,14 +137,34 @@ public class EventService {
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(invalidCapacityResponse);
             }
 
+            if (eventCreateDTO.getTicketPrice() <= 0) {
+                StatusResponse invalidCapacityResponse = new StatusResponse("Ticket price must be greater than 0",
+                        HttpStatus.SC_BAD_REQUEST);
+                return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(invalidCapacityResponse);
+            }
+
+            // optional to set cancel fee
+            if (eventCreateDTO.getCancelFee() != null && eventCreateDTO.getCancelFee() <= 0) {
+                StatusResponse invalidCapacityResponse = new StatusResponse("Cancel fee must be greater than 0",
+                        HttpStatus.SC_BAD_REQUEST);
+                return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(invalidCapacityResponse);
+            }
+
             // Mappping dto to entity
             Event event = eventMapper.mapToEvent(eventCreateDTO);
 
             // eventId (take from existing event)
             event.setEventId(existingEvent.getEventId());
 
-            // filled (take from existing event)
-            event.setFilled(existingEvent.getFilled());
+            if (eventCreateDTO.getFilled() == null) {
+                // filled (take from existing event)
+                event.setFilled(existingEvent.getFilled());
+            }
+
+            // cancel fee  -> must set to 0 if not will have error
+            if (eventCreateDTO.getCancelFee() == null) {
+                event.setCancelFee(0.00);
+            }
 
             eventRepository.save(event);
 

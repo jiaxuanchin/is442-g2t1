@@ -54,7 +54,9 @@ CREATE TABLE IF NOT EXISTS Event (
   event_start_time VARCHAR(255) NOT NULL,
   event_end_time VARCHAR(255),
   filled INT NOT NULL DEFAULT 0,
-  capacity INT NOT NULL
+  capacity INT NOT NULL,
+  ticket_price Decimal(10,2) NOT NULL,
+  cancel_fee Decimal(10,2) NOT NULL DEFAULT 0.00
 );
 
 -- --------------------------------------------------------
@@ -108,12 +110,12 @@ INSERT INTO Users (role_name,user_fname,user_lname,email,password) VALUES
 ('Event Manager','Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', 'password'),
 ('Ticketing Officer','Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', 'password');
 
-INSERT INTO Event (event_id, event_title, event_date, event_description, event_location, event_start_time, event_end_time, filled, capacity) VALUES
-(1, 'Musical', '2023-09-15', 'Disney is coming to town', 'The Capitol', '18:00', '21:00', 0, 2000),
-(2, 'Movie', '2024-01-22', 'Avengers 100', 'Golden Village (Plaza Singapura)', '14:45', '18:00', 0, 2000),
-(3, 'Seminar', '2023-12-15', 'How to make use of ChatGPT', 'Singapore Management University', '09:00', '13:00', 0, 40),
-(4, 'Concert', '2024-03-02', 'Disney is coming to town', 'National Stadium', '19:30', '23:00', 0, 25000),
-(5, 'Play', '2023-11-29', 'Romeo & Juliet', 'Esplanade', '19:00', '22:00', 0, 3000);
+INSERT INTO Event (event_id, event_title, event_date, event_description, event_location, event_start_time, event_end_time, filled, capacity, ticket_price, cancel_fee) VALUES
+(1, 'Musical', '2023-09-15', 'Disney is coming to town', 'The Capitol', '18:00', '21:00', 0, 2000, 220.00, 20.00),
+(2, 'Movie', '2024-01-22', 'Avengers 100', 'Golden Village (Plaza Singapura)', '14:45', '18:00', 0, 2000, 220.00, 20.00),
+(3, 'Seminar', '2023-12-15', 'How to make use of ChatGPT', 'Singapore Management University', '09:00', '13:00', 0, 40, 220.00, 20.00),
+(4, 'Concert', '2024-03-02', 'Disney is coming to town', 'National Stadium', '19:30', '23:00', 0, 25000, 220.00, 20.00),
+(5, 'Play', '2023-11-29', 'Romeo & Juliet', 'Esplanade', '19:00', '22:00', 0, 3000, 220.00, 20.00);
 
 INSERT INTO Booking VALUES
 (1,1,4,2, TIMESTAMP('2023-09-13 10:04:30')),

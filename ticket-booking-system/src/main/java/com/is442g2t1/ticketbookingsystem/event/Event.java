@@ -41,4 +41,10 @@ public class Event {
 
     @Column(name = "capacity")
     private Integer capacity;
+
+    @Column(name = "ticket_price")
+    private Double ticketPrice;
+
+    @Column(name = "cancel_fee")
+    private Double cancelFee;
 }
