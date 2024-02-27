@@ -1,4 +1,4 @@
-package com.is442g2t1.ticketbookingsystem.web;
+package com.is442g2t1.ticketbookingsystem.booking;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.is442g2t1.ticketbookingsystem.model.*;
-import com.is442g2t1.ticketbookingsystem.service.*;
 
 @RestController
 @RequestMapping("/booking")

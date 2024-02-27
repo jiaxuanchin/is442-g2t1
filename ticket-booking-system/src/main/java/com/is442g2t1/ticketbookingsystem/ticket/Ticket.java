@@ -1,10 +1,11 @@
-package com.is442g2t1.ticketbookingsystem.model;
+package com.is442g2t1.ticketbookingsystem.ticket;
 
 
 import org.springframework.data.annotation.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.is442g2t1.ticketbookingsystem.booking.Booking;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

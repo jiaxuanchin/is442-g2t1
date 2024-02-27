@@ -1,4 +1,4 @@
-package com.is442g2t1.ticketbookingsystem.service;
+package com.is442g2t1.ticketbookingsystem.ticket;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,8 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.is442g2t1.ticketbookingsystem.model.*;
-import com.is442g2t1.ticketbookingsystem.repository.TicketRepository;
+import com.is442g2t1.ticketbookingsystem.booking.Booking;
 
 @Service
 public class TicketService {
