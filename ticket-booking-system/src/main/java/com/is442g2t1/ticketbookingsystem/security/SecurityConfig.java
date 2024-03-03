@@ -30,6 +30,7 @@ public class SecurityConfig {
         this.authEntryPoint = authEntryPoint;
     }
 
+
     // This part needs to change, needs to be more strict
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
