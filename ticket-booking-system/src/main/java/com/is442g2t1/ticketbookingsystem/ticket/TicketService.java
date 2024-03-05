@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.is442g2t1.ticketbookingsystem.booking.Booking;
@@ -18,94 +19,82 @@ public class TicketService {
         this.ticketRepository = ticketRepository;
     }
 
-    public List<Ticket> getAllTickets() {
+    public ResponseEntity getAllTickets() {
         try {
             List<Ticket> tickets = ticketRepository.findAll();
             System.out.println("Tickets retrieved");
-            // for (Ticket ticket : tickets) {
-            //     System.out.println(ticket.toString());
-            // }
+            if (tickets.isEmpty()) {
+                return ResponseEntity.status(404).body("No tickets found");
+            }
 
             System.out.println(tickets.toString());
-            return tickets;
+            return ResponseEntity.ok(tickets);
             
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
 
-    public Optional<Ticket> getTicketById(int ticketId) {
+    public ResponseEntity getTicketById(int ticketId) {
         try {
             Optional<Ticket> ticket = ticketRepository.findById(ticketId);
             if (!ticket.isPresent()) {
-                throw new RuntimeException("Ticket not found");
+                return ResponseEntity.status(404).body("Ticket not found");
             }
             System.out.println(ticket.toString());
-            return ticket;
+            return ResponseEntity.ok(ticket);
 
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
 
         }
     }
 
-    public List<Ticket> getTicketsByBookingId(int bookingId) {
+    public ResponseEntity getTicketsByBookingId(int bookingId) {
         try {
             Booking booking = new Booking(bookingId);
             List<Ticket> tickets = ticketRepository.findTicketsByBooking(booking);
-            System.out.println(tickets.toString());
-            return tickets;
+
+            if (tickets.isEmpty()) {
+                return ResponseEntity.status(404).body("Ticket not found");
+            }
+            // System.out.println(tickets.toString());
+            return ResponseEntity.ok(tickets);
 
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
 
-    public String createTicket(Booking booking) {
+    public ResponseEntity createTicket(Booking booking) {
         try {
             Ticket ticket = new Ticket(booking);
-            System.out.println("Ticket: " + ticket.toString());
+
             Ticket createdTicket = ticketRepository.save(ticket);
-            System.out.println(createdTicket.toString());
-            return """
-                {
-                    "status": 200,
-                    "message": "Ticket created",
-                    "ticket": """
-                    + createdTicket.toString() +
-                            """
-                }
-                """;
+            System.out.println("CREATED TICKET: " + createdTicket.toString());
+
+            return ResponseEntity.ok("Ticket created");
 
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            return """
-                {
-                    "status": 500,
-                    "message": "Error creating ticket"
-                }
-                """;
+            return ResponseEntity.status(500).body("Error creating ticket");
+            
         }
     }
 
-    public Ticket updateTicketAttendance(int ticketId) {
+    public ResponseEntity updateTicketAttendance(int ticketId) {
         try {
             Optional<Ticket> ticketOptional = ticketRepository.findById(ticketId);
             if (!ticketOptional.isPresent()) {
-                throw new RuntimeException("Ticket not found");
+                return ResponseEntity.status(404).body("Ticket not found");
             }
             Ticket ticket = ticketOptional.get();
             ticket.setAttendance(true);
             Ticket newTicket = ticketRepository.save(ticket);
             System.out.println(newTicket.toString());
-            return ticket;
+            return ResponseEntity.ok(newTicket);
 
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            return ResponseEntity.status(500).body("Error updating ticket with id: " + ticketId);
         }
     }
 
