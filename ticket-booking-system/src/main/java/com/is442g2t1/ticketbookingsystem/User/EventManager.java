@@ -1,16 +1,15 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
-public class EventManager extends User {
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-    // Default constructor
+@Entity
+@Table(name = "EventManagers") 
+public class EventManager extends UserEntity {
+
+    // Constructors
     public EventManager() {
-        super();
+        super(); 
     }
 
-    // Constructor
-    public EventManager(String id, String email, String password, String name) {
-        super(id, email, password, name); 
-
-    }
-    
 }

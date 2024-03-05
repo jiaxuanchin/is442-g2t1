@@ -1,73 +1,34 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
 
-import com.google.common.base.Optional;
-// import com.is442g2t1.ticketbookingsystem.repository.TicketRepository;
-// import com.is442g2t1.ticketbookingsystem.User.Event;
-// import com.is442g2t1.ticketbookingsystem.User.Ticket;
-// import com.is442g2t1.ticketbookingsystem.repository.EventRepository;
 
-import java.time.LocalDateTime;
-
-@Service
 public class TicketingOfficerService {
 
-    @Autowired
-    private TicketRepository ticketRepository;
+    private final RestTemplate restTemplate;
+    private String eventServiceBaseUrl = "http://localhost:8080/event";
+    private String ticketServiceBaseUrl = "http://localhost:8080/ticket";
 
-    @Autowired
-    private EventRepository eventRepository;
+    public TicketingOfficerService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     // Verify ticket validity
-    public boolean verifyTicket(String ticketId) {
-        Optional<Ticket> ticketOpt = ticketRepository.findById(ticketId);
-        if (ticketOpt.isPresent()) {
-            Ticket ticket = ticketOpt.get();
-            
-            // Check ticket validity
-            return ticket.isValid() && ticket.getEvent().getEventDateTime().isAfter(LocalDateTime.now());
-        }
-        return false; // Ticket not found or invalid
+    public boolean verifyTicket(int ticketId) {
+        ResponseEntity<Boolean> response = restTemplate.getForEntity(ticketServiceBaseUrl + "/verify/" + ticketId, Boolean.class);
+        return response.getBody();
     }
 
-    //Process on-site ticket sales
-    @Transactional
-    public void processOnSiteSale(String eventId, int numOfTickets) throws Exception {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new Exception("Event not found"));
-        if (event.getNumTicketsAvailable() < numOfTickets) {
-            throw new Exception("Not enough tickets available");
-        }
-        // Update event's available tickets
-        event.setNumTicketsAvailable(event.getNumTicketsAvailable() - numOfTickets);
-        eventRepository.save(event);
-        //create and save tickets 
+    // Process on-site ticket sales
+    public ResponseEntity<?> processOnSiteSale(String eventId, int numOfTickets) {
+        ResponseEntity<?> response = restTemplate.postForEntity(eventServiceBaseUrl + "/processSale/" + eventId + "/" + numOfTickets, null, ResponseEntity.class);
+        return response;
     }
 
-    //Issuing e-tickets
-    @Transactional
-    public Ticket issueETicket(String customerId, String eventId, int numOfTickets) throws Exception {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new Exception("Event not found"));
-        if (event.getNumTicketsAvailable() < numOfTickets) {
-            throw new Exception("Not enough tickets available");
-        }
-        
-        Ticket newTicket = new Ticket();
-        newTicket.setCustomerId(customerId);
-        newTicket.setEvent(event);
-        newTicket.setIssueDate(LocalDateTime.now());
-        newTicket.setValid(true);
-        
-        // Update available tickets count
-        event.setNumTicketsAvailable(event.getNumTicketsAvailable() - numOfTickets);
-        eventRepository.save(event);
-        
-        ticketRepository.save(newTicket);
-
-        // sending an email to the customer 
-        
-        return newTicket; // return for further confirming or further processing
+    // Issuing e-tickets
+    public ResponseEntity<?> issueETicket(String customerId, String eventId, int numOfTickets) {
+        ResponseEntity<?> response = restTemplate.postForEntity(ticketServiceBaseUrl + "/issue/" + customerId + "/" + eventId + "/" + numOfTickets, null, ResponseEntity.class);
+        return response;
     }
 }

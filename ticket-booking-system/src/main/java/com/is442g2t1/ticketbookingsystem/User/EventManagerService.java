@@ -1,88 +1,52 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
-// import com.is442g2t1.ticketbookingsystem.User.Event;
-// import com.is442g2t1.ticketbookingsystem.repository.EventRepository;
-
+import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
 
 @Service
 public class EventManagerService {
 
+    private final RestTemplate restTemplate;
+    private final String baseUrl = "http://localhost:8080/event"; // Adjust this to your actual base URL
+
     @Autowired
-    private EventRepository eventRepository;
-
-    //create a new event
-    public Event createEvent(Event event) {
-        return eventRepository.save(event);
+    public EventManagerService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
-    public Event updateEvent(String eventId, Event updatedEvent) {
-        return eventRepository.findById(eventId).map(event -> {
-            event.setEventName(updatedEvent.getEventName());
-            event.setEventVenue(updatedEvent.getEventVenue());
-            // Update other fields as necessary
-            return eventRepository.save(event);
-        }).orElseGet(() -> {
-            updatedEvent.setEventID(eventId);
-            return eventRepository.save(updatedEvent);
-        });
+    // Create a new event
+    public ResponseEntity<?> createEvent(EventCreateDTO eventCreateDTO) {
+        return restTemplate.postForEntity(baseUrl + "/createEvent", eventCreateDTO, ResponseEntity.class);
     }
 
-
-    //delete an event
-    public void deleteEvent(String eventId) {
-        eventRepository.deleteById(eventId);
+    // Update event details
+    public ResponseEntity<?> updateEventDetails(Integer eventId, EventCreateDTO eventDTO) {
+        restTemplate.put(baseUrl + "/editEvent/" + eventId, eventDTO);
+        return ResponseEntity.ok().build(); // Assuming successful update
     }
 
-    //get all events
-    public List<Event> getAllEvents() {
-        return eventRepository.findAll();
+    // Search for an event by its ID
+    public ResponseEntity<?> searchEventById(Integer eventId) {
+        return restTemplate.getForEntity(baseUrl + "/searchById/" + eventId, ResponseEntity.class);
     }
 
-    // to edit - salesreport 
-    //     // Generate a sales report for an event
-    // public SalesReport generateSalesReport(String eventId) {
-    //     Optional<Event> eventOpt = eventRepository.findById(eventId);
+    // search for an event by its title
+    public ResponseEntity<?> searchEventByTitle(String title) {
+        return restTemplate.getForEntity(baseUrl + "/searchByTitle/" + title, ResponseEntity.class);
+    }
 
-    //     if (!eventOpt.isPresent()) {
-    //         // event does not exist
-    //         throw new RuntimeException("Event not found with ID: " + eventId); 
-    //     }
+    // Search for an event by its location
+    public ResponseEntity<?> searchEventByLocation(String location) {
+        return restTemplate.getForEntity(baseUrl + "/searchByLocation/" + location, ResponseEntity.class);
+    }
 
-    //     Event event = eventOpt.get();
-    //     SalesReport salesReport = new SalesReport();
+    // Delete an event
+    public ResponseEntity<?> deleteEvent(Integer eventId) {
+        restTemplate.delete(baseUrl + "/deleteById/" + eventId);
+        return ResponseEntity.ok().build(); 
+    }
 
-    //     // Calculate tickets sold & total revenue
-    //     int ticketsSold = event.getTotalNumTickets() - event.getNumTicketsAvailable();
-    //     double totalRevenue = calculateTotalRevenue(event.viewEventPrice(), ticketsSold);
-        
-    //     // cancellation rate 
-    //     double cancellationRate = calculateCancellationRate(event.getTotalNumTickets(), ticketsSold); 
-
-    //     // Generate sales report
-    //     salesReport.setEvent(event);
-    //     salesReport.setTicketsSold(ticketsSold);
-    //     salesReport.setTotalRevenue(totalRevenue);
-    //     salesReport.setCancellationRate(cancellationRate);
-
-    //     // Save  report --> generate as excel
-    //     return salesReportRepository.save(salesReport);
-    // }
-
-    // // Calculate total revenue
-    // private double calculateTotalRevenue(double ticketPrice, int ticketsSold) {
-    //     return ticketPrice * ticketsSold;
-    // }
-
-    // // Calculate cancellation rate
-    // private double calculateCancellationRate(int totalTickets, int ticketsSold) {
-    //     int ticketsCancelled = totalTickets - ticketsSold;
-    //     return totalTickets > 0 ? (double) ticketsCancelled / totalTickets * 100 : 0;
-    // }
-
-   
 }
