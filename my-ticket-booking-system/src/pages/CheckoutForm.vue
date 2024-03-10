@@ -18,7 +18,6 @@ onMounted(async () => {
   ).then((res) => res.json());
   stripe = await loadStripe(publishableKey); // initialize the Stripe object
   console.log(publishableKey);
-  console.log(stripe);
 
   // fetch client secret -> to confirm payment
   const { clientSecret } = await fetch(
@@ -30,8 +29,6 @@ onMounted(async () => {
     console.log(res);
     return res.json();
   });
-
-  console.log(clientSecret);
 
   messages.value.push(`Client secret returned.`);
   console.log(messages);
