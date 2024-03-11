@@ -4,13 +4,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor; // Create the constructors for us
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name="Users")
 @Data  // create the getter and setter functions for us
 @NoArgsConstructor // create constructors for us
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Creates a single table strategy for each class hierarchy
+@DiscriminatorColumn(name = "user_type") // Column used to differentiate the subclass in the single table
 
 public class UserEntity {
 
@@ -19,11 +19,10 @@ public class UserEntity {
     @Column(name = "user_id")
     private int id;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_roles", 
-                joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles = new ArrayList<>();
+    // Need to join this role id to the Roles table
+    @OneToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     @Column(name = "user_fname")
     private String user_fname;
@@ -36,18 +35,4 @@ public class UserEntity {
 
     @Column(name = "password")
     private String password;
-
-    @Column(name = "balance")
-    private double balance;
-
-    // To reduce balance
-    public void reduceBalance(double amount) {
-        if (amount >= 0 && amount <= balance) {
-            balance -= amount;
-        } else {
-            throw new IllegalArgumentException("Invalid amount or insufficient balance");
-        }
-    }
-
-
 }

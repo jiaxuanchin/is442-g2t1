@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.is442g2t1.ticketbookingsystem.event.*;
 
 @RestController
 @RequestMapping("/eventManager")
@@ -20,13 +21,13 @@ public class EventManagerController {
     }
 
     @PutMapping("/events/{id}")
-    public ResponseEntity<Event> updateEvent(@PathVariable String id, @RequestBody Event event) {
+    public ResponseEntity<Event> updateEvent(@PathVariable int id, @RequestBody Event event) {
         Event updatedEvent = eventManagerService.updateEvent(id, event);
         return ResponseEntity.ok(updatedEvent);
     }
 
     @DeleteMapping("/events/{id}")
-    public ResponseEntity<?> deleteEvent(@PathVariable String id) {
+    public ResponseEntity<?> deleteEvent(@PathVariable int id) {
         eventManagerService.deleteEvent(id);
         return ResponseEntity.ok().build();
     }

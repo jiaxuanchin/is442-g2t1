@@ -5,10 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
-// import com.is442g2t1.ticketbookingsystem.repository.TicketRepository;
-// import com.is442g2t1.ticketbookingsystem.User.Event;
-// import com.is442g2t1.ticketbookingsystem.User.Ticket;
-// import com.is442g2t1.ticketbookingsystem.repository.EventRepository;
+import com.is442g2t1.ticketbookingsystem.ticket.*;
+import com.is442g2t1.ticketbookingsystem.event.*;
 
 import java.time.LocalDateTime;
 
@@ -22,8 +20,8 @@ public class TicketingOfficerService {
     private EventRepository eventRepository;
 
     // Verify ticket validity
-    public boolean verifyTicket(String ticketId) {
-        Optional<Ticket> ticketOpt = ticketRepository.findById(ticketId);
+    public boolean verifyTicket(int ticketId) {
+        Optional<Ticket> ticketOpt = ticketRepository.findTicketByTicketId(ticketId);
         if (ticketOpt.isPresent()) {
             Ticket ticket = ticketOpt.get();
             
@@ -35,7 +33,7 @@ public class TicketingOfficerService {
 
     //Process on-site ticket sales
     @Transactional
-    public void processOnSiteSale(String eventId, int numOfTickets) throws Exception {
+    public void processOnSiteSale(int eventId, int numOfTickets) throws Exception {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new Exception("Event not found"));
         if (event.getNumTicketsAvailable() < numOfTickets) {
             throw new Exception("Not enough tickets available");
@@ -48,7 +46,7 @@ public class TicketingOfficerService {
 
     //Issuing e-tickets
     @Transactional
-    public Ticket issueETicket(String customerId, String eventId, int numOfTickets) throws Exception {
+    public Ticket issueETicket(int customerId, int eventId, int numOfTickets) throws Exception {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new Exception("Event not found"));
         if (event.getNumTicketsAvailable() < numOfTickets) {
             throw new Exception("Not enough tickets available");

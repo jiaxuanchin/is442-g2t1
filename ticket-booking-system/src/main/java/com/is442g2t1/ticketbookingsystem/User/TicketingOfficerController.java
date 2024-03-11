@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-// import com.is442g2t1.ticketbookingsystem.service.*; 
+import com.is442g2t1.ticketbookingsystem.ticket.*;
 
 @RestController
 public class TicketingOfficerController {
@@ -17,7 +17,7 @@ public class TicketingOfficerController {
 
     // Endpoint to verify ticket validity
     @GetMapping("/verifyTicket")
-    public ResponseEntity<String> verifyTicket(@RequestParam String ticketId) {
+    public ResponseEntity<String> verifyTicket(@RequestParam int ticketId) {
         boolean isValid = ticketingOfficerService.verifyTicket(ticketId);
         if (isValid) {
             return ResponseEntity.ok("Ticket is valid");
@@ -28,7 +28,7 @@ public class TicketingOfficerController {
 
     // Endpoint for processing on-site ticket sales
     @PostMapping("/processOnSiteSale")
-    public ResponseEntity<String> processOnSiteSale(@RequestParam String eventId, @RequestParam int numOfTickets) {
+    public ResponseEntity<String> processOnSiteSale(@RequestParam int eventId, @RequestParam int numOfTickets) {
         try {
             ticketingOfficerService.processOnSiteSale(eventId, numOfTickets);
             return ResponseEntity.ok("On-site ticket sale processed successfully");
@@ -39,12 +39,12 @@ public class TicketingOfficerController {
 
     // Endpoint for issuing e-tickets
     @PostMapping("/issueETicket")
-    public ResponseEntity<String> issueETicket(@RequestParam String customerId, @RequestParam String eventId, @RequestParam int numOfTickets) {
+    public ResponseEntity<String> issueETicket(@RequestParam int customerId, @RequestParam int eventId, @RequestParam int numOfTickets) {
         try {
             // Correcting the service call to match expected return type
             Ticket newTicket = ticketingOfficerService.issueETicket(customerId, eventId, numOfTickets);
             // Extracting ticket ID from the returned Ticket object
-            String eTicketId = newTicket.getTicketId();
+            int eTicketId = newTicket.getTicketId();
             return ResponseEntity.ok("E-Ticket issued successfully. Ticket ID: " + eTicketId);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Could not issue e-ticket: " + e.getMessage());

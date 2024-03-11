@@ -56,12 +56,18 @@ public class AuthController {
             return new ResponseEntity<>("Email is taken!", HttpStatus.BAD_REQUEST);
         }
 
+        // Fetch the Role entity from the database based on the role name
+        Role role = roleRepository.findByName("USER").orElse(null); // Assuming you have a method in roleRepository to find by name
+
+        if (role == null) {
+            return new ResponseEntity<>("Role not found!", HttpStatus.BAD_REQUEST);
+        }
+
         UserEntity user = new UserEntity();
         user.setEmail(registerDto.getEmail());
-        user.setPassword(passwordEncoder.encode((registerDto.getPassword())));
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
-        Role roles = roleRepository.findByName("USER").get();
-        user.setRoles(Collections.singletonList(roles));
+        user.setRole(role); // Set the Role object directly
 
         userRepository.save(user);
 

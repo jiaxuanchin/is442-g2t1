@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+// import java.util.Optional;
+
+import com.is442g2t1.ticketbookingsystem.event.*;
 
 @Service
 public class EventManagerService {
@@ -20,22 +22,22 @@ public class EventManagerService {
         return eventRepository.save(event);
     }
 
-    public Event updateEvent(String eventId, Event updatedEvent) {
+    public Event updateEvent(int eventId, Event updatedEvent) {
         return eventRepository.findById(eventId).map(event -> {
-            event.setEventName(updatedEvent.getEventName());
-            event.setEventVenue(updatedEvent.getEventVenue());
+            event.setEventTitle(updatedEvent.getEventTitle());
+            event.setEventLoc(updatedEvent.getEventLoc());
             // Update other fields as necessary
             return eventRepository.save(event);
         }).orElseGet(() -> {
-            updatedEvent.setEventID(eventId);
+            updatedEvent.setEventId(eventId);
             return eventRepository.save(updatedEvent);
         });
     }
 
 
     //delete an event
-    public void deleteEvent(String eventId) {
-        eventRepository.deleteById(eventId);
+    public void deleteEvent(int eventId) {
+        eventRepository.deleteEventById(eventId);
     }
 
     //get all events
