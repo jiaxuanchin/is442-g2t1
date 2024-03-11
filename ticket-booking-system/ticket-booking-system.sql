@@ -125,9 +125,9 @@ INSERT INTO Users (user_fname,user_lname,email,password) VALUES
 (3,'Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', 'password');
 
 INSERT INTO Roles (role_name) VALUES
-("USER"),
-("ADMIN"),
-("OFFICER");
+("customer"),
+("event_manager"),
+("ticketing_officer");
 
 INSERT INTO Event (event_id, event_title, event_date, event_description, event_location, event_start_time, event_end_time, filled, capacity, ticket_price, cancel_fee) VALUES
 (1, 'Musical', '2023-09-15', 'Disney is coming to town', 'The Capitol', '18:00', '21:00', 0, 2000, 220.00, 20.00),

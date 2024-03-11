@@ -15,6 +15,12 @@ public class TicketingOfficerService {
 
     @Autowired
     private TicketRepository ticketRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository; // Inject RoleRepository instance
 
     @Autowired
     private EventRepository eventRepository;
@@ -30,6 +36,21 @@ public class TicketingOfficerService {
         }
         return false; // Ticket not found or invalid
     }
+
+    // Method to create a new ticketing officer
+    @Transactional
+    public UserEntity createTicketingOfficer(String firstName, String lastName, String email, String password) {
+        UserEntity ticketingOfficer = new UserEntity();
+        ticketingOfficer.setUser_fname(firstName);
+        ticketingOfficer.setUser_lname(lastName);
+        ticketingOfficer.setEmail(email);
+        ticketingOfficer.setPassword(password);
+        ticketingOfficer.setRole(roleRepository.findByName("ticketing_officer").orElseThrow(() -> new IllegalArgumentException("Role not found: TICKETING_OFFICER")));
+        
+        // Save the ticketing officer to the database
+        return userRepository.save(ticketingOfficer);
+    }
+
 
     //Process on-site ticket sales
     @Transactional
