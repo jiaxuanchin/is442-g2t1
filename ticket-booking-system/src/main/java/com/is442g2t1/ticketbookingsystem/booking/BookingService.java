@@ -4,146 +4,131 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import com.is442g2t1.ticketbookingsystem.ticket.TicketService;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class BookingService {
 
     private BookingRepository bookingRepository;
 
-    private TicketService ticketService;
+    private WebClient webClient;
     
     @Autowired
-    public BookingService(BookingRepository bookingRepository, TicketService ticketService) {
+    public BookingService(BookingRepository bookingRepository, WebClient webClient) {
         this.bookingRepository = bookingRepository;
-        this.ticketService = ticketService;
+        this.webClient = webClient;
     }
 
-    public List<Booking> getAllBookings() {
+    public ResponseEntity getAllBookings() {
         try {
             System.out.println(this.bookingRepository.findAll());
             
             List<Booking> bookings = this.bookingRepository.findAll();
-            return bookings;
+            return ResponseEntity.ok(bookings);
 
         } catch(Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
 
-    public Optional<Booking> getOneBooking(int bookingId) {
+    public ResponseEntity getOneBooking(int bookingId) {
         try {
             Optional<Booking> booking = this.bookingRepository.findById(bookingId);
-            return booking;
+            if (!booking.isPresent()) {
+                return ResponseEntity.status(404).body("Booking not found");
+            }
+            return ResponseEntity.ok(booking);
             
         } catch(Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
     
-    public List<Booking> getUserBooking(int userId) {
+    public ResponseEntity getUserBooking(int userId) {
         try {
             List<Booking> booking = this.bookingRepository.findByUserId(userId);
-            return booking;
+            if (booking.equals(booking)) {
+                return ResponseEntity.status(404).body("Booking not found");
+            }
+            return ResponseEntity.ok(booking);
 
         } catch(Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
 
-    public List<Booking> getEventBooking(int eventId) {
+    public ResponseEntity getEventBooking(int eventId) {
         try {
             List<Booking> booking = this.bookingRepository.findByEventId(eventId);
-            return booking;
+            return ResponseEntity.ok(booking);
 
         } catch(Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     } 
 
-    public String createBooking(Booking booking) {
+    public ResponseEntity createBooking(Booking booking) {
         try {
             System.out.println("Create booking:" + booking);
             bookingRepository.save(booking);
 
-            boolean result = purchaseTicket(booking.getBookingId(), booking.getNumOfTickets());
+            ResponseEntity result = purchaseTicket(booking);
             // need to update event service? (TBD AFTER MERGE)
             // need to trigger emailer (TBD AFTER MERGE)
-
-            if (!result) {
-                return """
-                    {
-                        "status": 500,
-                        "message": "Error creating booking"
-                    }
-                    """;
+            System.out.println("RESULT CODE: " + result.getStatusCode());
+            System.out.println("CHECK RESULTS: " + result.getStatusCode().equals(HttpStatus.OK));
+            if (!result.getStatusCode().equals(HttpStatus.OK)) {
+                return ResponseEntity.status(404).body("Error creating booking");
             }
 
-            return """
-                {
-                    "status": 200,
-                    "message": "Booking created"
-                }
-                """;
+            return ResponseEntity.ok("Booking created");
 
         } catch(Exception e) {
-            System.out.println("Error: " + e);
-            return """
-                {
-                    "status": 500,
-                    "message": "Error creating booking"
-                }
-                """;
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
 
-    public String cancelBooking(int bookingId) {
+    public ResponseEntity cancelBooking(int bookingId) {
         try {
             System.out.println("Cancelling booking...");
+
             Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
             if (!bookingOptional.isPresent()) {
-                return """
-                    {
-                        "status": 404,
-                        "message": "Booking not found"
-                    }
-                    """;
+                return ResponseEntity.status(404).body("Booking not found");
             } 
             Booking booking = bookingOptional.get();
             bookingRepository.delete(booking);
-            return """
-                {
-                    "status": 200,
-                    "message": "Booking cancelled"
-                }
-                """;
+            return ResponseEntity.ok("Booking cancelled");
 
         } catch(Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
 
         }
     }
 
-    public Boolean purchaseTicket(int bookingId, int numOfTickets) {
-        System.out.println("Purchasing ticket for bookingId: " + bookingId + "...");
+    public ResponseEntity purchaseTicket(Booking booking) {
+        System.out.println("Purchasing ticket for bookingId: " + booking.getBookingId() + "...");
+
+        ResponseEntity<String> ticketResponse = null;
 
         try {
-            for (int i = 0; i < numOfTickets; i++) {
-                Booking booking = new Booking(bookingId);
-                this.ticketService.createTicket(booking);
+            for (int i = 0; i < booking.getNumOfTickets(); i++) {
+
+                ticketResponse = webClient.post()
+                .uri("/ticket/new")
+                .bodyValue(booking)
+                .retrieve()
+                .toEntity(String.class)
+                .block();
+
             }
-            return true;
+            return ticketResponse;
 
         } catch(Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
 
