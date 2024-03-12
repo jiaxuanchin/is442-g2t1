@@ -1,9 +1,7 @@
 package com.is442g2t1.ticketbookingsystem.booking;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,44 +22,44 @@ public class BookingController {
     }
 
     @GetMapping("/all")
-    public List<Booking> getAllBookings() {
+    public ResponseEntity getAllBookings() {
 
-        List<Booking> result = this.bookingService.getAllBookings();
-        
+        ResponseEntity result = this.bookingService.getAllBookings();
         return result;
     }
 
     @GetMapping("/{bookingId}")
-    public Optional<Booking> getOneBooking(@PathVariable int bookingId) {
+    public ResponseEntity getOneBooking(@PathVariable int bookingId) {
 
-        Optional<Booking> result = this.bookingService.getOneBooking(bookingId);
+        ResponseEntity result = this.bookingService.getOneBooking(bookingId);
         return result;
     }
 
     @GetMapping("/user/{userId}")
-    public List<Booking> getUserBooking(@PathVariable int userId) {
+    public ResponseEntity getUserBooking(@PathVariable int userId) {
 
-        List<Booking> result = this.bookingService.getUserBooking(userId);
+        ResponseEntity result = this.bookingService.getUserBooking(userId);
         return result;
     }
 
     @GetMapping("/event/{eventId}")
-    public List<Booking> getEventBooking(@PathVariable int eventId) {
+    public ResponseEntity getEventBooking(@PathVariable int eventId) {
 
-        List<Booking> result = this.bookingService.getEventBooking(eventId);
+        ResponseEntity result = this.bookingService.getEventBooking(eventId);
         return result;
     }
 
     @PostMapping("/new")
-    public String createBooking(@RequestBody Booking booking) {
-        String result = this.bookingService.createBooking(booking);
+    public ResponseEntity createBooking(@RequestBody Booking booking) {
+        
+        ResponseEntity result = this.bookingService.createBooking(booking);
         return result;
     }
 
     @DeleteMapping("/delete/{bookingId}")
-    public String cancelBooking(@PathVariable int bookingId) {
+    public ResponseEntity cancelBooking(@PathVariable int bookingId) {
 
-        String result = this.bookingService.cancelBooking(bookingId);
+        ResponseEntity result = this.bookingService.cancelBooking(bookingId);
         return result;
     }
 
