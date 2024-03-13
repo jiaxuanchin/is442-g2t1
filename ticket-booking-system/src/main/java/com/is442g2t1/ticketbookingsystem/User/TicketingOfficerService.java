@@ -1,34 +1,144 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
-import org.springframework.web.client.RestTemplate;
+import com.is442g2t1.ticketbookingsystem.event.Event;
+import com.is442g2t1.ticketbookingsystem.event.EventService;
+import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
+import com.is442g2t1.ticketbookingsystem.booking.Booking;
+import com.is442g2t1.ticketbookingsystem.booking.BookingService;
+import com.is442g2t1.ticketbookingsystem.email.EmailService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
+import java.time.LocalDate;
 
-
+@Service
 public class TicketingOfficerService {
 
-    private final RestTemplate restTemplate;
-    private String eventServiceBaseUrl = "http://localhost:8080/event";
-    private String ticketServiceBaseUrl = "http://localhost:8080/ticket";
+    private final BookingService bookingService;
+    private final EventService eventService;
+    private final EmailService emailService;
+    
 
-    public TicketingOfficerService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    @Autowired
+    public TicketingOfficerService(BookingService bookingService, EventService eventService, EmailService emailService) {
+        this.bookingService = bookingService;
+        this.eventService = eventService;
+        this.emailService = emailService;
     }
 
-    // Verify ticket validity
-    public boolean verifyTicket(int ticketId) {
-        ResponseEntity<Boolean> response = restTemplate.getForEntity(ticketServiceBaseUrl + "/verify/" + ticketId, Boolean.class);
-        return response.getBody();
+    
+    //****** need to check whether the booking is cancelled?
+    //****** need to check whether the ticket that belongs to that booking is already used?
+
+    public ResponseEntity<?> verifyTicketValidity(int ticketId) {
+
+        //check booking for a specific ticket
+        ResponseEntity<?> bookingResponse = bookingService.getOneBooking(ticketId);
+        if (!bookingResponse.getStatusCode().is2xxSuccessful()) {
+            return bookingResponse;
+        }
+
+        Booking booking = (Booking) bookingResponse.getBody();
+        if (booking == null) {
+            return ResponseEntity.status(404).body("Booking not found");
+        }
+
+        //fetch eventID using booking
+        ResponseEntity<?> eventResponse = eventService.searchById(booking.getEventId());
+        if (!eventResponse.getStatusCode().is2xxSuccessful()) {
+            return eventResponse;
+        }
+
+        Event event = (Event) eventResponse.getBody();
+        if (event == null) {
+            return ResponseEntity.status(404).body("Event not found for booking");
+        }
+
+        // check whether event is valid for today
+        boolean isEventForToday = event.getEventDate().isEqual(LocalDate.now());
+        if (isEventForToday) {
+            return ResponseEntity.ok("Ticket is valid and for today's event.");
+        } else if (!isEventForToday) {
+            return ResponseEntity.ok("Ticket is not for today's event.");
+        } else {
+            return ResponseEntity.ok("Booking has been cancelled.");
+        }
+
     }
 
-    // Process on-site ticket sales
-    public ResponseEntity<?> processOnSiteSale(String eventId, int numOfTickets) {
-        ResponseEntity<?> response = restTemplate.postForEntity(eventServiceBaseUrl + "/processSale/" + eventId + "/" + numOfTickets, null, ResponseEntity.class);
-        return response;
+    public ResponseEntity<?> processOnsiteTicketSales(int eventId, int numOfTickets, int customerId) {
+        // Validate the event and check ticket availability
+        ResponseEntity<?> eventResponse = eventService.searchById(eventId);
+        if (!eventResponse.getStatusCode().is2xxSuccessful()) {
+            return eventResponse;
+        }
+    
+        Event event = (Event) eventResponse.getBody();
+        if (event == null || event.getNumTicketsAvailable() < numOfTickets) {
+            return ResponseEntity.badRequest().body("Event not found or not enough tickets available");
+        }
+    
+        // Assuming we are selling tickets, we need to decrease the number of available tickets.
+        // Construct the EventCreateDTO for updating event details.
+        EventCreateDTO eventCreateDTO = new EventCreateDTO();
+        eventCreateDTO.setEventTitle(event.getEventTitle());
+        eventCreateDTO.setEventDesc(event.getEventDesc());
+        eventCreateDTO.setEventLoc(event.getEventLoc());
+        eventCreateDTO.setEventDate(event.getEventDate());
+        eventCreateDTO.setStartTime(event.getStartTime());
+        eventCreateDTO.setEndTime(event.getEndTime());
+        eventCreateDTO.setCapacity(event.getCapacity());
+        eventCreateDTO.setTicketPrice(event.getTicketPrice());
+        eventCreateDTO.setCancelFee(event.getCancelFee());
+        eventCreateDTO.setFilled(event.getFilled() + numOfTickets); 
+    
+        // Update the event using the event service.
+        ResponseEntity<?> updateResponse = eventService.editEvent(eventCreateDTO, eventId);
+        if (!updateResponse.getStatusCode().is2xxSuccessful()) {
+            return updateResponse; 
+        }
+    
+        // Now, create a new booking for the onsite ticket sales.
+        Booking booking = new Booking();
+        booking.setEventId(eventId);
+        booking.setNumOfTickets(numOfTickets);
+        booking.setUserId(customerId); 
+    
+        // Call the booking service to create the booking.
+        ResponseEntity<?> bookingResponse = bookingService.createBooking(booking);
+        if (!bookingResponse.getStatusCode().is2xxSuccessful()) {
+            return bookingResponse;
+        }
+    
+        // update booking and event successfully 
+        return ResponseEntity.ok().body("Onsite ticket sales processed successfully.");
     }
 
-    // Issuing e-tickets
-    public ResponseEntity<?> issueETicket(String customerId, String eventId, int numOfTickets) {
-        ResponseEntity<?> response = restTemplate.postForEntity(ticketServiceBaseUrl + "/issue/" + customerId + "/" + eventId + "/" + numOfTickets, null, ResponseEntity.class);
-        return response;
+    public ResponseEntity<?> issueETicket(int bookingId, String customerEmail) {
+
+        // Fetch booking details
+        ResponseEntity<?> bookingResponse = bookingService.getOneBooking(bookingId);
+        if (!bookingResponse.getStatusCode().is2xxSuccessful()) {
+            return bookingResponse; 
+        }
+
+        Booking booking = (Booking) bookingResponse.getBody();
+        if (booking == null) {
+            return ResponseEntity.status(404).body("Booking not found");
+        }
+
+        // Generate e-ticket information
+        String eTicketInfo = "E-Ticket for Booking ID: " + bookingId + "\n" +
+                             "Event ID: " + booking.getEventId() + "\n" +
+                             "Number of Tickets: " + booking.getNumOfTickets() + "\n" +
+                             "Date of Issue: " + java.time.LocalDate.now();
+
+        // Send e-ticket information via email
+        emailService.sendEmail(customerEmail, "Your E-Ticket", eTicketInfo);
+
+        // Return successful response
+        return ResponseEntity.ok("E-Ticket issued successfully to " + customerEmail);
     }
+    
 }

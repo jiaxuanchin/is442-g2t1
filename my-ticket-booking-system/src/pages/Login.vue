@@ -30,6 +30,8 @@
         // Dispatch action to login the user
         this.$store.dispatch('login', this.credentials).then(() => {
           this.$router.push('/dashboard');
+          // Send login details to java server
+          // if response code == 200 proceed
         }).catch(error => {
           console.error('Login error:', error);
         });

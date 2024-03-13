@@ -1,12 +1,17 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
+import com.is442g2t1.response.SuccessResponse;
+import com.is442g2t1.ticketbookingsystem.event.Event;
 import com.is442g2t1.ticketbookingsystem.event.EventService;
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
-import com.is442g2t1.ticketbookingsystem.ticket.Ticket;
 
-import java.io.FileWriter;
-import java.io.IOException;
+
+import java.io.BufferedWriter;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.*;
+import java.nio.file.Files;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +21,10 @@ import org.springframework.http.ResponseEntity;
 @Service
 public class EventManagerService {
 
+    private EventService eventService; 
+
     private final RestTemplate restTemplate;
     private final String eventBaseUrl = "http://localhost:8080/event";
-    private final String ticketBaseUrl = "http://localhost:8080/ticket"; 
 
 
     @Autowired
@@ -58,55 +64,48 @@ public class EventManagerService {
         return ResponseEntity.ok().build(); 
     }
 
-    /*View sales statistics
+    /*  View sales statistics
         Number of tickets sold per event
         Revenue generated per event
         Cancel events if necessary
     */
 
-    public ResponseEntity<Map<String, Object>> viewSalesStatistics(int eventId) {
-        // Fetch the event
-        ResponseEntity<?> event = restTemplate.getForEntity(eventBaseUrl + "/getEventById/" + eventId, ResponseEntity.class);
+    public ResponseEntity<String> generateSalesStatistics(int eventId) {
+        ResponseEntity<?> eventResponse = eventService.searchById(eventId);
         
-        // i f
-        if (event == null) {
-            return ResponseEntity.notFound().build();
+        if (!eventResponse.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.status(eventResponse.getStatusCode()).body("Event not found");
         }
-    
-        // Fetch tickets associated with the event
-        ResponseEntity<Ticket[]> ticketsResponseEntity = restTemplate.getForEntity(ticketBaseUrl + "/getTicketsByEventId/" + eventId, Ticket[].class);
-        Ticket[] tickets = ticketsResponseEntity.getBody();
-    
-        // Calculate ticket sales and customer attendance
-        int totalNumTickets = tickets.length;
-        int numTicketsAvailable = 0;
-        int ticketsSold = 0;
-        int customerAttendance = 0;
-    
-        for (Ticket ticket : tickets) {
-            if (ticket.getStatus().equals("Sold")) { // Assuming ticket status is 'Sold' when sold
-                ticketsSold++;
+
+        Event event = (Event) ((SuccessResponse) eventResponse.getBody()).getData();
+
+        int totalNumTickets = event.getCapacity();
+        int ticketsAvailable = event.getNumTicketAvailable();
+        int ticketsSold = totalNumTickets - ticketsAvailable;
+        double revenue = ticketsSold * event.getTicketPrice();
+        long customerAttendance = event.getFilled();
+
+        String csvContent = String.format(
+            "Event Name, Total Tickets, Tickets Sold, Tickets Available, Customer Attendance, Ticket Sales\n%s, %d, %d, %d, %d, %.2f",
+            event.getEventTitle(), totalNumTickets, ticketsSold, ticketsAvailable, customerAttendance, revenue
+        );
+
+        String fileName = "SalesStatistics_Event_" + eventId + ".csv";
+        try {
+            Path path = Paths.get(fileName);
+            try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+                writer.write(csvContent);
             }
-            if (!ticket.getStatus().equals("Cancelled")) { // Assuming attendance is not counted for cancelled tickets
-                customerAttendance++;
-            }
-            if (ticket.getStatus().equals("Available")) {
-                numTicketsAvailable++;
-            }
+            return ResponseEntity.ok("Report generated: " + path.toAbsolutePath().toString());
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Failed to generate report: " + e.getMessage());
         }
-    
-        // Calculate ticket sales using the formula: (eventTicketPrice) * (totalNumTicket - numTicketAvailable)
-        int ticketSales = event.getTicketPrice() * (totalNumTickets - numTicketsAvailable);
-    
-        // Construct a map for sales statistics
-        Map<String, Object> salesStatisticsMap = new HashMap<>();
-        salesStatisticsMap.put("eventName", event.getName());
-        salesStatisticsMap.put("ticketSales", ticketSales);
-        salesStatisticsMap.put("customerAttendance", customerAttendance);
-    
-        return ResponseEntity.ok(salesStatisticsMap);
     }
+
+  
+    
+}
     
 
 
-}
+
