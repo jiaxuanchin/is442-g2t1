@@ -1,6 +1,11 @@
 package com.is442g2t1.ticketbookingsystem.event;
 
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
+import com.is442g2t1.ticketbookingsystem.booking.Booking;
+import com.is442g2t1.ticketbookingsystem.booking.BookingRepository;
+import com.is442g2t1.ticketbookingsystem.ticket.Ticket;
+import com.is442g2t1.ticketbookingsystem.ticket.TicketRepository;
+
 import com.is442g2t1.response.StatusResponse;
 import com.is442g2t1.response.SuccessResponse;
 import org.apache.http.HttpStatus;
@@ -24,11 +29,15 @@ import jakarta.transaction.Transactional;
 public class EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
+    private final BookingRepository bookingRepository;
+    private final TicketRepository ticketRepository;
 
     @Autowired
-    public EventService(EventRepository eventRepository, EventMapper eventMapper) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingRepository bookingRepository, TicketRepository ticketRepository) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
+        this.bookingRepository = bookingRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     public List<Event> getAllEvent() {
@@ -65,7 +74,7 @@ public class EventService {
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(invalidCapacityResponse);
             }
 
-            // optional to set cancel fee
+            // optional to set cancellation fee
             if (eventCreateDTO.getCancelFee() != null && eventCreateDTO.getCancelFee() <= 0) {
                 StatusResponse invalidCapacityResponse = new StatusResponse("Cancel fee must be greater than 0",
                         HttpStatus.SC_BAD_REQUEST);
@@ -125,7 +134,6 @@ public class EventService {
                     eventCreateDTO.getStartTime() == null || eventCreateDTO.getStartTime().isBlank() ||
                     eventCreateDTO.getEndTime() == null || eventCreateDTO.getEndTime().isBlank() ||
                     eventCreateDTO.getCapacity() == null || eventCreateDTO.getTicketPrice() == null) {
-                // rewardPoints can be 0, this is dependent on the admin
                 StatusResponse statusResponse = new StatusResponse("Fields cannot be empty", HttpStatus.SC_BAD_REQUEST);
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(statusResponse);
             }
@@ -143,7 +151,7 @@ public class EventService {
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(invalidCapacityResponse);
             }
 
-            // optional to set cancel fee
+            // optional to set cancellation fee
             if (eventCreateDTO.getCancelFee() != null && eventCreateDTO.getCancelFee() <= 0) {
                 StatusResponse invalidCapacityResponse = new StatusResponse("Cancel fee must be greater than 0",
                         HttpStatus.SC_BAD_REQUEST);
@@ -249,15 +257,32 @@ public class EventService {
             // Delete the event from the database
             eventRepository.deleteById(eventId);
 
-            SuccessResponse successResponse = new SuccessResponse("Event deleted successfully", HttpStatus.SC_OK,
+            SuccessResponse successResponse = new SuccessResponse("Event cancelled successfully", HttpStatus.SC_OK,
                     eventId);
             return ResponseEntity.ok().body(successResponse);
 
         } catch (Exception e) {
             e.printStackTrace();
-            StatusResponse statusResponse = new StatusResponse("Error deleting event: " + e.getMessage(),
+            StatusResponse statusResponse = new StatusResponse("Error cancelling event: " + e.getMessage(),
                     HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(statusResponse);
         }
     }
+
+    // public ResponseEntity<?> attendanceById(int eventId) {
+    //     try {
+    //         // get list of bookings made and tickets under each booking for each event id
+    //         List<Booking> bookings = bookingRepository.findByEventId(eventId);
+            
+    //         SuccessResponse successResponse = new SuccessResponse("Event bookings retrieved successfully", HttpStatus.SC_OK,
+    //                 eventId);
+    //         return ResponseEntity.ok().body(successResponse);
+
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         StatusResponse statusResponse = new StatusResponse("Error deleting event: " + e.getMessage(),
+    //                 HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    //         return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(statusResponse);
+    //     }
+    // }
 }
