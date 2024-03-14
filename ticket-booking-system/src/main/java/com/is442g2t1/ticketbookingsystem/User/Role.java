@@ -3,7 +3,7 @@ package com.is442g2t1.ticketbookingsystem.User;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Setter
 @Getter
