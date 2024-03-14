@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -27,7 +25,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder; // Todo: expand on this
     private JWTGenerator jwtGenerator;
 
     @Autowired
@@ -36,17 +34,18 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder; // Todo: expand on this
         this.jwtGenerator = jwtGenerator;
     }
 
     @PostMapping("login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDto loginDto){
-        Authentication authentication = authenticationManager.authenticate( // trying to authenticate the provided Authentication object
+        // https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/AuthenticationManager.html#authenticate(org.springframework.security.core.Authentication)
+        Authentication authentication = authenticationManager.authenticate( // trying to authenticate the provided Authentication object 
                 new UsernamePasswordAuthenticationToken(
                 loginDto.getEmail(),
                 loginDto.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication); 
         String token = jwtGenerator.generateToken(authentication);
         return new ResponseEntity<>(new AuthResponseDTO(token), HttpStatus.OK);
     }
@@ -58,18 +57,13 @@ public class AuthController {
         }
 
         // Fetch the Role entity from the database based on the role name
-        Role role = roleRepository.findByName("USER").orElse(null); // Assuming you have a method in roleRepository to find by name
+        Role role = roleRepository.findByName("customer").orElse(null);
 
         if (role == null) {
             return new ResponseEntity<>("Role not found!", HttpStatus.BAD_REQUEST);
         }
 
-        UserEntity user = new UserEntity();
-        user.setEmail(registerDto.getEmail());
-        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-
-        user.setRole(role); // Set the Role object directly
-
+        UserEntity user = new UserEntity(role,registerDto.getUser_fname(),registerDto.getUser_lname(),registerDto.getEmail(),registerDto.getPassword());
         userRepository.save(user);
 
         return new ResponseEntity<>("User registered success!", HttpStatus.OK);
