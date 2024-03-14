@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JWTGenerator {
-	//private static final KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
-	private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+	// private static final KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
+	private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512); // This key is used to sign and verify JWT tokens
 	
 	public String generateToken(Authentication authentication) {
-		String email = authentication.getName();
+		String email = authentication.getName(); //https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/core/Authentication.html
 		Date currentDate = new Date();
 		Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
 		
@@ -32,13 +32,14 @@ public class JWTGenerator {
 		System.out.println(token);
 		return token;
 	}
+
 	public String getUsernameFromJWT(String token){
 		Claims claims = Jwts.parserBuilder()
 				.setSigningKey(key)
 				.build()
 				.parseClaimsJws(token)
 				.getBody();
-		return claims.getSubject();
+		return claims.getSubject(); // retrieve the subject claim, which represents the username associated with the token
 	}
 	
 	public boolean validateToken(String token) {

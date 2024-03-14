@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-//serves as a filter in the Spring Security filter chain responsible for JWT-based authentication. 
+// serves as a filter in the Spring Security filter chain responsible for JWT-based authentication. 
 // It extracts JWT tokens from incoming HTTP requests, validates them, and sets the authentication token in the security 
 // context if the token is valid.
 
@@ -27,6 +27,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter{
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    // Logic of the filtering: HTTP requests, extracts JWT tokens, validates them, and sets the authentication token in the security context if the token is valid.
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,

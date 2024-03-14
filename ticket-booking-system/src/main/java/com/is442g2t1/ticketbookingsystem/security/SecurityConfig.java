@@ -30,7 +30,7 @@ public class SecurityConfig {
         this.authEntryPoint = authEntryPoint;
     }
 
-    // This part needs to change, needs to be more strict
+    // Todo: This part needs to change, needs to be more strict can see the github 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
