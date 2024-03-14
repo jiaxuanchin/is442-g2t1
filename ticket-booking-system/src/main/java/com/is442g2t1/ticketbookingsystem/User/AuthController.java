@@ -4,6 +4,7 @@ import com.is442g2t1.ticketbookingsystem.User.DTO.AuthResponseDTO;
 import com.is442g2t1.ticketbookingsystem.User.DTO.LoginDto;
 import com.is442g2t1.ticketbookingsystem.User.DTO.RegisterDto;
 import com.is442g2t1.ticketbookingsystem.security.JWTGenerator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDto loginDto){
-        Authentication authentication = authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate( // trying to authenticate the provided Authentication object
                 new UsernamePasswordAuthenticationToken(
                 loginDto.getEmail(),
                 loginDto.getPassword()));

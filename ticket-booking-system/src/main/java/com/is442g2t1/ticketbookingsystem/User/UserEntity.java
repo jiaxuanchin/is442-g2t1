@@ -1,14 +1,11 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
 import lombok.Data;
-import lombok.NoArgsConstructor; // Create the constructors for us
-
 import javax.persistence.*;
 
 @Entity
 @Table(name="Users")
 @Data  // create the getter and setter functions for us
-@NoArgsConstructor // create constructors for us
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Creates a single table strategy for each class hierarchy
 @DiscriminatorColumn(name = "user_type") // Column used to differentiate the subclass in the single table
 
@@ -19,7 +16,6 @@ public class UserEntity {
     @Column(name = "user_id")
     private int id;
 
-    // Need to join this role id to the Roles table
     @OneToOne
     @JoinColumn(name = "role_id")
     private Role role;
@@ -35,4 +31,12 @@ public class UserEntity {
 
     @Column(name = "password")
     private String password;
+
+    public UserEntity(Role role, String user_fname, String user_lname, String email, String password){
+        this.role = role;
+        this.user_fname = user_fname;
+        this.user_lname = user_lname;
+        this.email = email;
+        this.password = password;
+    }
 }
