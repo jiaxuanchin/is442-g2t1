@@ -119,15 +119,16 @@ ALTER TABLE `Ticket`
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-INSERT INTO Users (user_id,user_fname,user_lname,email,password) VALUES
-(1,'Eunice','Ong','euniceong.2021@scis.smu.edu.sg', 'password'),
-(2,'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', 'password'),
-(3,'Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', 'password');
-
 INSERT INTO Role (role_id, role_name) VALUES
 (1,"customer"),
 (2,"event_manager"),
 (3,"ticketing_officer");
+
+INSERT INTO Users (user_id, role_id, user_fname,user_lname,email,password) VALUES
+(1, 1, 'Eunice','Ong','euniceong.2021@scis.smu.edu.sg', 'password'),
+(2, 2, 'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', 'password'),
+(3, 3, 'Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', 'password');
+
 
 INSERT INTO Event (event_id, event_title, event_date, event_description, event_location, event_start_time, event_end_time, filled, capacity, ticket_price, cancel_fee) VALUES
 (1, 'Musical', '2023-09-15', 'Disney is coming to town', 'The Capitol', '18:00', '21:00', 0, 2000, 220.00, 20.00),
