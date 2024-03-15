@@ -58,12 +58,12 @@ CREATE TABLE IF NOT EXISTS Roles (
 
 DROP TABLE IF EXISTS user_roles;
 
-CREATE TABLE IF NOT EXISTS user_roles (
+CREATE TABLE IF NOT EXISTS User_Roles (
   user_id INT,
   role_id INT,
   PRIMARY KEY (user_id, role_id),
-  FOREIGN KEY (user_id) REFERENCES User(user_id),
-  FOREIGN KEY (role_id) REFERENCES role(role_id)
+  FOREIGN KEY (user_id) REFERENCES Users(user_id),
+  FOREIGN KEY (role_id) REFERENCES Roles(role_id)
 );
 
 
