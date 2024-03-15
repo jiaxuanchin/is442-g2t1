@@ -80,10 +80,10 @@ public class EventManagerService {
         Event event = (Event) ((SuccessResponse) eventResponse.getBody()).getData();
 
         int totalNumTickets = event.getCapacity();
-        int ticketsAvailable = event.getNumTicketAvailable();
+        int ticketsAvailable = event.getFilled();
         int ticketsSold = totalNumTickets - ticketsAvailable;
         double revenue = ticketsSold * event.getTicketPrice();
-        long customerAttendance = event.getFilled();
+        // long customerAttendance = event.getFilled();
 
         String csvContent = String.format(
             "Event Name, Total Tickets, Tickets Sold, Tickets Available, Customer Attendance, Ticket Sales\n%s, %d, %d, %d, %d, %.2f",

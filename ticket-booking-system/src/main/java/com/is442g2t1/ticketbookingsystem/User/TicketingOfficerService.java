@@ -5,6 +5,7 @@ import com.is442g2t1.ticketbookingsystem.event.EventService;
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
 import com.is442g2t1.ticketbookingsystem.booking.Booking;
 import com.is442g2t1.ticketbookingsystem.booking.BookingService;
+import com.is442g2t1.ticketbookingsystem.ticket.TicketService;
 import com.is442g2t1.ticketbookingsystem.email.EmailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +19,21 @@ public class TicketingOfficerService {
     private final BookingService bookingService;
     private final EventService eventService;
     private final EmailService emailService;
+    private final TicketService ticketService;
     
 
     @Autowired
-    public TicketingOfficerService(BookingService bookingService, EventService eventService, EmailService emailService) {
+    public TicketingOfficerService(BookingService bookingService, EventService eventService, EmailService emailService, TicketService ticketService) {
         this.bookingService = bookingService;
         this.eventService = eventService;
         this.emailService = emailService;
+        this.ticketService = ticketService;
     }
 
     
     //****** need to check whether the booking is cancelled?
     //****** need to check whether the ticket that belongs to that booking is already used?
+    //*****  update attendance in Event (getFilled) or Ticket(updateAttendance) ?
 
     public ResponseEntity<?> verifyTicketValidity(int ticketId) {
 
@@ -57,14 +61,19 @@ public class TicketingOfficerService {
 
         // check whether event is valid for today
         boolean isEventForToday = event.getEventDate().isEqual(LocalDate.now());
-        if (isEventForToday) {
-            return ResponseEntity.ok("Ticket is valid and for today's event.");
-        } else if (!isEventForToday) {
-            return ResponseEntity.ok("Ticket is not for today's event.");
-        } else {
-            return ResponseEntity.ok("Booking has been cancelled.");
-        }
 
+        if (isEventForToday) {
+            // Update the ticket's attendance status
+            ResponseEntity<?> updateResponse = ticketService.updateTicketAttendance(ticketId);
+            if (!updateResponse.getStatusCode().is2xxSuccessful()) {
+                return updateResponse; // If ticket update fails
+            }
+            return ResponseEntity.ok("Ticket is valid and for today's event. Attendance has been updated.");
+        } 
+        else {
+            return ResponseEntity.ok("Ticket is not for today's event.");
+        }
+        
     }
 
     public ResponseEntity<?> processOnsiteTicketSales(int eventId, int numOfTickets, int customerId) {
@@ -75,12 +84,11 @@ public class TicketingOfficerService {
         }
     
         Event event = (Event) eventResponse.getBody();
-        if (event == null || event.getNumTicketsAvailable() < numOfTickets) {
+        if (event == null || event.getFilled() < numOfTickets) {
             return ResponseEntity.badRequest().body("Event not found or not enough tickets available");
         }
     
-        // Assuming we are selling tickets, we need to decrease the number of available tickets.
-        // Construct the EventCreateDTO for updating event details.
+        // updating event details.
         EventCreateDTO eventCreateDTO = new EventCreateDTO();
         eventCreateDTO.setEventTitle(event.getEventTitle());
         eventCreateDTO.setEventDesc(event.getEventDesc());
@@ -111,7 +119,7 @@ public class TicketingOfficerService {
             return bookingResponse;
         }
     
-        // update booking and event successfully 
+        // Return successful response
         return ResponseEntity.ok().body("Onsite ticket sales processed successfully.");
     }
 
