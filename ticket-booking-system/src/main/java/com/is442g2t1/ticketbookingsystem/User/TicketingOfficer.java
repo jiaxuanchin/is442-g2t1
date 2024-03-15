@@ -1,6 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

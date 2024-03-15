@@ -1,6 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
-import javax.persistence.*; // JPA API, to store, access and manage java objects
+import jakarta.persistence.*; // JPA API, to store, access and manage java objects
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
