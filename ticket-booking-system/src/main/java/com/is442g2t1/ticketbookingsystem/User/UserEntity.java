@@ -1,11 +1,13 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name="Users")
 @Data  // create the getter and setter functions for us
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Creates a single table strategy for each class hierarchy
 @DiscriminatorColumn(name = "user_type") // Column used to differentiate the subclass in the single table
 

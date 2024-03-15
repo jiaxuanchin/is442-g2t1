@@ -1,14 +1,16 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.persistence.*;
 
 @Setter
 @Getter
+@NoArgsConstructor
 @Entity
-@Table(name = "Roles")
+@Table(name = "Role")
 
 public class Role {
     @Id

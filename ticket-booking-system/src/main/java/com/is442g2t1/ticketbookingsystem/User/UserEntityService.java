@@ -25,4 +25,17 @@ public class UserEntityService {
         return userRepository.save(newUser);
     }
 
+    // Method to update a user's profile details
+    public UserEntity updateUserProfile(int userId, String user_fname, String user_lname, String email, String password) {
+        UserEntity existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+
+        existingUser.setUser_fname(user_fname);
+        existingUser.setUser_lname(user_lname);
+        existingUser.setEmail(email);
+        existingUser.setPassword(password);
+
+        return userRepository.save(existingUser);
+    }
+
 }
