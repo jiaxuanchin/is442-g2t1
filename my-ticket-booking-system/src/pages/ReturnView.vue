@@ -16,10 +16,11 @@ clientSecret.value = currentRoute.value?.payment_intent_client_secret;
 // get payment intent client secret from query parameters
 
 let stripe;
+console.log(clientSecret.value);
 
 onMounted(async () => {
   // get publishable key
-  const { publishableKey } = await fetch("/api/config").then((res) =>
+  const { publishableKey } = await fetch("/api/payments//config").then((res) =>
     res.json()
   );
   stripe = await loadStripe(publishableKey);
@@ -39,7 +40,8 @@ onMounted(async () => {
 <template>
   <body>
     <main>
-      <a href="/">home</a>
+      <a href="/">Home</a>
+      <h1>Payment was successful.</h1>
       <h1>Thank you!</h1>
       <sr-messages v-if="clientSecret" :messages="messages" />
     </main>
