@@ -17,34 +17,22 @@ public class CustomerController {
     }
 
     @PostMapping("/create")
-    public Customer createCustomer(@RequestParam String user_fname,
-                                   @RequestParam String user_lname,
-                                   @RequestParam String email,
-                                   @RequestParam String password) {
+    public ResponseEntity<?> createCustomer(@RequestParam String user_fname,
+                                             @RequestParam String user_lname,
+                                             @RequestParam String email,
+                                             @RequestParam String password) {
         return customerService.createCustomer(user_fname, user_lname, email, password);
     }
-    
 
     @PutMapping("/reduce-balance/{userId}")
-    public ResponseEntity<String> reduceCustomerBalance(@PathVariable int userId,
-                                                        @RequestParam double amount) {
-        try {
-            customerService.reduceCustomerBalance(userId, Double.valueOf(amount));
-            return ResponseEntity.ok("Balance reduced successfully.");
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+    public ResponseEntity<?> reduceCustomerBalance(@PathVariable int userId,
+                                                   @RequestParam double amount) {
+        return customerService.reduceCustomerBalance(userId, amount);
     }
 
     @PutMapping("/increase-balance/{userId}")
-    public ResponseEntity<String> increaseCustomerBalance(@PathVariable int userId,
-                                                          @RequestParam double amount) {
-        try {
-            customerService.increaseCustomerBalance(userId, amount);
-            return ResponseEntity.ok("Balance increased successfully.");
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+    public ResponseEntity<?> increaseCustomerBalance(@PathVariable int userId,
+                                                      @RequestParam double amount) {
+        return customerService.increaseCustomerBalance(userId, amount);
     }
-
 }
