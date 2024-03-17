@@ -89,7 +89,7 @@ const component = '@iconify/vue';
 // Set to true to use require() instead of import
 const commonJS = false;
 // File to save bundle to
-const target = (0, node_path_1.join)(__dirname, 'icons-bundle.js');
+// const target = (0, node_path_1.join)(__dirname, 'icons-bundle.js');
 /**
  * Do stuff!
  */

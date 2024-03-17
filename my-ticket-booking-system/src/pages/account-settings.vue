@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import AccountSettingsAccount from '@/views/pages/account-settings/AccountSettingsAccount.vue'
-import AccountSettingsNotification from '@/views/pages/account-settings/AccountSettingsNotification.vue'
+import AccountSettingsWallet from '@/views/pages/account-settings/AccountSettingsWallet.vue'
 import AccountSettingsSecurity from '@/views/pages/account-settings/AccountSettingsSecurity.vue'
 
 const route = useRoute()
@@ -20,9 +20,9 @@ const tabs = [
     tab: 'security',
   },
   {
-    title: 'Notifications',
+    title: 'Wallet',
     icon: 'bx-bell',
-    tab: 'notification',
+    tab: 'wallet',
   },
 ]
 </script>
@@ -62,9 +62,9 @@ const tabs = [
         <AccountSettingsSecurity />
       </VWindowItem>
 
-      <!-- Notification -->
-      <VWindowItem value="notification">
-        <AccountSettingsNotification />
+      <!-- Wallet -->
+      <VWindowItem value="wallet">
+        <AccountSettingsWallet />
       </VWindowItem>
     </VWindow>
   </div>

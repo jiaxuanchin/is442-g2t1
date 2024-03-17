@@ -83,6 +83,13 @@ const upgradeBanner = computed(() => {
           to: '/account-settings',
         }"
       />
+      <VerticalNavLink
+        :item="{
+          title: 'My Booking',
+          icon: 'mdi-account-cog-outline',
+          to: '/my-bookings',
+        }"
+      />
 
       <!-- 👉 Pages -->
       <VerticalNavSectionTitle
