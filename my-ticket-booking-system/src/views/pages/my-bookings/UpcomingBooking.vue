@@ -1,152 +1,77 @@
-// ToDo: Fetch info from database
-
 <script setup>
-import { VDataTable } from 'vuetify/labs/VDataTable'
-
-const cardNumber = ref('0000 0000 0000 0000')
-const isExpiryDateVisible = ref(false)
-const isCsvVisible = ref(false)
-const expiryDate = ref('11/25')
-const csv = ref('543')
-const accountBalance = ref('1000.00');
-
-const passwordRequirements = [
-  'Minimum 8 characters long - the more, the better',
-  'At least one lowercase character',
-  'At least one number, symbol, or whitespace character',
-]
-
-const cards = [
+const events = ref([
   {
-    name: 'Goh Kelly',
-    number: '1234 5678 9453'
+    name: 'Event 1',
+    description: 'Event 1 description',
+    date: '2023-03-23',
+    location: 'The Capitol',
+    time: '18:00 - 21:00',
+    tickets: 4,
+    id: 1
   },
-  {
-    name: 'Goh Kelly',
-    number: '1234 1234 1234'
-  },
-  {
-    name: 'Goh Kelly',
-    number: '1234 4325 2352'
-  }
-]
+]);
 </script>
 
 <template>
   <VRow>
-    <!-- SECTION: Account e-wallet balance -->
-    <VCol cols="12">
-      <VCard title="Account e-wallet Balance">
-        <VCardText>
-          <p>Current balance</p>
-          <p class="text-h5 font-weight-bold">$ {{ accountBalance }}</p>
-        </VCardText>
+    <!-- 👉 Booking card -->
+    <VCol
+      v-for="(event, index) in events"
+      :key="index"
+      md="12"
+      lg="12"
+      cols="12"
+    >
+      <VCard>
+        <VRow no-gutters>
+          <VCol
+            cols="12"
+            sm="8"
+            md="12"
+            order="2"
+            order-lg="1"
+          >
+            <VCardItem>
+              <VCardTitle>{{ event.name }}</VCardTitle>
+            </VCardItem>
+
+            <VCardText>
+                <p>Event Description: {{ event.description }}</p> 
+                <p>Date: {{ event.date }}</p> 
+                <p>Location: {{ event.location }}</p>
+            </VCardText>
+
+            <VCardText>
+              <VDivider />
+            </VCardText>
+
+            <VCardText class="d-flex justify-center">
+              <div class="me-auto pe-4">
+                <p class="d-flex align-center mb-6">
+                  <VIcon
+                    color="primary"
+                    icon="bx-lock-open"
+                  />
+                  <span class="ms-3">{{ event.time }}</span>
+                </p>
+
+                <p class="d-flex align-center mb-0">
+                  <VIcon
+                    color="primary"
+                    icon="bx-user"
+                  />
+                  <span class="ms-3">{{ event.tickets }} Tickets</span>
+                </p>
+              </div>
+              <VBtn class="mt-8" :to="'/booking-details/' + event.id">
+                More details
+              </VBtn>
+            </VCardText>
+          </VCol>
+        </VRow>
       </VCard>
     </VCol>
     <!-- !SECTION -->
 
-    <!-- SECTION: Your cards -->
-    <VCol cols="12">
-      <VCard title="Your Cards">
-        <VTable>
-          <thead>
-            <tr>
-              <th class="text-uppercase">
-                Card holder name
-              </th>
-              <th>
-                Card number
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr
-              v-for="item in cards"
-              :key="item.card"
-            >
-              <td>
-                {{ item.name }}
-              </td>
-              <td>
-                {{ item.number }}
-              </td>
-            </tr>
-          </tbody>
-        </VTable>
-      </VCard>
-    </VCol>
-    <!-- !SECTION -->
-
-
-    <!-- SECTION: Add a new card -->
-    <VCol cols="12">
-      <VCard title="Add a new card">
-        <VForm>
-          <VCardText>
-            <!-- 👉 Card number -->
-            <VRow>
-              <VCol
-                cols="12"
-                md="12"
-              >
-                <VTextField
-                  v-model="cardNumber"
-                  label="Card Number"
-                  placeholder="0000 0000 0000 0000"
-                />
-              </VCol>
-            </VRow>
-
-            <!-- 👉 Card information -->
-            <VRow>
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <!-- 👉 Expiry Date -->
-                <VTextField
-                  v-model="expiryDate"
-                  :type="isExpiryDateVisible ? 'text' : 'password'"
-                  :append-inner-icon="isExpiryDateVisible ? 'bx-hide' : 'bx-show'"
-                  label="Expiry Date"
-                  placeholder="············"
-                  @click:append-inner="isExpiryDateVisible = !isExpiryDateVisible"
-                />
-              </VCol>
-
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <!-- 👉 card CSV -->
-                <VTextField
-                  v-model="csv"
-                  :type="isCsvVisible ? 'text' : 'password'"
-                  :append-inner-icon="isCsvVisible ? 'bx-hide' : 'bx-show'"
-                  label="CSV"
-                  placeholder="············"
-                  @click:append-inner="isCsvVisible = !isCsvVisible"
-                />
-              </VCol>
-            </VRow>
-          </VCardText>
-
-          <!-- 👉 Action Buttons -->
-          <VCardText class="d-flex flex-wrap gap-4">
-            <VBtn>Add Card</VBtn>
-
-            <VBtn
-              type="reset"
-              color="secondary"
-              variant="tonal"
-            >
-              Reset
-            </VBtn>
-          </VCardText>
-        </VForm>
-      </VCard>
-    </VCol>
-    <!-- !SECTION -->
   </VRow>
 </template>
