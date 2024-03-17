@@ -1,19 +1,16 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
 import com.is442g2t1.ticketbookingsystem.event.Event;
-import com.is442g2t1.ticketbookingsystem.event.EventService;
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
 import com.is442g2t1.ticketbookingsystem.booking.Booking;
-import com.is442g2t1.ticketbookingsystem.booking.BookingService;
 import com.is442g2t1.ticketbookingsystem.ticket.Ticket;
-import com.is442g2t1.ticketbookingsystem.ticket.TicketService;
-import com.rabbitmq.client.RpcClient.Response;
-import com.is442g2t1.ticketbookingsystem.email.EmailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import java.time.LocalDate;
 
 @Service
@@ -24,7 +21,7 @@ public class TicketingOfficerService {
     private final String eventBaseUrl = "http://localhost:8080/event/";
     private final String bookingBaseUrl = "http://localhost:8080/booking/";
     private final String ticketBaseUrl = "http://localhost:8080/ticket/";
-    private final String emailBaseUrl = "http://localhost:8080/email/";
+    // private final String emailBaseUrl = "http://localhost:8080/email/";
 
     
 
@@ -33,61 +30,51 @@ public class TicketingOfficerService {
         this.restTemplate = restTemplate;
 
     }
-
-
     public ResponseEntity<?> verifyTicketValidity(int ticketId) {
+      // Check booking for a specific ticket
+      ResponseEntity<Booking> bookingResponse = restTemplate.getForEntity(bookingBaseUrl + "getOneBooking/" + ticketId, Booking.class);
+      if (!bookingResponse.getStatusCode().is2xxSuccessful()) {
+          return bookingResponse;
+      }
 
-        //check booking for a specific ticket
-        ResponseEntity<Booking> bookingResponse = restTemplate.getForEntity(bookingBaseUrl + "/getOneBooking/" + ticketId, Booking.class);
-        if (!bookingResponse.getStatusCode().is2xxSuccessful()) {
-            return bookingResponse;
-        }
+      Booking booking = bookingResponse.getBody();
+      if (booking == null) {
+          return new ResponseEntity<>("Booking not found", HttpStatus.NOT_FOUND);
+      }
 
-        Booking booking = (Booking) bookingResponse.getBody();
-        if (booking == null) {
-            return ResponseEntity.status(404).body("Booking not found");
-        }
+      // Fetch event ID using booking
+      ResponseEntity<Event> eventResponse = restTemplate.getForEntity(eventBaseUrl + "searchById/" + booking.getEventId(), Event.class);
+      if (!eventResponse.getStatusCode().is2xxSuccessful()) {
+          return eventResponse;
+      }
 
-        //fetch eventID using booking
-        ResponseEntity<Event> eventResponse = restTemplate.getForEntity(eventBaseUrl + "/searchById/" + booking.getEventId(), Event.class);
-        if (!eventResponse.getStatusCode().is2xxSuccessful()) {
-            return eventResponse;
-        }
+      Event event = eventResponse.getBody();
+      if (event == null) {
+          return new ResponseEntity<>("Event not found for booking", HttpStatus.NOT_FOUND);
+      }
 
-        Event event = (Event) eventResponse.getBody();
-        if (event == null) {
-            return ResponseEntity.status(404).body("Event not found for booking");
-        }
+      // Fetch ticket using ticketId
+      ResponseEntity<Ticket> ticketResponse = restTemplate.getForEntity(ticketBaseUrl + "getTicketById/" + ticketId, Ticket.class);
+      if (!ticketResponse.getStatusCode().is2xxSuccessful()) {
+          return ticketResponse;
+      }
 
-        //fetch ticket using ticketId
-        ResponseEntity<Ticket> ticketResponse = restTemplate.getForEntity(ticketBaseUrl + "/getTicketById/" + ticketId, Ticket.class);
-        if (!ticketResponse.getStatusCode().is2xxSuccessful()) {
-            return ticketResponse;
-        }
+      Ticket ticket = ticketResponse.getBody();
+      if (ticket == null) {
+          return new ResponseEntity<>("Ticket not found", HttpStatus.NOT_FOUND);
+      }
 
-        Ticket ticket = (Ticket) ticketResponse.getBody();
-        if (ticket == null) {
-            return ResponseEntity.status(404).body("Ticket not found");
-        }
+      // Check whether the event is valid for today
+      boolean isEventForToday = event.getEventDate().isEqual(LocalDate.now());
 
-        // check whether event is valid for today
-        boolean isEventForToday = event.getEventDate().isEqual(LocalDate.now());
-
-        if (isEventForToday) {
-
-            // Update the ticket's attendance status
-            ResponseEntity<?> updateResponse = restTemplate.getForEntity(ticketBaseUrl + "/updateTicketAttendance/" + ticketId, Ticket.class);
-            if (!updateResponse.getStatusCode().is2xxSuccessful()) {
-                return updateResponse; // update attendance fail
-            }
-            return ResponseEntity.ok("Ticket is valid and for today's event. Attendance has been updated.");
-        } 
-
-        else {
-            return ResponseEntity.ok("Ticket is not for today's event.");
-        }
-        
-    }
+      if (isEventForToday) {
+          // Update the ticket's attendance status using a PUT request
+          restTemplate.put(ticketBaseUrl + "updateTicketAttendance/" + ticketId, null);
+          return new ResponseEntity<>("Ticket is valid and for today's event. Attendance has been updated.", HttpStatus.OK);
+      } else {
+          return new ResponseEntity<>("Ticket is not for today's event.", HttpStatus.OK);
+      }
+  }
 
     public ResponseEntity<?> processOnsiteTicketSales(int eventId, int numOfTickets, int customerId) {
         // Validate the event and check ticket availability
@@ -127,7 +114,8 @@ public class TicketingOfficerService {
         bookingCreate.setUserId(customerId); 
     
         // Call the booking service to create the booking.
-        ResponseEntity<Booking> bookingResponse = restTemplate.postForEntity(bookingBaseUrl + "/createBooking/" + bookingCreate, Booking.class);
+        HttpEntity<Booking> request = new HttpEntity<>(bookingCreate);
+        ResponseEntity<Booking> bookingResponse = restTemplate.postForEntity(bookingBaseUrl + "createBooking", request, Booking.class);
         if (!bookingResponse.getStatusCode().is2xxSuccessful()) {
             return bookingResponse;
         }
@@ -136,31 +124,31 @@ public class TicketingOfficerService {
         return ResponseEntity.ok().body("Onsite ticket sales processed successfully.");
     }
 
-    public ResponseEntity<?> issueETicket(int bookingId, String customerEmail) {
+    // public ResponseEntity<?> issueETicket(int bookingId, String customerEmail) {
 
-        // Fetch booking details
-        ResponseEntity<Booking> bookingResponse = restTemplate.getForEntity(bookingBaseUrl + "/getOneBooking/" + bookingId, Booking.class);
-        if (!bookingResponse.getStatusCode().is2xxSuccessful()) {
-            return bookingResponse; 
-        }
+    //     // Fetch booking details
+    //     ResponseEntity<Booking> bookingResponse = restTemplate.getForEntity(bookingBaseUrl + "/getOneBooking/" + bookingId, Booking.class);
+    //     if (!bookingResponse.getStatusCode().is2xxSuccessful()) {
+    //         return bookingResponse; 
+    //     }
 
-        Booking booking = (Booking) bookingResponse.getBody();
-        if (booking == null) {
-            return ResponseEntity.status(404).body("Booking not found");
-        }
+    //     Booking booking = (Booking) bookingResponse.getBody();
+    //     if (booking == null) {
+    //         return ResponseEntity.status(404).body("Booking not found");
+    //     }
 
-        // Generate e-ticket information
-        String eTicketInfo = "E-Ticket for Booking ID: " + bookingId + "\n" +
-                             "Event ID: " + booking.getEventId() + "\n" +
-                             "Number of Tickets: " + booking.getNumOfTickets() + "\n" +
-                             "Date of Issue: " + java.time.LocalDate.now();
+    //     // Generate e-ticket information
+    //     String eTicketInfo = "E-Ticket for Booking ID: " + bookingId + "\n" +
+    //                          "Event ID: " + booking.getEventId() + "\n" +
+    //                          "Number of Tickets: " + booking.getNumOfTickets() + "\n" +
+    //                          "Date of Issue: " + java.time.LocalDate.now();
 
-        // Send e-ticket information via email
+    //     // Send e-ticket information via email
 
-        ResponseEntity<?> emailResponse = restTemplate.getForEntity(emailBaseUrl + "/sendEmail/" + customerEmail + "/Your E-Ticket/" + eTicketInfo, String.class);
+    //     ResponseEntity<?> emailResponse = restTemplate.getForEntity(emailBaseUrl + "/sendEmail/" + customerEmail + "/Your E-Ticket/" + eTicketInfo, String.class);
 
-        // Return successful response
-        return ResponseEntity.ok("E-Ticket issued successfully to " + customerEmail);
-    }
+    //     // Return successful response
+    //     return ResponseEntity.ok("E-Ticket issued successfully to " + customerEmail);
+    // }
     
 }
