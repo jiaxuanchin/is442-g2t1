@@ -9,7 +9,6 @@ import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
 import java.io.BufferedWriter;
 import java.nio.file.Paths;
 import java.nio.file.Path;
-import java.util.*;
 import java.nio.file.Files;
 import java.io.IOException;
 
@@ -17,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 @Service
 public class EventManagerService {
@@ -24,7 +24,8 @@ public class EventManagerService {
     private EventService eventService; 
 
     private final RestTemplate restTemplate;
-    private final String eventBaseUrl = "http://localhost:8080/event";
+    private final String eventBaseUrl = "http://localhost:8080/event/";
+
 
 
     @Autowired
@@ -71,23 +72,23 @@ public class EventManagerService {
     */
 
     public ResponseEntity<String> generateSalesStatistics(int eventId) {
-        ResponseEntity<?> eventResponse = eventService.searchById(eventId);
+        ResponseEntity<Event> eventResponse = restTemplate.getForEntity(eventBaseUrl + "/searchById/" + eventId, Event.class);
         
-        if (!eventResponse.getStatusCode().is2xxSuccessful()) {
+        if (eventResponse.getStatusCode() != HttpStatus.OK) {
             return ResponseEntity.status(eventResponse.getStatusCode()).body("Event not found");
         }
 
-        Event event = (Event) ((SuccessResponse) eventResponse.getBody()).getData();
+        Event event = eventResponse.getBody();
 
         int totalNumTickets = event.getCapacity();
         int ticketsAvailable = event.getFilled();
         int ticketsSold = totalNumTickets - ticketsAvailable;
         double revenue = ticketsSold * event.getTicketPrice();
-        // long customerAttendance = event.getFilled();
+        int customerAttendance = ticketsSold; 
 
         String csvContent = String.format(
-            "Event Name, Total Tickets, Tickets Sold, Tickets Available, Customer Attendance, Ticket Sales\n%s, %d, %d, %d, %d, %.2f",
-            event.getEventTitle(), totalNumTickets, ticketsSold, ticketsAvailable, customerAttendance, revenue
+                "Event Name, Total Tickets, Tickets Sold, Tickets Available, Customer Attendance, Ticket Sales\n%s, %d, %d, %d, %d, %.2f",
+                event.getEventTitle(), totalNumTickets, ticketsSold, ticketsAvailable, customerAttendance, revenue
         );
 
         String fileName = "SalesStatistics_Event_" + eventId + ".csv";
@@ -97,12 +98,11 @@ public class EventManagerService {
                 writer.write(csvContent);
             }
             return ResponseEntity.ok("Report generated: " + path.toAbsolutePath().toString());
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             return ResponseEntity.internalServerError().body("Failed to generate report: " + e.getMessage());
         }
     }
-
-  
     
 }
     
