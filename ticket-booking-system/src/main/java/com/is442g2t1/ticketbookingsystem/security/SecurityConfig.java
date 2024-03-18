@@ -18,14 +18,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 // import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.is442g2t1.ticketbookingsystem.security.jwt.JWTAuthFilter;
+import com.is442g2t1.ticketbookingsystem.security.jwt.JWTAuthEntryPoint;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private JwtAuthEntryPoint authEntryPoint;
+    private JWTAuthEntryPoint authEntryPoint;
     private CustomUserDetailsService userDetailsService;
 
     @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JWTAuthEntryPoint authEntryPoint) {
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = authEntryPoint;
     }
@@ -45,8 +48,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -56,8 +58,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public  JWTAuthenticationFilter jwtAuthenticationFilter() {
-        return new JWTAuthenticationFilter();
+    public  JWTAuthFilter jwtAuthenticationFilter() {
+        return new JWTAuthFilter();
     }
 
 }

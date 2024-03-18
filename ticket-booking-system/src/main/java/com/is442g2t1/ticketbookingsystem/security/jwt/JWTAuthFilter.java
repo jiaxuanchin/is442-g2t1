@@ -1,4 +1,4 @@
-package com.is442g2t1.ticketbookingsystem.security;
+package com.is442g2t1.ticketbookingsystem.security.jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -7,6 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.is442g2t1.ticketbookingsystem.security.CustomUserDetailsService;
+
 import org.springframework.lang.NonNull;
 
 import jakarta.servlet.FilterChain;
@@ -19,7 +22,7 @@ import java.io.IOException;
 // It extracts JWT tokens from incoming HTTP requests, validates them, and sets the authentication token in the security 
 // context if the token is valid.
 
-public class JWTAuthenticationFilter extends OncePerRequestFilter{
+public class JWTAuthFilter extends OncePerRequestFilter{
     
     @Autowired
     private JWTGenerator tokenGenerator;
@@ -28,6 +31,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter{
     private CustomUserDetailsService customUserDetailsService;
 
     // Logic of the filtering: HTTP requests, extracts JWT tokens, validates them, and sets the authentication token in the security context if the token is valid.
+    
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,

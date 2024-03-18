@@ -1,4 +1,4 @@
-package com.is442g2t1.ticketbookingsystem.User.DTO;
+package com.is442g2t1.ticketbookingsystem.security.DTO;
 
 import lombok.Data;
 

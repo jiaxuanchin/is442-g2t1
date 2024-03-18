@@ -1,9 +1,13 @@
-package com.is442g2t1.ticketbookingsystem.User;
+package com.is442g2t1.ticketbookingsystem.security;
 
-import com.is442g2t1.ticketbookingsystem.User.DTO.AuthResponseDTO;
-import com.is442g2t1.ticketbookingsystem.User.DTO.LoginDTO;
-import com.is442g2t1.ticketbookingsystem.User.DTO.RegisterDto;
-import com.is442g2t1.ticketbookingsystem.security.JWTGenerator;
+import com.is442g2t1.ticketbookingsystem.User.Role;
+import com.is442g2t1.ticketbookingsystem.User.RoleRepository;
+import com.is442g2t1.ticketbookingsystem.User.UserEntity;
+import com.is442g2t1.ticketbookingsystem.User.UserRepository;
+import com.is442g2t1.ticketbookingsystem.security.DTO.AuthResponseDTO;
+import com.is442g2t1.ticketbookingsystem.security.DTO.LoginDTO;
+import com.is442g2t1.ticketbookingsystem.security.DTO.RegisterDTO;
+import com.is442g2t1.ticketbookingsystem.security.jwt.JWTGenerator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,7 +55,7 @@ public class AuthController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<String> register(@RequestBody RegisterDTO registerDto) {
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             return new ResponseEntity<>("Email is taken!", HttpStatus.BAD_REQUEST);
         }

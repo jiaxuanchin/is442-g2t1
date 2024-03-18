@@ -1,4 +1,4 @@
-package com.is442g2t1.ticketbookingsystem.security;
+package com.is442g2t1.ticketbookingsystem.security.jwt;
 import java.util.Date;
 
 import io.jsonwebtoken.Jwts;
@@ -8,6 +8,7 @@ import java.security.Key;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -15,12 +16,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class JWTGenerator {
 	// private static final KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
-	private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512); // This key is used to sign and verify JWT tokens
+	private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // This key is used to sign and verify JWT tokens
 	
 	public String generateToken(Authentication authentication) {
 		String email = authentication.getName(); //https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/core/Authentication.html
+		
+		@Value("${JWT_Secret}")
+		private final String jwtSecret;
+	  
+		@Value("${JWT_Expiration_Ms}")
+		private final int jwtExpirationMs;
+		
 		Date currentDate = new Date();
-		Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
+		Date expireDate = new Date(currentDate.getTime() + this.jwtExpirationMs);
 		
 		String token = Jwts.builder()
 				.setSubject(email)
