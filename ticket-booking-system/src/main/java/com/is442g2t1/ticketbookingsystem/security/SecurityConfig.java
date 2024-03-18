@@ -26,12 +26,12 @@ public class SecurityConfig {
     private JWTAuthEntryPoint authEntryPoint;
     private UserDetailsServiceImpl userDetailsService;
 
-    // @Autowired
-    // public SecurityConfig(UserDetailsServiceImpl userDetailsService, JWTAuthEntryPoint authEntryPoint) {
-    //     this.userDetailsService = userDetailsService;
-    //     this.authEntryPoint = authEntryPoint;
+    @Autowired
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService, JWTAuthEntryPoint authEntryPoint) {
+        this.userDetailsService = userDetailsService;
+        this.authEntryPoint = authEntryPoint;
 
-    // }
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

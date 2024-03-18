@@ -8,6 +8,7 @@ import com.is442g2t1.ticketbookingsystem.security.DTO.AuthResponseDTO;
 import com.is442g2t1.ticketbookingsystem.security.DTO.LoginDTO;
 import com.is442g2t1.ticketbookingsystem.security.DTO.RegisterDTO;
 import com.is442g2t1.ticketbookingsystem.security.jwt.JWTGenerator;
+import com.is442g2t1.ticketbookingsystem.security.service.UserDetailsImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,19 +43,43 @@ public class AuthController {
         this.jwtGenerator = jwtGenerator;
     }
 
-    @PostMapping("login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDto){
+    @PostMapping("/signin")
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginRequest){
         // https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/AuthenticationManager.html#authenticate(org.springframework.security.core.Authentication)
-        Authentication authentication = authenticationManager.authenticate( // trying to authenticate the provided Authentication object 
-                new UsernamePasswordAuthenticationToken(
-                loginDto.getEmail(),
-                loginDto.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication); 
-        String token = jwtGenerator.generateToken(authentication);
-        return new ResponseEntity<>(new AuthResponseDTO(token), HttpStatus.OK);
+        try {
+            
+            UsernamePasswordAuthenticationToken test = new UsernamePasswordAuthenticationToken(
+                loginRequest.getEmail(),
+                loginRequest.getPassword());
+            System.out.println(test);
+
+            Authentication authentication = authenticationManager.authenticate( // trying to authenticate the provided Authentication object 
+            new UsernamePasswordAuthenticationToken(
+                loginRequest.getEmail(),
+                loginRequest.getPassword()));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication); 
+            String token = jwtGenerator.generateToken(authentication);
+
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            String role = userDetails.getAuthorities().stream()
+            .findFirst()
+            .map(item -> item.getAuthority())
+            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+            // return new ResponseEntity.ok(new AuthResponseDTO(token), HttpStatus.OK);
+            return ResponseEntity.ok(new AuthResponseDTO(token, 
+                            userDetails.getId(), 
+                            userDetails.getUsername(), 
+                            userDetails.getEmail(), 
+                            role));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
-    @PostMapping("register")
+    @PostMapping("/signup")
     public ResponseEntity<String> register(@RequestBody RegisterDTO registerDto) {
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             return new ResponseEntity<>("Email is taken!", HttpStatus.BAD_REQUEST);
