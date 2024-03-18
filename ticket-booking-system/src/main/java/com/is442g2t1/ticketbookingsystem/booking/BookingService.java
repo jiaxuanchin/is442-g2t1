@@ -111,6 +111,23 @@ public class BookingService {
                 return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
             }
 
+            // Fetch the event associated with the booking
+            int eventId = booking.getEventId();
+            Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+
+            // Check if the event capacity is full
+            if (booking.getNumOfTickets() + event.getFilled() > event.getCapacity()) {
+                return ResponseEntity.status(400).body("Event capacity is full");
+            }
+
+            // Calculate the new filled capacity
+            int newFilledCapacity = event.getFilled() + booking.getNumOfTickets();
+
+            // Update the event filled capacity
+            event.setFilled(newFilledCapacity);
+            eventRepository.save(event);
+
             // Deduct the ticket price from the customer's balance
             customer.reduceBalance(totalTicketPrice);
             userRepository.save(user);
@@ -123,11 +140,6 @@ public class BookingService {
             if (!result.getStatusCode().equals(HttpStatus.OK)) {
                 return ResponseEntity.status(404).body("Error creating booking");
             }
-
-            // Fetch the event associated with the booking
-            int eventId = booking.getEventId();
-            Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
 
             String bookingId = Integer.toString(booking.getBookingId());
             String subject = "Event Booking Confirmation (Booking ID: " + bookingId + ")";
@@ -181,6 +193,13 @@ public class BookingService {
             int eventId = booking.getEventId();
             Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+
+            // Calculate the new filled capacity
+            int newFilledCapacity = event.getFilled() - booking.getNumOfTickets();
+
+            // Update the event filled capacity
+            event.setFilled(newFilledCapacity);
+            eventRepository.save(event);
 
             // Add the ticket price to the customer's balance
             customer.increaseBalance(totalTicketPrice - event.getCancelFee());
