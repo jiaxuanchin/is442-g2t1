@@ -98,6 +98,10 @@ public class TicketService {
         }
     }
 
+    // public List<Ticket> getTicketsByEventId(int eventId) {
+    //     return ticketRepository.findByEventId(eventId);
+    // }
+
     // ------------- try deleting ticket, not necessary but to make sure deletion works without cascade removal from booking
     // public String deleteTicket(int ticketId) {
     //     try {
@@ -120,5 +124,7 @@ public class TicketService {
     //         throw e;
     //     }
     // }
+
+
     
 }

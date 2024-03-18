@@ -22,30 +22,12 @@ USE `ticket-booking-system`;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Users`
---
-
-DROP TABLE IF EXISTS Users;
-
-CREATE TABLE IF NOT EXISTS Users (
-  user_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  user_fname VARCHAR(50) NOT NULL,
-  user_lname VARCHAR(50) NOT NULL,
-  email VARCHAR(255) NOT NULL,
---   salt VARCHAR(50) NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  balance DOUBLE NOT NULL DEFAULT 1000.0
-);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `Roles`
 --
 
-DROP TABLE IF EXISTS Roles;
+DROP TABLE IF EXISTS Role;
 
-CREATE TABLE IF NOT EXISTS Roles (
+CREATE TABLE IF NOT EXISTS Role (
   role_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   role_name VARCHAR(50) NOT NULL
 );
@@ -53,19 +35,21 @@ CREATE TABLE IF NOT EXISTS Roles (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_roles`
+-- Table structure for table `Users`
 --
 
-DROP TABLE IF EXISTS user_roles;
+DROP TABLE IF EXISTS Users;
 
-CREATE TABLE IF NOT EXISTS User_Roles (
-  user_id INT,
-  role_id INT,
-  PRIMARY KEY (user_id, role_id),
-  FOREIGN KEY (user_id) REFERENCES Users(user_id),
-  FOREIGN KEY (role_id) REFERENCES Roles(role_id)
+CREATE TABLE IF NOT EXISTS Users (
+  user_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  role_id INT NOT NULL,
+  user_fname VARCHAR(50) NOT NULL,
+  user_lname VARCHAR(50) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+--   salt VARCHAR(50) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  FOREIGN KEY (role_id) REFERENCES Role(role_id)
 );
-
 
 -- --------------------------------------------------------
 
@@ -135,22 +119,16 @@ ALTER TABLE `Ticket`
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-INSERT INTO Users (user_fname,user_lname,email,password,balance) VALUES
-('Eunice','Ong','euniceong.2021@scis.smu.edu.sg', 'password',1000.0),
-('Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', 'password',300),
-('Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', 'password',500);
+INSERT INTO Role (role_id, role_name) VALUES
+(1,"customer"),
+(2,"event_manager"),
+(3,"ticketing_officer");
 
-INSERT INTO Roles (role_name) VALUES
-("USER"),
-("ADMIN"),
-("OFFICER");
+INSERT INTO Users (user_id, role_id, user_fname,user_lname,email,password) VALUES
+(1, 1, 'Eunice','Ong','euniceong.2021@scis.smu.edu.sg', 'password'),
+(2, 2, 'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', 'password'),
+(3, 3, 'Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', 'password');
 
-INSERT INTO user_roles (user_id,role_id) VALUES
-(1,1),
-(2,2),
-(2,1),
-(3,1),
-(3,3);
 
 INSERT INTO Event (event_id, event_title, event_date, event_description, event_location, event_start_time, event_end_time, filled, capacity, ticket_price, cancel_fee) VALUES
 (1, 'Musical', '2023-09-15', 'Disney is coming to town', 'The Capitol', '18:00', '21:00', 0, 2000, 220.00, 20.00),

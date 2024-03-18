@@ -10,5 +10,8 @@ import com.is442g2t1.ticketbookingsystem.booking.Booking;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Integer>{
     public List<Ticket> findTicketsByBooking(Booking booking);
+    // List<Ticket> findByEventId(int eventId);
 
+    // Find ticket by ticket_id
+    Ticket findTicketByTicketId(int ticketId);
 }
