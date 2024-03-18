@@ -140,7 +140,7 @@ public class BookingService {
             + "Time: " + event.getStartTime() + " - " + event.getEndTime() + "\n"
             + "Number of Tickets Bought: " + booking.getNumOfTickets() + "\n"
             + "Total Amount Paid: $" + totalTicketPrice + "0\n\n"
-            + "Please log in to our web app to view your tickets. Contact us by replying to this email with any enquiries.\n\n"
+            + "Please log in to our web app to view your tickets. For any further assistance, please contact us by replying to this email.\n\n"
             + "Brought to you by,\n"
             + "G2T1 Event Management Team";
 
@@ -196,7 +196,7 @@ public class BookingService {
             + "Time: " + event.getStartTime() + " - " + event.getEndTime() + "\n"
             + "Number of Tickets Refunded: " + booking.getNumOfTickets() + "\n"
             + "Total Amount To Be Refunded: $" + (totalTicketPrice - event.getCancelFee()) + "0\n\n"
-            + "Please log in to our web app to check the refund into your e-wallet. Contact us by replying to this email with any enquiries.\n\n"
+            + "Please log in to our web app to check the refund into your e-wallet. For any further assistance, please contact us by replying to this email.\n\n"
             + "Brought to you by,\n"
             + "G2T1 Event Management Team";
 
