@@ -1,10 +1,13 @@
 package com.is442g2t1.ticketbookingsystem.event;
 
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
+import com.is442g2t1.ticketbookingsystem.User.UserEntity;
+import com.is442g2t1.ticketbookingsystem.User.UserRepository;
 import com.is442g2t1.ticketbookingsystem.booking.Booking;
-import com.is442g2t1.ticketbookingsystem.booking.BookingRepository;
+import com.is442g2t1.ticketbookingsystem.booking.BookingService;
 import com.is442g2t1.ticketbookingsystem.ticket.Ticket;
 import com.is442g2t1.ticketbookingsystem.ticket.TicketRepository;
+import com.is442g2t1.ticketbookingsystem.email.EmailService;
 
 import com.is442g2t1.response.StatusResponse;
 import com.is442g2t1.response.SuccessResponse;
@@ -13,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -29,15 +31,17 @@ import jakarta.transaction.Transactional;
 public class EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final BookingRepository bookingRepository;
-    private final TicketRepository ticketRepository;
+    private final BookingService bookingService;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingRepository bookingRepository, TicketRepository ticketRepository) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingService bookingService, UserRepository userRepository, EmailService emailService) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
-        this.bookingRepository = bookingRepository;
-        this.ticketRepository = ticketRepository;
+        this.bookingService = bookingService;
+        this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     public List<Event> getAllEvent() {
@@ -244,7 +248,7 @@ public class EventService {
         }
     }
 
-    public ResponseEntity<?> deleteById(int eventId) {
+    public ResponseEntity<?> cancelEvent(int eventId) {
         try {
             // Check if the event exists
             Optional<Event> optionalEvent = eventRepository.findById(eventId);
@@ -254,13 +258,16 @@ public class EventService {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(notFoundResponse);
             }
 
+            // Cancel all bookings under the event
+            ResponseEntity cancellationResponse = bookingService.cancelAllBookingsUnderEvent(eventId);
+
             // Delete the event from the database
             eventRepository.deleteById(eventId);
 
             SuccessResponse successResponse = new SuccessResponse("Event cancelled successfully", HttpStatus.SC_OK,
                     eventId);
             return ResponseEntity.ok().body(successResponse);
-
+    
         } catch (Exception e) {
             e.printStackTrace();
             StatusResponse statusResponse = new StatusResponse("Error cancelling event: " + e.getMessage(),
@@ -268,21 +275,4 @@ public class EventService {
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(statusResponse);
         }
     }
-
-    // public ResponseEntity<?> attendanceById(int eventId) {
-    //     try {
-    //         // get list of bookings made and tickets under each booking for each event id
-    //         List<Booking> bookings = bookingRepository.findByEventId(eventId);
-            
-    //         SuccessResponse successResponse = new SuccessResponse("Event bookings retrieved successfully", HttpStatus.SC_OK,
-    //                 eventId);
-    //         return ResponseEntity.ok().body(successResponse);
-
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         StatusResponse statusResponse = new StatusResponse("Error deleting event: " + e.getMessage(),
-    //                 HttpStatus.SC_INTERNAL_SERVER_ERROR);
-    //         return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(statusResponse);
-    //     }
-    // }
 }
