@@ -48,8 +48,12 @@ const router = createRouter({
           path: '/booking-details/:bookingId',
           component: () => import('../pages/booking-details.vue'),
           props: true
+        },
+        {
+          path: '/event-details/:eventId',
+          component: () => import('../pages/event-details.vue'),
+          props: true
         }
-      
       ],
     },
     {
