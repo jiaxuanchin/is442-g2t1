@@ -32,6 +32,8 @@ const tickets = [
 <template>
   <VRow>
     <VCol cols="12">
+
+      <!-- Start of event details -->
       <VCard title="Event Details">
         <VCardText class="d-flex flex-column gap-y-8">
 
@@ -115,9 +117,16 @@ const tickets = [
       </VCard>
     </VCol>
   </VRow>
+
+  <!-- The form for quantity of tickets required -->
   <VRow>
     <VCol cols="12">
-      <router-link to="/other-page" style="display: flex; justify-content: flex-end;">
+      This is the table to add information
+    </VCol>
+  </VRow>
+  <VRow>
+    <VCol cols="12">
+      <router-link :to="'/other-page/' + eventId" style="display: flex; justify-content: flex-end;">
       <VBtn>
         Purchase Tickets
       </VBtn>
