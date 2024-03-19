@@ -4,6 +4,14 @@ import { useRoute } from 'vue-router'
 const {params} = useRoute()
 const eventId = params.eventId
 
+const ticketData = {
+  ticketType : "VIP",
+  quantity: 3,
+}
+
+const refInputEl = ref()
+const ticketDataLocal = ref(structuredClone(ticketData))
+
 const tickets = [
   {
     type: 'VIP',
@@ -27,6 +35,14 @@ const tickets = [
   },
 ]
 
+const ticketType = [
+  "VIP",
+  "CAT 1",
+  "CAT 2",
+  "CAT 3",
+  "CAT 4"
+]
+
 </script>
 
 <template>
@@ -44,6 +60,8 @@ const tickets = [
             <span>Event description</span><br>
             <span>23 January 2023, Singapore indoor stadium, 6pm</span>
           </div>
+
+          <VDivider />
 
           <div>
             <h6 class="text-h6">
@@ -104,7 +122,7 @@ const tickets = [
             </ul>
 
           </div>
-
+          <VDivider />
           <div>
             <h6 class="text-h6">
               Note:
@@ -121,9 +139,26 @@ const tickets = [
   <!-- The form for quantity of tickets required -->
   <VRow>
     <VCol cols="12">
-      This is the table to add information
+      <VCard title="Choose your tickets">
+        <VCardText>
+          <VForm class="mt-6">
+            <VRow>
+              <VCol md="6" cols="12">
+                  <VSelect
+                  v-model="ticketDataLocal.ticketType"
+                  label="Ticket Type"
+                  placeholder="Select Ticket Type"
+                  :items="ticketType"
+                  :menu-props="{ maxHeight: 200 }"
+                  />
+              </VCol>
+            </VRow>
+          </VForm>  
+        </VCardText>
+      </VCard>
     </VCol>
   </VRow>
+  <!-- The for the purchase ticket button -->
   <VRow>
     <VCol cols="12">
       <router-link :to="'/other-page/' + eventId" style="display: flex; justify-content: flex-end;">
