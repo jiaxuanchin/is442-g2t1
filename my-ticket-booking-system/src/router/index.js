@@ -13,6 +13,10 @@ const router = createRouter({
           component: () => import('../pages/dashboard.vue'),
         },
         {
+          path: 'home',
+          component: () => import('../pages/home.vue'),
+        },
+        {
           path: 'account-settings',
           component: () => import('../pages/account-settings.vue'),
         },
@@ -44,8 +48,12 @@ const router = createRouter({
           path: '/booking-details/:bookingId',
           component: () => import('../pages/booking-details.vue'),
           props: true
+        },
+        {
+          path: '/event-details/:eventId',
+          component: () => import('../pages/event-details.vue'),
+          props: true
         }
-      
       ],
     },
     {
