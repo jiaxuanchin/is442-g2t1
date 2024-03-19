@@ -29,6 +29,7 @@ replay_pid*
 .vscode/settings.json
 .idea/workspace.xml
 
+# Additional things
 node_modules
 package-lock.json
 yarn.lock
