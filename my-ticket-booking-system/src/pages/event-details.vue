@@ -6,7 +6,7 @@ const eventId = params.eventId
 
 const ticketData = {
   ticketType : "VIP",
-  quantity: 3,
+  quantity: 1,
 }
 
 const refInputEl = ref()
@@ -134,14 +134,15 @@ const ticketType = [
         </VCardText>
       </VCard>
     </VCol>
-  </VRow>
+  
 
   <!-- The form for quantity of tickets required -->
-  <VRow>
     <VCol cols="12">
       <VCard title="Choose your tickets">
         <VCardText>
           <VForm class="mt-6">
+
+            <!-- 👉 Asking for the ticket type -->
             <VRow>
               <VCol md="6" cols="12">
                   <VSelect
@@ -152,20 +153,34 @@ const ticketType = [
                   :menu-props="{ maxHeight: 200 }"
                   />
               </VCol>
+
+              <!-- 👉 Quantity of tickets -->
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="ticketDataLocal.quantity"
+                  label="Ticket Quantity"
+                  placeholder="1"
+                />
+              </VCol>
             </VRow>
+
+            <!-- 👉 Submit the forms -->
+            <VRow>
+              <VCol cols="12" class="text-end mt-4"> <!-- Use 'text-end' class to align content to the right -->
+                <router-link :to="'/other-page/' + eventId" style="display: flex; justify-content: flex-end;">
+                  <VBtn>
+                    Purchase Tickets
+                  </VBtn>
+                </router-link>
+              </VCol>
+            </VRow>
+
           </VForm>  
         </VCardText>
       </VCard>
-    </VCol>
-  </VRow>
-  <!-- The for the purchase ticket button -->
-  <VRow>
-    <VCol cols="12">
-      <router-link :to="'/other-page/' + eventId" style="display: flex; justify-content: flex-end;">
-      <VBtn>
-        Purchase Tickets
-      </VBtn>
-    </router-link>
     </VCol>
   </VRow>
 </template>
