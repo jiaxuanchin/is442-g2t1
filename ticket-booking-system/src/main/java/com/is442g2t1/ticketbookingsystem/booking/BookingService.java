@@ -90,7 +90,21 @@ public class BookingService {
         }
     } 
 
-    public ResponseEntity createBooking(Booking booking) {
+    public ResponseEntity checkIfCanBook(Booking booking) {
+        // Fetch the event associated with the booking
+        int eventId = booking.getEventId();
+        Event event = eventRepository.findById(eventId)
+            .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+
+        // Check if the event capacity is full
+        if ((booking.getNumOfTickets() + event.getFilled()) > event.getCapacity()) {
+            int remainingNum = event.getCapacity() - event.getFilled();
+            return ResponseEntity.status(400).body("Event capacity is full. Remaining number of tickets: " + remainingNum);
+        }
+        return null;
+    }
+
+    public ResponseEntity createBooking(Booking booking, String payType) {
         try {
             System.out.println("Creating booking:" + booking);
 
@@ -107,8 +121,10 @@ public class BookingService {
             }
             Customer customer = (Customer) user;
             double totalTicketPrice = calculateTotalTicketPrice(booking);
-            if (totalTicketPrice > customer.getBalance()) {
-                return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
+            if (payType.equals("ewallet")) {
+                if (totalTicketPrice > customer.getBalance()) {
+                    return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
+                }
             }
 
             // Fetch the event associated with the booking
@@ -117,9 +133,9 @@ public class BookingService {
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
 
             // Check if the event capacity is full
-            if (booking.getNumOfTickets() + event.getFilled() > event.getCapacity()) {
-                return ResponseEntity.status(400).body("Event capacity is full");
-            }
+            // if (booking.getNumOfTickets() + event.getFilled() > event.getCapacity()) {
+            //     return ResponseEntity.status(400).body("Event capacity is full");
+            // }
 
             // Calculate the new filled capacity
             int newFilledCapacity = event.getFilled() + booking.getNumOfTickets();
@@ -129,8 +145,10 @@ public class BookingService {
             eventRepository.save(event);
 
             // Deduct the ticket price from the customer's balance
-            customer.reduceBalance(totalTicketPrice);
-            userRepository.save(user);
+            if (payType.equals("ewallet")) {
+                customer.reduceBalance(totalTicketPrice);
+                userRepository.save(user);
+            }
 
             bookingRepository.save(booking);
 
