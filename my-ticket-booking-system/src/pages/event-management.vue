@@ -1,5 +1,6 @@
 <script setup>
 import pages1 from '@images/pages/1.png'
+import CreateEvent from '@/views/pages/event-management/CreateEvent.vue'
 
 const isCardDetailsVisible = ref(false)
 
@@ -46,6 +47,26 @@ const cardList = [
 </script>
 
 <template>
+        
+    <VRow>
+        <!-- Page Title -->
+        <VCol cols="12">
+            <div>
+                <h1 class="align-center text-h3">
+                    Event Management
+                </h1>
+            </div>
+        </VCol>
+
+        <VCol cols="12">
+            <!-- 👉 Multiple Column -->
+            <VCard title="Create A New Event">
+            <VCardText>
+                <CreateEvent />
+            </VCardText>
+            </VCard>
+        </VCol>
+    </VRow>
 
 
   <VRow>
@@ -68,7 +89,7 @@ const cardList = [
           {{ card.description }} <br><br>
           {{ card.date }} ({{ card.time }}) <br><br>
           <div style="text-align: right;">
-            <VBtn :to="'/event-details/' + card.eventId">
+            <VBtn :to="'/event-details-event-manager/' + card.eventId">
                 View Details
             </VBtn>
           </div>

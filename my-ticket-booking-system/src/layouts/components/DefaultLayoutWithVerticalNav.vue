@@ -97,6 +97,35 @@ const upgradeBanner = computed(() => {
           to: '/my-bookings',
         }"
       />
+      <VerticalNavLink
+        :item="{
+          title: 'Ticketing Officer',
+          icon: 'mdi-account-cog-outline',
+          to: '/ticketing-officer',
+        }"
+      />
+      <VerticalNavLink
+        :item="{
+          title: 'Sales Statistics',
+          icon: 'mdi-account-cog-outline',
+          to: '/sales-statistics',
+        }"
+      />
+      <VerticalNavLink
+        :item="{
+          title: 'Add Ticketing Officer',
+          icon: 'mdi-account-cog-outline',
+          to: '/add-ticketing-officer',
+        }"
+      />
+      <VerticalNavLink
+        :item="{
+          title: 'Event Management',
+          icon: 'mdi-account-cog-outline',
+          to: '/event-management',
+        }"
+      />
+    
 
       <!-- 👉 Pages -->
       <VerticalNavSectionTitle
@@ -167,6 +196,8 @@ const upgradeBanner = computed(() => {
           to: '/form-layouts',
         }"
       />
+      
+      
     </template>
 
     <template #after-vertical-nav-items>
