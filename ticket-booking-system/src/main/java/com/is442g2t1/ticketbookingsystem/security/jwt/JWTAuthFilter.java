@@ -1,6 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.security.jwt;
 
-import org.slf4j.LoggerFactory;
+// import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +38,11 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         try {
             String token = getJWTFromRequest(request);
+
+            // ----------------------------- CHECKPOINT -----------------------------
+            System.out.println("[CHECKPOINT JWTAuthFilter] Validating token: " + token);
+            // -----------------------------------------------------------------------
+
             if(token != null && tokenGenerator.validateToken(token)) {
                 String email = tokenGenerator.getEmailFromJWT(token);
     
@@ -50,6 +55,11 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+                System.out.println("[CHECKPOINT JWTAuthFilter] User authenticated: " + SecurityContextHolder.getContext().getAuthentication());
+
+            } else {
+                System.out.println("Token is not valid");
             }
 
         } catch (Exception e) {
@@ -58,10 +68,15 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+        System.out.println("[CHECKPOINT JWTAuthFilter] Filter chain done");
     }
 
     private String getJWTFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
+
+        // ----------------------------- CHECKPOINT -----------------------------
+        System.out.println("[CHECKPOINT JWTAuthFilter] Bearer token: " + bearerToken);
+        // -----------------------------------------------------------------------
 
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7, bearerToken.length());

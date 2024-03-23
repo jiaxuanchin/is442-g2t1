@@ -31,5 +31,8 @@ public class JWTAuthEntryPoint implements AuthenticationEntryPoint {
 
         final ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getOutputStream(), body);
+
+        System.out.println("[ERROR CHECKPOINT JWTAuthEntryPoint] ERROR HERE: " + body.toString());
+
     }
 }

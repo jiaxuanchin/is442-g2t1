@@ -13,11 +13,13 @@ import com.is442g2t1.ticketbookingsystem.security.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +32,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder; // Todo: expand on this
+    private PasswordEncoder passwordEncoder;
     private JWTGenerator jwtGenerator;
 
     @Autowired
@@ -39,19 +41,34 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder; // Todo: expand on this
+        this.passwordEncoder = passwordEncoder;
         this.jwtGenerator = jwtGenerator;
     }
+
+    // -------------------- TESTER METHODS, TO BE REMOVED --------------------
+    @GetMapping("/all1")
+    public String allAccess() {
+        return "Public Content.";
+    }
+
+    @GetMapping("/user")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager')")
+    public String userAccess() {
+        return "User Content.";
+    }
+    // -----------------------------------------------------------------------
 
     @PostMapping("/signin")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginRequest){
         // https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/AuthenticationManager.html#authenticate(org.springframework.security.core.Authentication)
         try {
             
+            // ----------------------------- CHECKPOINT -----------------------------
             UsernamePasswordAuthenticationToken test = new UsernamePasswordAuthenticationToken(
                 loginRequest.getEmail(),
                 loginRequest.getPassword());
-            System.out.println(test);
+            System.out.println("[CHECKPOINT AuthController] PRINT USER AUTH DETAILS: " + test);
+            // -----------------------------------------------------------------------
 
             Authentication authentication = authenticationManager.authenticate( // trying to authenticate the provided Authentication object 
             new UsernamePasswordAuthenticationToken(
@@ -92,9 +109,12 @@ public class AuthController {
             return new ResponseEntity<>("Role not found!", HttpStatus.BAD_REQUEST);
         }
 
-        UserEntity user = new UserEntity(role,registerDto.getUser_fname(),registerDto.getUser_lname(),registerDto.getEmail(),registerDto.getPassword());
+        UserEntity user = new UserEntity(role, registerDto.getUser_fname(),registerDto.getUser_lname(),registerDto.getEmail(), 
+            passwordEncoder.encode(registerDto.getPassword())
+        );
         userRepository.save(user);
 
-        return new ResponseEntity<>("User registered success!", HttpStatus.OK);
+        return new ResponseEntity<>("User registered successfully!", HttpStatus.OK);
     }
+
 }

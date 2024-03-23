@@ -9,11 +9,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.is442g2t1.ticketbookingsystem.User.Role;
 import com.is442g2t1.ticketbookingsystem.User.UserEntity;
 
 public class UserDetailsImpl implements UserDetails{
     
     private int id;
+
+    private Role role;
 
     private String username;
 
@@ -24,8 +27,9 @@ public class UserDetailsImpl implements UserDetails{
 
     private Collection<GrantedAuthority> authorities;
 
-    public UserDetailsImpl(int id, String username, String email, String password, Collection<GrantedAuthority> authorities) {
+    public UserDetailsImpl(int id, Role role, String username, String email, String password, Collection<GrantedAuthority> authorities) {
         this.id = id;
+        this.role = role;
         this.username = username;
         this.email = email;
         this.password = password;
@@ -41,6 +45,7 @@ public class UserDetailsImpl implements UserDetails{
 
         return new UserDetailsImpl(
             user.getId(), 
+            user.getRole(),
             fullName,
             user.getEmail(),
             user.getPassword(), 
@@ -54,6 +59,10 @@ public class UserDetailsImpl implements UserDetails{
 
     public int getId() {
         return id;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public String getEmail() {
