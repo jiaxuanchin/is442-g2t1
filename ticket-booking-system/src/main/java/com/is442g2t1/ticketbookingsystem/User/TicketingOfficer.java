@@ -4,17 +4,17 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Data;
 
-
 @Entity
-@DiscriminatorValue("event_manager")
+@DiscriminatorValue("ticketing_officer")
 @Data
-public class EventManager extends UserEntity {
-    
-    public EventManager() {
+public class TicketingOfficer extends UserEntity {
+
+    public TicketingOfficer() {
         super();
     }
-    
-    public EventManager(Role role, String user_fname, String user_lname, String email, String password) {
+
+    public TicketingOfficer(Role role, String user_fname, String user_lname, String email, String password) {
         super(role, user_fname, user_lname, email, password);
     }
+    
 }

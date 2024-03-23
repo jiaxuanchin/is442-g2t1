@@ -23,7 +23,7 @@ public class BookingController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAuthority('customer')")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity getAllBookings() {
 
         ResponseEntity result = this.bookingService.getAllBookings();
@@ -59,6 +59,7 @@ public class BookingController {
     }
 
     @DeleteMapping("/delete/{bookingId}")
+    @PreAuthorize("hasAuthority('event_manager')")
     public ResponseEntity cancelBooking(@PathVariable int bookingId) {
 
         ResponseEntity result = this.bookingService.cancelBooking(bookingId);
