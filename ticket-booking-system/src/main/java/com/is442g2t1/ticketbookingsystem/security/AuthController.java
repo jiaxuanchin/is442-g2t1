@@ -1,5 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.security;
 
+import com.is442g2t1.ticketbookingsystem.User.Customer;
 import com.is442g2t1.ticketbookingsystem.User.Role;
 import com.is442g2t1.ticketbookingsystem.User.RoleRepository;
 import com.is442g2t1.ticketbookingsystem.User.UserEntity;
@@ -110,7 +111,7 @@ public class AuthController {
         }
 
         try {
-            UserEntity user = new UserEntity(role, registerDto.getUser_fname(),registerDto.getUser_lname(),registerDto.getEmail(), 
+            UserEntity user = new Customer(role, registerDto.getUser_fname(),registerDto.getUser_lname(),registerDto.getEmail(), 
                 passwordEncoder.encode(registerDto.getPassword())
             );
 

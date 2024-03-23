@@ -21,6 +21,11 @@ public class Customer extends UserEntity{
         this.balance = 1000;
     }
 
+    public Customer(Role role, String user_fname, String user_lname, String email, String password) {
+        super(role, user_fname, user_lname, email, password);
+        this.balance = 1000;
+    }
+
     // To reduce balance
     public void reduceBalance(double amount) {
         if (amount >= 0 && amount <= balance) {
