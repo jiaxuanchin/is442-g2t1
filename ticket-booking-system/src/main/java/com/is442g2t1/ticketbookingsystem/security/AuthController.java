@@ -109,10 +109,17 @@ public class AuthController {
             return new ResponseEntity<>("Role not found!", HttpStatus.BAD_REQUEST);
         }
 
-        UserEntity user = new UserEntity(role, registerDto.getUser_fname(),registerDto.getUser_lname(),registerDto.getEmail(), 
-            passwordEncoder.encode(registerDto.getPassword())
-        );
-        userRepository.save(user);
+        try {
+            UserEntity user = new UserEntity(role, registerDto.getUser_fname(),registerDto.getUser_lname(),registerDto.getEmail(), 
+                passwordEncoder.encode(registerDto.getPassword())
+            );
+
+            System.out.println("[CHECKPOINT AuthController] PRINT USER DETAILS: " + user.toString());
+
+            userRepository.save(user);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
 
         return new ResponseEntity<>("User registered successfully!", HttpStatus.OK);
     }

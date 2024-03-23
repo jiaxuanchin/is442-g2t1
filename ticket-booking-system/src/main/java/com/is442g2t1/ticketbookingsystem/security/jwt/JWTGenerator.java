@@ -32,6 +32,7 @@ public class JWTGenerator {
 		
 		String token = Jwts.builder()
 				.setSubject(userPrincipal.getEmail())
+				.claim("user_id", userPrincipal.getId())
 				.claim("role_id", userPrincipal.getRole())
 				.setIssuedAt(currentDate)
 				.setExpiration(expireDate)

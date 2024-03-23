@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/booking")
 public class BookingController {
@@ -52,9 +54,10 @@ public class BookingController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity createBooking(@RequestBody Booking booking) {
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
+    public ResponseEntity createBooking(HttpServletRequest request, @RequestBody Booking booking) {
         
-        ResponseEntity result = this.bookingService.createBooking(booking);
+        ResponseEntity result = this.bookingService.createBooking(request, booking);
         return result;
     }
 

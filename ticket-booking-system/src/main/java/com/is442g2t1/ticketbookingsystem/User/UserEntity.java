@@ -33,6 +33,9 @@ public class UserEntity {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "user_type" , insertable = false, updatable = false)
+    private String user_type = "customer";
+
     public UserEntity(Role role, String user_fname, String user_lname, String email, String password){
         this.role = role;
         this.user_fname = user_fname;

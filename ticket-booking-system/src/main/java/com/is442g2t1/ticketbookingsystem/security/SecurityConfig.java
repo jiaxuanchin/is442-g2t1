@@ -68,7 +68,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth ->
                     auth.requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/event_manager/**").hasRole("event_manager") // to change url
+                        // .requestMatchers("/event_manager/**").hasRole("event_manager") // to change url
                         .anyRequest().authenticated()
                     
             );

@@ -4,22 +4,22 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public class BookingService {
 
     private BookingRepository bookingRepository;
-
-    private WebClient webClient;
     
     @Autowired
-    public BookingService(BookingRepository bookingRepository, WebClient webClient) {
+    public BookingService(BookingRepository bookingRepository) {
         this.bookingRepository = bookingRepository;
-        this.webClient = webClient;
     }
 
     public ResponseEntity getAllBookings() {
@@ -70,18 +70,20 @@ public class BookingService {
         }
     } 
 
-    public ResponseEntity createBooking(Booking booking) {
+    public ResponseEntity createBooking(HttpServletRequest request, Booking booking) {
         try {
             System.out.println("Create booking:" + booking);
             bookingRepository.save(booking);
 
-            ResponseEntity result = purchaseTicket(booking);
+            String token = extractJwtFromRequest(request);
+
+            ResponseEntity result = purchaseTicket(booking, token);
             // need to update event service? (TBD AFTER MERGE)
             // need to trigger emailer (TBD AFTER MERGE)
             System.out.println("RESULT CODE: " + result.getStatusCode());
             System.out.println("CHECK RESULTS: " + result.getStatusCode().equals(HttpStatus.OK));
             if (!result.getStatusCode().equals(HttpStatus.OK)) {
-                return ResponseEntity.status(404).body("Error creating booking");
+                return ResponseEntity.status(404).body("Error creating booking: " + result.getBody());
             }
 
             return ResponseEntity.ok("Booking created");
@@ -109,20 +111,24 @@ public class BookingService {
         }
     }
 
-    public ResponseEntity purchaseTicket(Booking booking) {
+    private ResponseEntity purchaseTicket(Booking booking, String token) {
         System.out.println("Purchasing ticket for bookingId: " + booking.getBookingId() + "...");
 
         ResponseEntity<String> ticketResponse = null;
 
         try {
+            WebClient webClient = WebClient.builder()
+            .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+            .build();
+
             for (int i = 0; i < booking.getNumOfTickets(); i++) {
 
                 ticketResponse = webClient.post()
-                .uri("/ticket/new")
-                .bodyValue(booking)
-                .retrieve()
-                .toEntity(String.class)
-                .block();
+                                        .uri("http://localhost:8080/ticket/new") // how to make it dynamic?
+                                        .bodyValue(booking)
+                                        .retrieve()
+                                        .toEntity(String.class)
+                                        .block();
 
             }
             return ticketResponse;
@@ -130,6 +136,14 @@ public class BookingService {
         } catch(Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
+    }
+
+    private String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // Remove "Bearer " prefix
+        }
+        return null;
     }
 
 }
