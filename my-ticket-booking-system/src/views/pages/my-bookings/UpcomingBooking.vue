@@ -20,9 +20,17 @@ const events = ref([
   },
 ]);
 
+let confirmationDialog = ref(false);
+let cancelIndex = null;
+
 const cancelEvent = (index) => {
-  // To do: Need to also call the cancellation of booking here
   events.value.splice(index, 1);
+  confirmationDialog.value = false; // Close the confirmation dialog after cancellation
+};
+
+const showConfirmationDialog = (index) => {
+  confirmationDialog.value = true; // Show the confirmation dialog when cancel button is clicked
+  cancelIndex = index; // Store the index of the event to be cancelled
 };
 
 </script>
@@ -82,10 +90,24 @@ const cancelEvent = (index) => {
               <VBtn class="mt-8" :to="'/booking-details/' + event.id">
                 More details
               </VBtn>
+
               <!-- Cancellation button -->
-              <VBtn class="mt-8 ms-2"  @click="cancelEvent(index)" color="error">
+              <VBtn class="mt-8 ms-2" @click="showConfirmationDialog(index)" color="error">
                 Cancel Booking
               </VBtn>
+
+              <!-- Confirmation dialog -->
+              <VDialog v-model="confirmationDialog" max-width="500">
+                <VCard>
+                  <VCardText>
+                    <div>Are you sure you want to cancel the booking for "{{ events[cancelIndex].name }}"?</div>
+                  </VCardText>
+                  <VCardActions>
+                    <VBtn color="error" @click="cancelEvent(cancelIndex)">Yes, Cancel Booking</VBtn>
+                    <VBtn @click="confirmationDialog = false">No, Keep Booking</VBtn>
+                  </VCardActions>
+                </VCard>
+              </VDialog>
 
             </VCardText>
           </VCol>

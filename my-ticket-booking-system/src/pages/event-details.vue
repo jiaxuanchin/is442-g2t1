@@ -18,7 +18,7 @@ const ticketDataLocal = ref(structuredClone(ticketData))
     <VCol cols="12">
 
       <!-- Start of event details -->
-      <VCard title="Event Details">
+      <VCard>
         <VCardText class="d-flex flex-column gap-y-8">
 
           <div>
