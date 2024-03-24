@@ -9,7 +9,22 @@ const events = ref([
     tickets: 4,
     id: 1
   },
+  {
+    name: 'Event 2',
+    description: 'Event 2 description',
+    date: '2023-03-23',
+    location: 'The Capitol',
+    time: '18:00 - 21:00',
+    tickets: 4,
+    id: 1
+  },
 ]);
+
+const cancelEvent = (index) => {
+  // To do: Need to also call the cancellation of booking here
+  events.value.splice(index, 1);
+};
+
 </script>
 
 <template>
@@ -63,9 +78,15 @@ const events = ref([
                   <span class="ms-3">{{ event.tickets }} Tickets</span>
                 </p>
               </div>
+              <!-- View more details button -->
               <VBtn class="mt-8" :to="'/booking-details/' + event.id">
                 More details
               </VBtn>
+              <!-- Cancellation button -->
+              <VBtn class="mt-8 ms-2"  @click="cancelEvent(index)" color="error">
+                Cancel Booking
+              </VBtn>
+
             </VCardText>
           </VCol>
         </VRow>

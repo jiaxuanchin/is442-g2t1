@@ -25,8 +25,10 @@ const ticketDataLocal = ref(structuredClone(ticketData))
             <h6 class="text-h6">
               Event Name
             </h6>
+            <span>Location: Singapore indoor stadium</span><br>
+            <span>Start: 23 December 2023, 4pm</span><br>
+            <span>End: 23 December 2023, 8pm</span><br><br>
             <span>Event description</span><br>
-            <span>23 January 2023, Singapore indoor stadium, 6pm</span>
           </div>
         </VCardText>
       </VCard>
@@ -38,7 +40,8 @@ const ticketDataLocal = ref(structuredClone(ticketData))
         <VCardText class="d-flex flex-column gap-y-8">
 
           <div>
-            
+            <span>Sales Start: 27 December 2023, 12am </span><br>
+            <span>Sales End: 22 December 2023, 4pm </span><br>
           </div>
 
         </VCardText>

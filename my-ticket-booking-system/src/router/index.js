@@ -21,6 +21,10 @@ const router = createRouter({
           component: () => import('../pages/account-settings.vue'),
         },
         {
+          path: 'my-wallet',
+          component: () => import('../views/pages/account-settings/AccountSettingsWallet.vue'),
+        },
+        {
           path: 'my-bookings',
           component: () => import('../pages/my-bookings.vue'),
         },

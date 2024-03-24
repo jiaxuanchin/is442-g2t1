@@ -1,5 +1,8 @@
 <script setup>
 import avatar1 from '@images/avatars/avatar-1.png'
+
+let userRole = "Customer" // To Do: get this from db and modify
+
 </script>
 
 <template>
@@ -55,7 +58,7 @@ import avatar1 from '@images/avatars/avatar-1.png'
           <VDivider class="my-2" />
 
           <!-- 👉 Profile -->
-          <VListItem link>
+          <VListItem :to="'/account-settings'">
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -68,7 +71,7 @@ import avatar1 from '@images/avatars/avatar-1.png'
           </VListItem>
 
           <!-- 👉 Settings -->
-          <VListItem link>
+          <VListItem v-if="userRole !== 'Customer'" link>
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -77,11 +80,11 @@ import avatar1 from '@images/avatars/avatar-1.png'
               />
             </template>
 
-            <VListItemTitle>Settings</VListItemTitle>
+            <VListItemTitle>My Actions</VListItemTitle>
           </VListItem>
 
-          <!-- 👉 Pricing -->
-          <VListItem link>
+          <!-- 👉 Wallet -->
+          <VListItem :to="'/my-wallet'">
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -90,7 +93,7 @@ import avatar1 from '@images/avatars/avatar-1.png'
               />
             </template>
 
-            <VListItemTitle>Pricing</VListItemTitle>
+            <VListItemTitle>My Wallet</VListItemTitle>
           </VListItem>
 
           <!-- 👉 FAQ -->
