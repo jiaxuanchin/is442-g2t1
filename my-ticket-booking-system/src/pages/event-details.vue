@@ -98,9 +98,9 @@ const ticketDataLocal = ref(structuredClone(ticketData))
             Online & Mobile
           </h6>
           <ul style="padding-left: 20px;margin-bottom: 10px">
-            <li style="margin-bottom: 10px;">Book tickets online or via our mobile app up to 6 months in advance. </li>
-            <li style="margin-bottom: 10px;">Ticket sales will close 24 hours before the event starts.</li>
-            <li style="margin-bottom: 10px;">Sign up for an account to easily book tickets for any event you're interested in.</li>
+            <li>Book tickets online or via our mobile app up to 6 months in advance. </li>
+            <li>Ticket sales will close 24 hours before the event starts.</li>
+            <li>Sign up for an account to easily book tickets for any event you're interested in.</li>
           </ul>
         </div>
 
@@ -111,9 +111,9 @@ const ticketDataLocal = ref(structuredClone(ticketData))
             Onsite
           </h6>
           <ul style="padding-left: 20px;margin-bottom: 10px">
-            <li style="margin-bottom: 10px;">Visit our ticketing office to purchase tickets</li>
-            <li style="margin-bottom: 10px;">Opening hours: Monday to Sunday, 9 am to 11 pm.</li>
-            <li style="margin-bottom: 10px;">Customers can purchase tickets up to 24 hours before the show, subject to availability.</li>
+            <li>Visit our ticketing office to purchase tickets</li>
+            <li>Opening hours: Monday to Sunday, 9 am to 11 pm.</li>
+            <li>Customers can purchase tickets up to 24 hours before the show, subject to availability.</li>
           </ul>
         </div>
 

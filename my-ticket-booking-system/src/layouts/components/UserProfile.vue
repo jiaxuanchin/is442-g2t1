@@ -53,7 +53,7 @@ let userRole = "Customer" // To Do: get this from db and modify
             <VListItemTitle class="font-weight-semibold">
               John Doe
             </VListItemTitle>
-            <VListItemSubtitle>Admin</VListItemSubtitle>
+            <VListItemSubtitle>{{userRole}}</VListItemSubtitle>
           </VListItem>
           <VDivider class="my-2" />
 
