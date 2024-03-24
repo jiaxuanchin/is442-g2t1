@@ -1,8 +1,6 @@
 <script setup>
 import { useTheme } from 'vuetify'
 import VerticalNavSectionTitle from '@/@layouts/components/VerticalNavSectionTitle.vue'
-import upgradeBannerDark from '@images/pro/upgrade-banner-dark.png'
-import upgradeBannerLight from '@images/pro/upgrade-banner-light.png'
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
 
@@ -49,19 +47,6 @@ const upgradeBanner = computed(() => {
 
         <VSpacer />
 
-        <IconBtn
-          class="me-2"
-          href="https://github.com/themeselection/sneat-vuetify-vuejs-admin-template-free"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <VIcon icon="bxl-github" />
-        </IconBtn>
-
-        <IconBtn class="me-2">
-          <VIcon icon="bx-bell" />
-        </IconBtn>
-
         <NavbarThemeSwitcher class="me-2" />
 
         <UserProfile />
@@ -97,6 +82,35 @@ const upgradeBanner = computed(() => {
           to: '/my-bookings',
         }"
       />
+      <VerticalNavLink
+        :item="{
+          title: 'Ticketing Officer',
+          icon: 'mdi-account-cog-outline',
+          to: '/ticketing-officer',
+        }"
+      />
+      <VerticalNavLink
+        :item="{
+          title: 'Sales Statistics',
+          icon: 'mdi-account-cog-outline',
+          to: '/sales-statistics',
+        }"
+      />
+      <VerticalNavLink
+        :item="{
+          title: 'Add Ticketing Officer',
+          icon: 'mdi-account-cog-outline',
+          to: '/add-ticketing-officer',
+        }"
+      />
+      <VerticalNavLink
+        :item="{
+          title: 'Event Management',
+          icon: 'mdi-account-cog-outline',
+          to: '/event-management',
+        }"
+      />
+    
 
       <!-- 👉 Pages -->
       <VerticalNavSectionTitle
@@ -167,24 +181,8 @@ const upgradeBanner = computed(() => {
           to: '/form-layouts',
         }"
       />
-    </template>
-
-    <template #after-vertical-nav-items>
-      <!-- 👉 illustration -->
-      <a
-        href="https://themeselection.com/item/sneat-vuetify-vuejs-admin-template"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="margin-left: 7px;"
-      >
-        <img
-          :src="upgradeBanner"
-          alt="upgrade-banner"
-          transition="scale-transition"
-          class="upgrade-banner mx-auto"
-          style="max-width: 230px;"
-        >
-      </a>
+      
+      
     </template>
 
     <!-- 👉 Pages -->

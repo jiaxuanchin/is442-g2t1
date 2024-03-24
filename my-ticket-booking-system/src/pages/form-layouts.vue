@@ -14,6 +14,7 @@ import DemoFormLayoutVerticalFormWithIcons from '@/views/pages/form-layouts/Demo
         md="6"
       >
         <!-- 👉 Horizontal Form -->
+  
         <VCard title="Horizontal Form">
           <VCardText>
             <DemoFormLayoutHorizontalForm />
