@@ -4,9 +4,10 @@ import pages1 from '@images/pages/1.png'
 const isCardDetailsVisible = ref(false)
 
 // Define a list of card information
+
 const cardList = [
   {
-    title: 'Musical',
+    title: 'Cat',
     eventId : "2",
     description: 'Disney is coming to town',
     date: '2023-09-15',

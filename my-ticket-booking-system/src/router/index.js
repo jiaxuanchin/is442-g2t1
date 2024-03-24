@@ -53,7 +53,43 @@ const router = createRouter({
           path: '/event-details/:eventId',
           component: () => import('../pages/event-details.vue'),
           props: true
-        }
+        },
+        {
+          path: 'ticketing-verification',
+          component: () => import('../pages/ticketing-verification.vue'),
+          props: true
+        },
+        {
+          path: 'ticketing-officer',
+          component: () => import('../pages/ticketing-officer.vue'),
+          props: true
+        },
+        {
+          path: 'sales-statistics',
+          component: () => import('../pages/sales-statistics.vue'),
+          props: true
+        },
+        {
+          path: 'add-ticketing-officer',
+          component: () => import('../pages/add-ticketing-officer.vue'),
+          props: true
+        },
+        {
+          path: 'event-management',
+          component: () => import('../pages/event-management.vue'),
+          props: true
+        },
+        {
+          path: '/event-details-event-manager/:eventId',
+          component: () => import('../pages/event-details-event-manager.vue'),
+          props: true
+        },
+        {
+          path: '/edit-event/:eventId',
+          component: () => import('../pages/edit-event.vue'),
+          props: true
+        },
+        
       ],
     },
     {
