@@ -47,9 +47,9 @@ CREATE TABLE IF NOT EXISTS Users (
   user_lname VARCHAR(50) NOT NULL,
   email VARCHAR(255) NOT NULL,
 --   salt VARCHAR(50) NOT NULL,
-  password VARCHAR(255) NOT NULL,
+ `password` VARCHAR(255) NOT NULL,
   user_type VARCHAR(50) NOT NULL,
-  balance DOUBLE NOT NULL DEFAULT 0.00,
+  balance DOUBLE PRECISION DEFAULT 1000,
   FOREIGN KEY (role_id) REFERENCES Role(role_id)
 );
 
@@ -126,10 +126,10 @@ INSERT INTO Role (role_id, role_name) VALUES
 (2,"event_manager"),
 (3,"ticketing_officer");
 
-INSERT INTO Users (user_id, role_id, user_fname, user_lname, email, password, user_type, balance) VALUES
-(1, 1, 'Eunice','Ong','euniceong.2021@scis.smu.edu.sg', 'password', 'customer', 1000.00),
-(2, 2, 'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', 'password', 'event_manager', 0.00),
-(3, 3, 'Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', 'password', 'ticketing_officer', 0.00);
+INSERT INTO Users (user_id, role_id, user_fname,user_lname,email, `password`, user_type, balance) VALUES
+(1, 1, 'Eunice','Ong','euniceong.2021@scis.smu.edu.sg', '$2a$10$9iPJ9/xQEIJlHzFHcvUEX.3Z8Trj9G/.M4.AKdjsr1zW83iFgpThC', 'customer', 1000),
+(2, 2, 'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', '$2a$10$SQ67EdPDW/yWSbFr065A1O131e1T0iKm6plIclQ8Xf6DhZjCCV80S', 'event_manager', NULL),
+(3, 3, 'Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', '$2a$10$5SAphSHTMrFBiO1sXr3Y3u3ybrqHXDopn2g1jl8u2X.unz2vUkfwu', 'ticketing_officer', NULL);
 
 
 INSERT INTO Event (event_id, event_title, event_date, event_description, event_location, event_start_time, event_end_time, filled, capacity, ticket_price, cancel_fee) VALUES
