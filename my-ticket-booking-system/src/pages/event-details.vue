@@ -5,43 +5,11 @@ const {params} = useRoute()
 const eventId = params.eventId
 
 const ticketData = {
-  ticketType : "VIP",
   quantity: 1,
 }
 
 const refInputEl = ref()
 const ticketDataLocal = ref(structuredClone(ticketData))
-
-const tickets = [
-  {
-    type: 'VIP',
-    price: 308
-  },
-  {
-    type: 'CAT 1',
-    price: 128
-  },
-  {
-    type: 'CAT 2',
-    price: 108
-  },
-  {
-    type: 'CAT 3',
-    price: 98
-  },
-  {
-    type: 'CAT 4',
-    price: 88
-  },
-]
-
-const ticketType = [
-  "VIP",
-  "CAT 1",
-  "CAT 2",
-  "CAT 3",
-  "CAT 4"
-]
 
 </script>
 
@@ -60,81 +28,96 @@ const ticketType = [
             <span>Event description</span><br>
             <span>23 January 2023, Singapore indoor stadium, 6pm</span>
           </div>
-
-          <VDivider />
-
-          <div>
-            <h6 class="text-h6">
-              About Artist (tbc)
-            </h6>
-            <span>description about artist</span>
-          </div>
-
-
         </VCardText>
       </VCard>
     </VCol>
 
     <!-- Start of the ticketing details -->
     <VCol cols="12">
-      <VCard title="Ticket Pricing">
+      <VCard title="Ticket Sales Information">
         <VCardText class="d-flex flex-column gap-y-8">
 
           <div>
-            <h6 class="text-h6">
-              Ticket Category
-            </h6>
-            <VTable>
-              <thead>
-                <tr>
-                  <th class="text-uppercase">
-                    Ticket Type
-                  </th>
-                  <th>
-                    Ticket Price ($)
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr
-                  v-for="item in tickets"
-                  :key="item.tickets"
-                >
-                  <td>
-                    {{ item.type }}
-                  </td>
-                  <td class="text-center">
-                    {{ item.price }}
-                  </td>
-                </tr>
-              </tbody>
-            </VTable><br>
-            <h6 class="text-h6">
-              VIP PACKAGE includes:
-            </h6>
-
-            <ul style="padding-left: 30px; margin-left: 0;">
-              <li>Includes one (1) Cat 1 ($128) ticket</li>
-              <li>Meet Amber Liu for an individual photo opportunity by a professional photographer</li>
-              <li>Pre-show soundcheck party with Amber Liu</li>
-              <li>One (1) signed poster by Amber Liu</li>
-            </ul>
-
+            
           </div>
-          <VDivider />
-          <div>
-            <h6 class="text-h6">
-              Note:
-            </h6>
-            <ul style="padding-left: 30px; margin-left: 0;">
-              <li>Limited to only 5 tickets per transaction.</li>
-            </ul>
-          </div>
+
         </VCardText>
       </VCard>
     </VCol>
   
+  <!-- The Policies: Exchange policies and admission policies -->
+  <VCol cols="12">
+    <!-- Start of event details -->
+    <VCard title="Policies">
+      <VCardText class="d-flex flex-column gap-y-8">
+
+        <div>
+          <h6 class="text-h6">
+            Exchange & Refund Policies
+          </h6>
+          <ul style="padding-left: 20px">
+            <li>The Organiser/Venue Owner reserves the right without refund or compensation to refuse admission/evict any person(s) whose conduct is disorderly or inappropriate or who poses a threat to security, or to the enjoyment of the Event by others.</li>
+            <li>Ticket holders assume all risk of injury and all responsibility for property loss, destruction or theft and release the promoters, performers, sponsors, ticket outlets, venues, and their employees from any liability thereafter.</li>
+            <li>The resale of ticket(s) at the same or any price in excess of the initial purchase price is prohibited.</li>
+            <li>There is no refund, exchange, upgrade, or cancellation once ticket(s) are sold.</li>
+            <li>We would like to caution members of the public against purchasing tickets from unauthorized sellers or 3rd party websites. By purchasing tickets through these non-authorized points of sale, buyers take on the risk that the validity of the tickets cannot be guaranteed, with no refunds possible.</li>
+          </ul>
+        </div>
+
+        <VDivider />
+
+       <div>
+          <h6 class="text-h6">
+            Admission Policies
+          </h6>
+          <ul style="padding-left: 20px;">
+            <li>Admission to show/venue by full ticket only. Printed/electronic tickets must be produced for admission.</li>
+            <li>There will be no admission for infants in arms and children below 3 years old.</li>
+            <li>Individuals aged 3 years old and above will be required to purchase a ticket for admission.</li>
+            <li>No professional photography, videography of any kind is allowed.</li>
+            <li>No iPads, tablets and laptops are allowed.</li>
+          </ul>
+        </div>
+
+
+      </VCardText>
+    </VCard>
+  </VCol>
+
+  <!-- Ways to buy ticket -->
+  <VCol cols="12">
+    <!-- Start of event details -->
+    <VCard title="Ways to buy ticket">
+      <VCardText class="d-flex flex-column gap-y-8">
+
+        <div>
+          <h6 class="text-h6">
+            Online & Mobile
+          </h6>
+          <ul style="padding-left: 20px;margin-bottom: 10px">
+            <li style="margin-bottom: 10px;">Book tickets online or via our mobile app up to 6 months in advance. </li>
+            <li style="margin-bottom: 10px;">Ticket sales will close 24 hours before the event starts.</li>
+            <li style="margin-bottom: 10px;">Sign up for an account to easily book tickets for any event you're interested in.</li>
+          </ul>
+        </div>
+
+        <VDivider />
+
+        <div>
+          <h6 class="text-h6">
+            Onsite
+          </h6>
+          <ul style="padding-left: 20px;margin-bottom: 10px">
+            <li style="margin-bottom: 10px;">Visit our ticketing office to purchase tickets</li>
+            <li style="margin-bottom: 10px;">Opening hours: Monday to Sunday, 9 am to 11 pm.</li>
+            <li style="margin-bottom: 10px;">Customers can purchase tickets up to 24 hours before the show, subject to availability.</li>
+          </ul>
+        </div>
+
+
+      </VCardText>
+    </VCard>
+  </VCol>
 
   <!-- The form for quantity of tickets required -->
     <VCol cols="12">
@@ -142,22 +125,11 @@ const ticketType = [
         <VCardText>
           <VForm class="mt-6">
 
-            <!-- 👉 Asking for the ticket type -->
             <VRow>
-              <VCol md="6" cols="12">
-                  <VSelect
-                  v-model="ticketDataLocal.ticketType"
-                  label="Ticket Type"
-                  placeholder="Select Ticket Type"
-                  :items="ticketType"
-                  :menu-props="{ maxHeight: 200 }"
-                  />
-              </VCol>
 
               <!-- 👉 Quantity of tickets -->
               <VCol
                 cols="12"
-                md="6"
               >
                 <VTextField
                   v-model="ticketDataLocal.quantity"
@@ -165,7 +137,17 @@ const ticketType = [
                   placeholder="1"
                 />
               </VCol>
+
+              <!-- Note -->
+              <div style="padding-left: 20px;margin-bottom: 10px;margin-top: 10px">
+                <span>Note:</span>
+                <ul style="padding-left: 30px; margin-left: 0;">
+                  <li>Limited to only 5 tickets per transaction.</li>
+                </ul>
+              </div>
             </VRow>
+
+            
 
             <!-- 👉 Submit the forms -->
             <VRow>
@@ -177,6 +159,8 @@ const ticketType = [
                 </router-link>
               </VCol>
             </VRow>
+
+            
 
           </VForm>  
         </VCardText>

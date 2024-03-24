@@ -7,12 +7,19 @@ const accountData = {
   lastName: 'Doe',
   email: 'johnDoe@example.com',
   phone: '+(65) 9534-3543',
-  currency: 'USD',
 }
 
 const refInputEl = ref()
 const accountDataLocal = ref(structuredClone(accountData))
 const isAccountDeactivated = ref(false)
+
+// To deactivate the account
+import { ref } from 'vue';
+
+// Define a method to deactivate the account
+const deactivateAccount = () => {
+  // To do: Can perform account deactivation logic here
+};
 
 const resetForm = () => {
   accountDataLocal.value = structuredClone(accountData)
@@ -35,20 +42,6 @@ const resetAvatar = () => {
   accountDataLocal.value.avatarImg = accountData.avatarImg
 }
 
-const currencies = [
-  'USD',
-  'EUR',
-  'GBP',
-  'AUD',
-  'BRL',
-  'CAD',
-  'CNY',
-  'CZK',
-  'DKK',
-  'HKD',
-  'HUF',
-  'INR',
-]
 </script>
 
 <template>
@@ -162,20 +155,6 @@ const currencies = [
                 />
               </VCol>
 
-              <!-- 👉 Currency -->
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <VSelect
-                  v-model="accountDataLocal.currency"
-                  label="Currency"
-                  placeholder="Select Currency"
-                  :items="currencies"
-                  :menu-props="{ maxHeight: 200 }"
-                />
-              </VCol>
-
               <!-- 👉 Form Actions -->
               <VCol
                 cols="12"
@@ -213,6 +192,7 @@ const currencies = [
             :disabled="!isAccountDeactivated"
             color="error"
             class="mt-3"
+            @click="deactivateAccount"
           >
             Deactivate Account
           </VBtn>
