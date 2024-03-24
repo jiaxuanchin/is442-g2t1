@@ -33,3 +33,5 @@ replay_pid*
 node_modules
 package-lock.json
 yarn.lock
+.DS_Store
+/node_modules/*
