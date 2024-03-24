@@ -12,6 +12,7 @@ const clientSecret = ref("");
 const currentRoute = computed(() => {
   return useRoute().query;
 });
+
 clientSecret.value = currentRoute.value?.payment_intent_client_secret;
 // get payment intent client secret from query parameters
 
@@ -23,6 +24,7 @@ onMounted(async () => {
   const { publishableKey } = await fetch("/api/payments//config").then((res) =>
     res.json()
   );
+
   stripe = await loadStripe(publishableKey);
 
   // retrieve payment intent details using client secret

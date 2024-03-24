@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 
 import io.github.cdimascio.dotenv.*;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://127.0.0.1:5173")
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
