@@ -21,17 +21,22 @@ public class Customer extends UserEntity{
         this.balance = 1000;
     }
 
-    // To reduce balance
+    // Method to reduce balance
     public void reduceBalance(double amount) {
-        if (amount >= 0 && amount <= balance) {
-            balance -= amount;
-        } else {
-            throw new IllegalArgumentException("Invalid amount or insufficient balance");
+        if (amount < 0) {
+            throw new IllegalArgumentException("Invalid amount: " + amount);
         }
+        if (amount > balance) {
+            throw new IllegalArgumentException("Insufficient balance: " + balance);
+        }
+        balance -= amount;
     }
 
-    // To increase balance
+    // Method to increase balance
     public void increaseBalance(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Invalid amount: " + amount);
+        }
         balance += amount;
     }
 }

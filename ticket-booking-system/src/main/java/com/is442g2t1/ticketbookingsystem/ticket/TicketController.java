@@ -46,9 +46,9 @@ public class TicketController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity createTicket(@RequestBody Booking booking) {
-        // Create a ticket by sending Booking instance
-        ResponseEntity result = this.ticketService.createTicket(booking);
+    public ResponseEntity createTicket(@RequestBody Ticket ticket) {
+        // Create a ticket by sending Ticket instance
+        ResponseEntity result = this.ticketService.createTicket(ticket);
         return result;
     }
 

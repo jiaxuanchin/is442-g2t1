@@ -1,13 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.booking;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,6 +9,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.is442g2t1.ticketbookingsystem.ticket.Ticket;
+import com.is442g2t1.ticketbookingsystem.event.Event;
+import com.is442g2t1.ticketbookingsystem.User.UserEntity;
 
 import io.micrometer.common.lang.NonNull;
 
@@ -24,7 +19,10 @@ import io.micrometer.common.lang.NonNull;
 @ToString
 @Getter
 @Setter
-@Table(name = "Booking")
+@Table(
+    name = "Booking",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"event_id", "user_id"})
+    )
 public class Booking {
 
     @Id

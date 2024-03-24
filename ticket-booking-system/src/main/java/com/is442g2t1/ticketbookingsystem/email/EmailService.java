@@ -5,13 +5,20 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import jakarta.mail.MessagingException;
+
 @Service
 public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendEmail(String to, String subject, String body) {
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    public void sendEmail(String to, String subject, String body) throws MessagingException {
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("g2t1.is442@gmail.com");
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);
