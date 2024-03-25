@@ -46,9 +46,9 @@ const ticketType = [
 </script>
 
 <template>
+
   <VRow>
     <VCol cols="12">
-
       <!-- Start of event details -->
       <VCard title="Event Details">
         <VCardText class="d-flex flex-column gap-y-8">
@@ -139,9 +139,9 @@ const ticketType = [
   <!-- The for the purchase ticket button -->
   <VRow>
     <VCol cols="12">
-      <router-link :to="'/other-page/' + eventId" style="display: flex; justify-content: flex-end;">
+      <router-link :to="'/edit-event/' + eventId" style="display: flex; justify-content: flex-end;">
       <VBtn>
-        Save Event
+        Edit event
       </VBtn>
     </router-link>
     </VCol>
