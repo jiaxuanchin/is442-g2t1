@@ -22,56 +22,56 @@ const randomImage = () => {
 const cardList = [
   {
     title: 'Cat',
-    eventId : "2",
+    eventId: "2",
     description: 'Disney is coming to town',
     date: '2023-09-15',
     time: '18:00 - 21:00'
   },
   {
     title: 'Musical',
-    eventId : "1",
+    eventId: "1",
     description: 'Disney is coming to town',
     date: '2023-09-15',
     time: '18:00 - 21:00'
   },
   {
     title: 'Musical',
-    eventId : "3",
+    eventId: "3",
     description: 'Disney is coming to town',
     date: '2023-09-15',
     time: '18:00 - 21:00'
   },
   {
     title: 'Musical',
-    eventId : "4",
+    eventId: "4",
     description: 'Disney is coming to town',
     date: '2023-09-15',
     time: '18:00 - 21:00'
   },
   {
     title: 'Musical',
-    eventId : "2",
+    eventId: "2",
     description: 'Disney is coming to town',
     date: '2023-09-15',
     time: '18:00 - 21:00'
   },
   {
     title: 'Musical',
-    eventId : "3",
+    eventId: "3",
     description: 'Disney is coming to town',
     date: '2023-09-15',
     time: '18:00 - 21:00'
   },
   {
     title: 'Musical',
-    eventId : "4",
+    eventId: "4",
     description: 'Disney is coming to town',
     date: '2023-09-15',
     time: '18:00 - 21:00'
   },
   {
     title: 'Musical',
-    eventId : "2",
+    eventId: "2",
     description: 'Disney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to town',
     date: '2023-09-15',
     time: '18:00 - 21:00'
@@ -86,43 +86,40 @@ const truncateDescription = (description) => {
 </script>
 
 <template>
-  <VRow>      
-      <!-- Use v-for to generate cards -->
-      <VCol
-        v-for="(card, index) in cardList"
-        :key="index"
-        cols="12"
-        sm="4"
-        md="3"
-      >
-        <VCard>
-          <VImg :src="randomImage()" cover />
+  <VRow>
+    <!-- Use v-for to generate cards -->
+    <VCol v-for="(card, index) in cardList" :key="index" cols="12" sm="4" md="3">
+      <VCard>
+        <VImg :src="randomImage()" cover />
 
-          <VCardItem>
-            <VCardTitle>{{ card.title }}</VCardTitle>
-          </VCardItem>
+        <VCardItem>
+          <VCardTitle>{{ card.title }}</VCardTitle>
+        </VCardItem>
 
-          <VCardText class="card-description" style="font-size: 1.1rem;">
-            {{ card.date }} ({{ card.time }}) <br><br>
-            {{ truncateDescription(card.description) }} <br><br>
-            <div style="text-align: right;">
-              <VBtn :to="'/event-details/' + card.eventId">
-                  View Details
-              </VBtn>
-            </div>
-          </VCardText>
-        </VCard>
-      </VCol>
-      <!-- End of card generation -->
-    </VRow>
+        <VCardText class="card-description" style="font-size: 1.1rem;">
+          {{ card.date }} ({{ card.time }}) <br><br>
+          {{ truncateDescription(card.description) }} <br><br>
+          <div style="text-align: right;">
+            <VBtn :to="'/event-details/' + card.eventId">
+              View Details
+            </VBtn>
+          </div>
+        </VCardText>
+      </VCard>
+    </VCol>
+    <!-- End of card generation -->
+  </VRow>
 </template>
 
 <style lang="scss" scoped>
 .card-description {
-  max-width: 100%; /* Limit the maximum width of the description */
-  overflow: hidden; /* Hide overflowing content */
-  text-overflow: ellipsis; /* Display ellipsis (...) for truncated text */
-  white-space: nowrap; /* Prevent wrapping of text to a new line */
+  max-width: 100%;
+  /* Limit the maximum width of the description */
+  overflow: hidden;
+  /* Hide overflowing content */
+  text-overflow: ellipsis;
+  /* Display ellipsis (...) for truncated text */
+  white-space: nowrap;
+  /* Prevent wrapping of text to a new line */
 }
-
 </style>

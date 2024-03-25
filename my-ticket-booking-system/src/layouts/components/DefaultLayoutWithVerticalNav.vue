@@ -84,7 +84,7 @@ const upgradeBanner = computed(() => {
       />
       <VerticalNavLink
         :item="{
-          title: 'Ticketing Officer',
+          title: 'Ticket Management',
           icon: 'mdi-account-cog-outline',
           to: '/ticketing-officer',
         }"
@@ -98,7 +98,7 @@ const upgradeBanner = computed(() => {
       />
       <VerticalNavLink
         :item="{
-          title: 'Add Ticketing Officer',
+          title: 'User Management',
           icon: 'mdi-account-cog-outline',
           to: '/add-ticketing-officer',
         }"
