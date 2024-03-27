@@ -35,4 +35,11 @@ public class UserEntityController {
         return userEntityService.updateUserProfile(userId, user_fname, user_lname, email, password);
     }
 
+    // Retrieve user details (for password validation of e-wallet) using email
+    @GetMapping("/get/{email}")
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
+        return userEntityService.getUserByEmail(email);
+
+    }
+
 }

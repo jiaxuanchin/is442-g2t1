@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.is442g2t1.ticketbookingsystem.security.jwt.JWTGenerator;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -19,9 +21,12 @@ public class BookingController {
 
     private BookingService bookingService;
 
+    private JWTGenerator jwtGenerator;
+
     @Autowired
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, JWTGenerator jwtGenerator) {
         this.bookingService = bookingService;
+        this.jwtGenerator = jwtGenerator;
     }
 
     @GetMapping("/all")
@@ -54,10 +59,12 @@ public class BookingController {
     }
 
     @PostMapping("/new")
-    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
+    // @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity createBooking(HttpServletRequest request, @RequestBody Booking booking) {
         
-        ResponseEntity result = this.bookingService.createBooking(request, booking);
+        String token = jwtGenerator.extractJwtFromRequest(request);
+
+        ResponseEntity result = this.bookingService.createBooking(token, booking);
         return result;
     }
 

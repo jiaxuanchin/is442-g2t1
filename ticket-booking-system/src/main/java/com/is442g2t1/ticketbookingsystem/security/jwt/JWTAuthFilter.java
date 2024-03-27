@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.is442g2t1.ticketbookingsystem.security.service.UserDetailsServiceImpl;
+import com.is442g2t1.ticketbookingsystem.security.token.TokenRepository;
 
 import org.springframework.lang.NonNull;
 
@@ -31,8 +32,10 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
+    private TokenRepository tokenRepository;
+
     // Logic of the filtering: HTTP requests, extracts JWT tokens, validates them, and sets the authentication token in the security context if the token is valid.
-    
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
@@ -44,19 +47,28 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             // -----------------------------------------------------------------------
 
             if(token != null && tokenGenerator.validateToken(token)) {
+
                 String email = tokenGenerator.getEmailFromJWT(token);
     
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                UsernamePasswordAuthenticationToken authenticationToken = 
+
+                boolean isTokenValid = tokenRepository.findByToken(token)
+                    .map(t -> !t.isExpired() && !t.isRevoked())
+                    .orElse(false);
+                
+                if (isTokenValid) {
+                    UsernamePasswordAuthenticationToken authenticationToken = 
                     new UsernamePasswordAuthenticationToken(
                         userDetails, 
                         null,
                         userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-                System.out.println("[CHECKPOINT JWTAuthFilter] User authenticated: " + SecurityContextHolder.getContext().getAuthentication());
+                    System.out.println("[CHECKPOINT JWTAuthFilter] User authenticated: " + SecurityContextHolder.getContext().getAuthentication());
+
+                }
 
             } else {
                 System.out.println("Token is not valid");

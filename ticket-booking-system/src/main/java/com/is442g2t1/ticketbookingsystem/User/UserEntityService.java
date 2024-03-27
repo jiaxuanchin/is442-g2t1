@@ -1,5 +1,7 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +48,21 @@ public class UserEntityService {
         } catch (IllegalArgumentException e ){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + userId);
         } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
+    // Method to retrieve a user by email
+    public ResponseEntity<?> getUserByEmail(String email) {
+        try {
+            Optional<UserEntity> userOptional = userRepository.findByEmail(email);
+            if (userOptional == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+
+            UserEntity user = userOptional.get();
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }

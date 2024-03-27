@@ -4,6 +4,8 @@ import java.util.Date;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.security.Key;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,21 +25,20 @@ public class JWTGenerator {
   	}
 	
 	public String generateToken(Authentication authentication) {
-		// String email = authentication.getName(); //https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/core/Authentication.html
-	
+		
 		Date currentDate = new Date();
 		Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_Expiration_Ms);
 
 		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 		
 		String token = Jwts.builder()
-				.setSubject(userPrincipal.getEmail())
-				.claim("user_id", userPrincipal.getId())
-				.claim("role_id", userPrincipal.getRole())
-				.setIssuedAt(currentDate)
-				.setExpiration(expireDate)
-				.signWith(key(),SignatureAlgorithm.HS256)
-				.compact();
+			.setSubject(userPrincipal.getEmail())
+			.claim("user_id", userPrincipal.getId())
+			.claim("role_id", userPrincipal.getRole())
+			.setIssuedAt(currentDate)
+			.setExpiration(expireDate)
+			.signWith(key(),SignatureAlgorithm.HS256)
+			.compact();
 
 		return token;
 	}
@@ -51,11 +52,11 @@ public class JWTGenerator {
 		// return claims.getSubject(); // retrieve the subject claim, which represents the username associated with the token
 
 		String email = Jwts.parserBuilder()
-							.setSigningKey(key())
-							.build()
-							.parseClaimsJws(token)
-							.getBody()
-							.getSubject();
+			.setSigningKey(key())
+			.build()
+			.parseClaimsJws(token)
+			.getBody()
+			.getSubject();
 
 		// ----------------------------- CHECKPOINT -----------------------------
 		System.out.println("[CHECKPOINT JWTGenerator] Getting email from token: " + email);
@@ -91,4 +92,11 @@ public class JWTGenerator {
 		return false;
 	}
 
+	public String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // Remove "Bearer " prefix
+        }
+        return null;
+    }
 }

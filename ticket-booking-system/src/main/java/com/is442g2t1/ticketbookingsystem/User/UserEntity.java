@@ -1,7 +1,12 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
+import java.util.List;
+
+import com.is442g2t1.ticketbookingsystem.security.token.Token;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -43,4 +48,7 @@ public class UserEntity {
         this.email = email;
         this.password = password;
     }
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Token> tokens;
 }

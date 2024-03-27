@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     // customised
-    public Optional<UserEntity> findByEmail(String email); // not sure if it is cae sensitive
+    public Optional<UserEntity> findByEmail(String email); // not sure if it is case sensitive
     public Boolean existsByEmail(String email); 
 }

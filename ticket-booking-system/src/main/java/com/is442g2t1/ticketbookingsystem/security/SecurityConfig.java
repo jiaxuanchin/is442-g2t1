@@ -10,12 +10,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import com.is442g2t1.ticketbookingsystem.security.jwt.JWTAuthFilter;
 import com.is442g2t1.ticketbookingsystem.security.service.UserDetailsServiceImpl;
@@ -28,11 +29,13 @@ public class SecurityConfig {
     
     private JWTAuthEntryPoint authEntryPoint;
     private UserDetailsServiceImpl userDetailsService;
+    private LogoutHandler logoutHandler;
 
     @Autowired
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService, JWTAuthEntryPoint authEntryPoint) {
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService, JWTAuthEntryPoint authEntryPoint, LogoutHandler logoutHandler) {
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = authEntryPoint;
+        this.logoutHandler = logoutHandler;
 
     }
 
@@ -67,10 +70,16 @@ public class SecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth ->
-                    auth.requestMatchers("/api/auth/**").permitAll()
-                        // .requestMatchers("/event_manager/**").hasRole("event_manager") // to change url
-                        .anyRequest().authenticated()
-                    
+                auth.requestMatchers("/api/auth/**").permitAll()
+                    // .requestMatchers("/event_manager/**").hasRole("event_manager") // to change url
+                    .anyRequest().authenticated()       
+            )
+            .logout((logout) -> 
+                logout.logoutUrl("/api/auth/logout")
+                    .addLogoutHandler(logoutHandler)
+                    .logoutSuccessHandler(
+                        (request, response, authentication) -> SecurityContextHolder.clearContext()
+                    )
             );
     
         http.authenticationProvider(authenticationProvider());

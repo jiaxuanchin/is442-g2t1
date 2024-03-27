@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @Service
 public class BookingService {
 
@@ -70,12 +68,10 @@ public class BookingService {
         }
     } 
 
-    public ResponseEntity createBooking(HttpServletRequest request, Booking booking) {
+    public ResponseEntity createBooking(String token, Booking booking) {
         try {
             System.out.println("Create booking:" + booking);
             bookingRepository.save(booking);
-
-            String token = extractJwtFromRequest(request);
 
             ResponseEntity result = purchaseTicket(booking, token);
             // need to update event service? (TBD AFTER MERGE)
@@ -136,14 +132,6 @@ public class BookingService {
         } catch(Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
-    }
-
-    private String extractJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7); // Remove "Bearer " prefix
-        }
-        return null;
     }
 
 }
