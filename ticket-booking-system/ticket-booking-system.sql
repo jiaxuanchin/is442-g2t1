@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS Booking (
   booking_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- --------------------------------------------------------\
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `Ticket`
@@ -104,6 +104,25 @@ CREATE TABLE IF NOT EXISTS Ticket (
   booking_id INT NOT NULL,
   attendance BOOLEAN DEFAULT FALSE
 );
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Token`
+--
+
+DROP TABLE IF EXISTS Token;
+
+CREATE TABLE IF NOT EXISTS Token (
+  token_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  token VARCHAR(255) NOT NULL,
+  revoked BOOLEAN DEFAULT FALSE,
+  expired BOOLEAN DEFAULT FALSE,
+  user_id INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- --------------------------------------------------------
 
 -- --------------------------------------------------------
 -- Constraints for table `User_Preference`
@@ -160,3 +179,8 @@ INSERT INTO Ticket VALUES
 (00000010, 4, false),
 (00000011, 5, false),
 (00000012, 5, false);
+
+INSERT INTO Token VALUES
+(1, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJldW5pY2VvbmcuMjAyMUBzY2lzLnNtdS5lZHUuc2ciLCJ1c2VyX2lkIjoxLCJyb2xlX2lkIjp7ImlkIjoxLCJuYW1lIjoiY3VzdG9tZXIifSwiaWF0IjoxNzExNTEzMjE1LCJleHAiOjE3MTE1OTk2MTV9.zh6RdIoKNMzJa7_yZ-vZHllJI7gAceMpwr1sLacHNB4', true, true, 1),
+(2, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJldW5pY2VvbmcuMjAyMUBzY2lzLnNtdS5lZHUuc2ciLCJ1c2VyX2lkIjoxLCJyb2xlX2lkIjp7ImlkIjoxLCJuYW1lIjoiY3VzdG9tZXIifSwiaWF0IjoxNzExNTIxNjY3LCJleHAiOjE3MTE2MDgwNjd9.QnZTq9R4_4bypTP0G2_LlK_GIafSMjcqEL0Q-DCC2Fw', false, false, 1),
+(3, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqeGNoaW4uMjAyMUBzY2lzLnNtdS5lZHUuc2ciLCJ1c2VyX2lkIjo0LCJyb2xlX2lkIjp7ImlkIjoxLCJuYW1lIjoiY3VzdG9tZXIifSwiaWF0IjoxNzExMjkxNTg2LCJleHAiOjE3MTEzNzc5ODZ9.iKZjd2U59B-ZFG9KTl4c29m-wTUAtG7wjVl738Kh0NU', false, false, 4);
