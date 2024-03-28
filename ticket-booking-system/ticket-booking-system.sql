@@ -152,19 +152,15 @@ INSERT INTO Users (user_id, role_id, user_fname,user_lname,email, `password`, us
 
 
 INSERT INTO Event (event_id, event_title, event_date, event_description, event_location, event_start_time, event_end_time, filled, capacity, ticket_price, cancel_fee) VALUES
-(1, 'Musical', '2023-09-15', 'Disney is coming to town', 'The Capitol', '18:00', '21:00', 0, 2000, 220.00, 20.00),
-(2, 'Movie', '2024-01-22', 'Avengers 100', 'Golden Village (Plaza Singapura)', '14:45', '18:00', 0, 2000, 220.00, 20.00),
-(3, 'Seminar', '2023-12-15', 'How to make use of ChatGPT', 'Singapore Management University', '09:00', '13:00', 0, 40, 220.00, 20.00),
-(4, 'Concert', '2024-03-02', 'Disney is coming to town', 'National Stadium', '19:30', '23:00', 0, 25000, 220.00, 20.00),
-(5, 'Play', '2023-11-29', 'Romeo & Juliet', 'Esplanade', '19:00', '22:00', 0, 3000, 220.00, 20.00);
+(1, 'Musical', '2023-09-15', 'Disney is coming to town', 'The Capitol', '18:00', '21:00', 0, 2000, 150.00, 20.00),
+(2, 'Movie', '2024-01-22', 'Avengers 100', 'Golden Village (Plaza Singapura)', '14:45', '18:00', 0, 2000, 12.00, 20.00),
+(3, 'Seminar', '2023-12-15', 'How to make use of ChatGPT', 'Singapore Management University', '09:00', '13:00', 0, 40, 500.00, 20.00),
+(4, 'Concert', '2024-03-02', 'Disney is coming to town', 'National Stadium', '19:30', '23:00', 0, 25000, 150.00, 20.00),
+(5, 'Play', '2023-11-29', 'Romeo & Juliet', 'Esplanade', '19:00', '22:00', 0, 3000, 78.00, 20.00);
 
 INSERT INTO Booking VALUES
 (1,1,4,2, TIMESTAMP('2023-09-13 10:04:30')),
-(2,1,3,1, TIMESTAMP('2024-01-02 11:27:33')),
-(3,1,2,3, TIMESTAMP('2023-10-13 14:09:56')),
-(4,1,1,4, TIMESTAMP('2024-02-01 18:43:02')),
-(5,1,5,2, TIMESTAMP('2023-09-30 23:59:04'));
-
+(2,1,3,1, TIMESTAMP('2024-01-02 11:27:33'));
 
 INSERT INTO Ticket VALUES
 (00000001, 1, false),

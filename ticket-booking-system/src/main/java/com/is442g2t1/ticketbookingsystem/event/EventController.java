@@ -48,8 +48,8 @@ public class EventController {
         return eventService.searchByLocation(eventLoc);
     }
 
-    @DeleteMapping("/deleteById/{eventId}")
-    public ResponseEntity<?> deleteById(@PathVariable Integer eventId) {
-        return eventService.deleteById(eventId);
+    @DeleteMapping("/cancelEvent/{eventId}")
+    public ResponseEntity<?> cancelEvent(@PathVariable Integer eventId) {
+        return eventService.cancelEvent(eventId);
     }
 }

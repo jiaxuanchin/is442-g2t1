@@ -3,11 +3,13 @@ package com.is442g2t1.ticketbookingsystem.User;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Data;
+import lombok.EqualsAndHashCode; //Eunice
 
 
 @Entity
 @DiscriminatorValue("event_manager")
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class EventManager extends UserEntity {
     
     public EventManager() {

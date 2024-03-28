@@ -66,10 +66,8 @@ public class TicketService {
         }
     }
 
-    public ResponseEntity createTicket(Booking booking) {
+    public ResponseEntity createTicket(Ticket ticket) {
         try {
-            Ticket ticket = new Ticket(booking);
-
             Ticket createdTicket = ticketRepository.save(ticket);
             System.out.println("CREATED TICKET: " + createdTicket.toString());
 
