@@ -680,10 +680,10 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
-"@stripe/stripe-js@^3.0.10":
-  version "3.0.10"
-  resolved "https://registry.npmjs.org/@stripe/stripe-js/-/stripe-js-3.0.10.tgz"
-  integrity sha512-CFRNha+aPXR8GrqJss2TbK1j4aSGZXQY8gx0hvaYiSp+dU7EK/Zs5uwFTSAgV+t8H4+jcZ/iBGajAvoMYOwy+A==
+"@stripe/stripe-js@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/@stripe/stripe-js/-/stripe-js-3.1.0.tgz"
+  integrity sha512-7+ciE35i8NZ6l4FiO1qFkBoZ64ul6B2ZhBVyygB+e/2EZa2WLUyjoxrP53SagnUW7+/q25nDyDLzQq5F0ebOEw==
 
 "@trysound/sax@0.2.0":
   version "0.2.0"

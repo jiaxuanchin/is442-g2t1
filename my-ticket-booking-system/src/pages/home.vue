@@ -72,7 +72,7 @@ const cardList = [
   {
     title: 'Musical',
     eventId: "2",
-    description: 'Disney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to town',
+    description: 'Disney is coming to town',
     date: '2023-09-15',
     time: '18:00 - 21:00'
   },

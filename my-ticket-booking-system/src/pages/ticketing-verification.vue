@@ -2,7 +2,7 @@
   <div class="verify-ticket">
     <h3>Verify Ticket</h3>
     <form @submit.prevent="verifyTicket">
-      <input type="text" v-model="ticketId" placeholder="Enter Ticket ID" required>
+      <input type="text" v-model="ticketIdInput" placeholder="Enter Ticket ID" required>
       <button type="submit">Verify</button>
     </form>
     <div v-if="verificationResult !== null">
@@ -23,16 +23,17 @@ export default {
   },
   methods: {
     async verifyTicket() {
-      try {
-        const response = await axios.post('http://your-backend-api/verify-ticket', {
-          ticketId: this.ticketId
-        });
-        this.verificationResult = response.data.status; // Assuming the API returns { status: 'Valid' or 'Invalid' }
-      } catch (error) {
-        console.error('Error verifying ticket:', error);
-        this.verificationResult = 'Error during verification process';
-      }
-    },
+        try {
+            const ticketId = this.ticketIdInput.replace(/^0+/, '');
+            const response = await axios.get(`http://localhost:8080/ticket/${ticketId}`);
+            // Handle the response
+            console.log(response.data);
+            this.verificationResult = response.data.status; // Assuming the API returns { status: 'Valid' or 'Invalid' }
+        } catch (error) {
+            console.error('Error verifying ticket:', error);
+            this.verificationResult = 'Error during verification process';
+        }
+    }
   },
 };
 </script>
