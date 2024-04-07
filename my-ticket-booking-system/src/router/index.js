@@ -24,12 +24,13 @@ const router = createRouter({
           component: () => import("../pages/account-settings.vue"),
         },
         {
-          path: 'my-wallet',
-          component: () => import('../views/pages/account-settings/AccountSettingsWallet.vue'),
+          path: "my-wallet",
+          component: () =>
+            import("../views/pages/account-settings/AccountSettingsWallet.vue"),
         },
         {
-          path: 'my-bookings',
-          component: () => import('../pages/my-bookings.vue'),
+          path: "my-bookings",
+          component: () => import("../pages/my-bookings.vue"),
         },
         {
           path: "typography",
@@ -57,46 +58,45 @@ const router = createRouter({
           props: true,
         },
         {
-          path: '/event-details/:eventId',
-          component: () => import('../pages/event-details.vue'),
-          props: true
+          path: "/event-details/:eventId",
+          component: () => import("../pages/event-details.vue"),
+          props: true,
         },
         {
-          path: 'ticketing-verification',
-          component: () => import('../pages/ticketing-verification.vue'),
-          props: true
+          path: "ticketing-verification",
+          component: () => import("../pages/ticketing-verification.vue"),
+          props: true,
         },
         {
-          path: 'ticketing-officer',
-          component: () => import('../pages/ticketing-officer.vue'),
-          props: true
+          path: "ticketing-officer",
+          component: () => import("../pages/ticketing-officer.vue"),
+          props: true,
         },
         {
-          path: 'sales-statistics',
-          component: () => import('../pages/sales-statistics.vue'),
-          props: true
+          path: "sales-statistics",
+          component: () => import("../pages/sales-statistics.vue"),
+          props: true,
         },
         {
-          path: 'add-ticketing-officer',
-          component: () => import('../pages/add-ticketing-officer.vue'),
-          props: true
+          path: "add-ticketing-officer",
+          component: () => import("../pages/add-ticketing-officer.vue"),
+          props: true,
         },
         {
-          path: 'event-management',
-          component: () => import('../pages/event-management.vue'),
-          props: true
+          path: "event-management",
+          component: () => import("../pages/event-management.vue"),
+          props: true,
         },
         {
-          path: '/event-details-event-manager/:eventId',
-          component: () => import('../pages/event-details-event-manager.vue'),
-          props: true
+          path: "/event-details-event-manager/:eventId",
+          component: () => import("../pages/event-details-event-manager.vue"),
+          props: true,
         },
         {
-          path: '/edit-event/:eventId',
-          component: () => import('../pages/edit-event.vue'),
-          props: true
+          path: "/edit-event/:eventId",
+          component: () => import("../pages/edit-event.vue"),
+          props: true,
         },
-        
       ],
     },
     {
@@ -117,7 +117,7 @@ const router = createRouter({
         },
       ],
     },
-    { path: "/payment", component: CheckoutForm },
+    { path: "/payment/:id", component: CheckoutForm },
     { path: "/payment/return", component: Return },
   ],
 });

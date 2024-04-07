@@ -9,11 +9,9 @@ import SrMessages from "./SrMessages.vue";
 const messages = ref([]);
 const clientSecret = ref("");
 
-// currentRoute is a computed property that returns the query parameters of the current route using 'useRoute().query'
 const currentRoute = computed(() => {
   return useRoute().query;
 });
-
 clientSecret.value = currentRoute.value?.payment_intent_client_secret;
 // get payment intent client secret from query parameters
 
@@ -22,10 +20,9 @@ console.log(clientSecret.value);
 
 onMounted(async () => {
   // get publishable key
-  const { publishableKey } = await fetch("/api/payments/config").then((res) =>
+  const { publishableKey } = await fetch("/api/payments//config").then((res) =>
     res.json()
   );
-
   stripe = await loadStripe(publishableKey);
 
   // retrieve payment intent details using client secret

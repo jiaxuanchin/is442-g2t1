@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 // ref: to create reactive variables
 import { loadStripe } from "@stripe/stripe-js"; // import stripe object
 
-import SrMessages from "./SrMessages.vue"; // display messages
+// import SrMessages from "./SrMessages.vue"; // display messages
 
 const isLoading = ref(false); // track whether data is loaded
 const messages = ref([]); // store payment messages
@@ -11,8 +11,30 @@ const messages = ref([]); // store payment messages
 let stripe; // hold Stripe object
 let elements; // hold Stripe Elements object
 
+const route = useRoute();
+
+const eventData = ref(null);
+
+const email = ref("");
+const loading = ref(false);
+const password = ref("");
+
+const show1 = ref(false);
+
 onMounted(async () => {
   // fetch publishable key
+  const eventId = route.params.id;
+  console.log(route.params.id);
+
+  // const response = await this.$http.get(`/searchById/${eventId}`);
+  // a;
+  const response = await fetch(
+    `http://localhost:8080/event/searchById/${eventId}`
+  ).then((res) => res.json());
+
+  eventData.value = response.data;
+  console.log(response);
+
   const { publishableKey } = await fetch(
     "http://localhost:8080/api/payments/config"
   ).then((res) => res.json());
@@ -83,6 +105,20 @@ const hideForm = () => {
 const showForm = ref(true); // track whether form is shown
 
 const required = (v) => !!v || "Field is required";
+
+const min = (v) => (v && v.length >= 8) || "Min 8 characters";
+
+const onSubmitWallet = async () => {
+  console.log("payed with wallet");
+  const response = await fetch(
+    `http://localhost:8080/api/auth/verify_password/${password}`
+  ).then((res) => res.json());
+  console.log(response);
+  if (response.data == true) {
+    // redirect to success page
+    window.location.href = `${window.location.origin}/payment/return`;
+  }
+};
 </script>
 
 <template>
@@ -98,19 +134,12 @@ const required = (v) => !!v || "Field is required";
               @click="toggleForm"
             >
               <main v-show="showForm">
-                <p>
-                  Enable more payment method types
-                  <a
-                    href="https://dashboard.stripe.com/settings/payment_methods"
-                    target="_blank"
-                    >in your dashboard</a
-                  >.
-                </p>
+                <p>Please enter your card details.</p>
 
                 <form id="payment-form" @submit.prevent="handleSubmit">
                   <div id="payment-element" />
                   <button id="submit" :disabled="isLoading">Pay now</button>
-                  <sr-messages :messages="messages" />
+                  <!-- <sr-messages :messages="messages" /> -->
                 </form>
               </main>
             </v-expansion-panel>
@@ -140,11 +169,15 @@ const required = (v) => !!v || "Field is required";
 
                     <v-text-field
                       v-model="password"
+                      :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                      :type="show1 ? 'text' : 'password'"
                       :readonly="loading"
-                      :rules="[required]"
+                      :rules="[required, min]"
                       label="Password"
                       placeholder="Enter your password"
                       clearable
+                      counter
+                      @click:append="show1 = !show1"
                     ></v-text-field>
 
                     <br />
@@ -168,17 +201,37 @@ const required = (v) => !!v || "Field is required";
         </div>
       </v-col>
       <v-col cols="6" class="mt-7">
-        <v-card color="indigo-darken-3" variant="tonal">
+        <v-card color="indigo-darken-3">
           <v-card-item>
             <div>
-              <div class="text-overline mb-1"></div>
-              <div class="text-h5 mb-1">Event Details:</div>
-              <div class="mt-6">
-                Item 1 Lorem ipsum dolor sit amet consectetur adipisicing elit
-                <br />
-                Item 2 Lorem ipsum dolor sit amet consectetur adipisicing elit
-                <br />
-                Item 3 Lorem ipsum dolor sit amet consectetur adipisicing elit
+              <div class="text mb-1"></div>
+              <div class="text-h5 mb-1" style="color: black">
+                Event Details:
+              </div>
+              <div
+                v-if="eventData != null"
+                class="text mt-6"
+                style="color: black"
+              >
+                <p><b>Title: </b> {{ eventData.eventTitle }}</p>
+                <p><b>About: </b> {{ eventData.eventDesc }}</p>
+                <p><b>Date: </b> {{ eventData.eventDate }}</p>
+                <p>
+                  <b>Time: </b> {{ eventData.startTime }} -
+                  {{ eventData.endTime }}
+                </p>
+                <p><b>Venue: </b> {{ eventData.eventLoc }}</p>
+                <p><b>Ticket Price: </b> {{ eventData.ticketPrice }}</p>
+                <p><b>Total Price: </b> {{ eventData.ticketPrice }}</p>
+                <div style="color: gray">
+                  To proceed, please pay with Stripe or opt for e-wallet
+                  payment.
+                  <br />
+                  A confirmation email will be sent to your email directly after
+                  purchase. These mobile tickets will be transferred directly to
+                  you from a trusted seller. We'll email you instructions on how
+                  to accept them on the original ticket provider's mobile app.
+                </div>
               </div>
             </div>
           </v-card-item>
