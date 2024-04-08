@@ -6,12 +6,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.is442g2t1.ticketbookingsystem.booking.Booking;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @Service
 public class TicketService {
-    
+
     private TicketRepository ticketRepository;
 
     @Autowired
@@ -29,7 +31,7 @@ public class TicketService {
 
             System.out.println(tickets.toString());
             return ResponseEntity.ok(tickets);
-            
+
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
@@ -66,10 +68,8 @@ public class TicketService {
         }
     }
 
-    public ResponseEntity createTicket(Booking booking) {
+    public ResponseEntity createTicket(Ticket ticket) {
         try {
-            Ticket ticket = new Ticket(booking);
-
             Ticket createdTicket = ticketRepository.save(ticket);
             System.out.println("CREATED TICKET: " + createdTicket.toString());
 
@@ -77,7 +77,7 @@ public class TicketService {
 
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error creating ticket");
-            
+
         }
     }
 
@@ -125,6 +125,4 @@ public class TicketService {
     //     }
     // }
 
-
-    
 }

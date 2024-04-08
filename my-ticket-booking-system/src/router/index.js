@@ -117,7 +117,7 @@ const router = createRouter({
         },
       ],
     },
-    { path: "/payment/:id", component: CheckoutForm },
+    { path: "/payment/:data", name: "CheckoutForm", component: CheckoutForm },
     { path: "/payment/return", component: Return },
   ],
 });

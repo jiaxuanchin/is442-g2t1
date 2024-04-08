@@ -1,13 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.booking;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,15 +9,16 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.is442g2t1.ticketbookingsystem.ticket.Ticket;
+import com.is442g2t1.ticketbookingsystem.event.Event;
+import com.is442g2t1.ticketbookingsystem.User.UserEntity;
 
 import io.micrometer.common.lang.NonNull;
-
 
 @Entity
 @ToString
 @Getter
 @Setter
-@Table(name = "Booking")
+// @Table(name = "Booking", uniqueConstraints = @UniqueConstraint(columnNames = { "event_id", "user_id" }))
 public class Booking {
 
     @Id
@@ -35,12 +29,12 @@ public class Booking {
     @Column(name = "user_id")
     @NonNull
     private int userId;
-    
+
     // ----------------------- to be edited when we integrate with events class -----------------------
     @Column(name = "event_id")
     @NonNull
     private int eventId;
-    
+
     @Column(name = "number_of_tickets")
     @NonNull
     private int numOfTickets;
@@ -58,7 +52,7 @@ public class Booking {
     public Booking(int bookingId) {
         this.bookingId = bookingId;
     }
-    
+
     public Booking(int userId, int eventId, int numOfTickets) {
         this.userId = userId;
         this.eventId = eventId;

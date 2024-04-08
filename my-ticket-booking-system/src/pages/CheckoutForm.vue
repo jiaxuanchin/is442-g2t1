@@ -20,11 +20,19 @@ const loading = ref(false);
 const password = ref("");
 
 const show1 = ref(false);
+const form = ref(false);
+
+let numTickets = ref(0);
+let totalPrice = ref(0);
 
 onMounted(async () => {
   // fetch publishable key
-  const eventId = route.params.id;
-  console.log(route.params.id);
+  const data = JSON.parse(route.params.data);
+  const eventId = data.eventId;
+  console.log(eventId);
+
+  numTickets = data.numTickets;
+  console.log(numTickets);
 
   // const response = await this.$http.get(`/searchById/${eventId}`);
   // a;
@@ -34,6 +42,8 @@ onMounted(async () => {
 
   eventData.value = response.data;
   console.log(response);
+
+  totalPrice = numTickets * eventData.value.ticketPrice;
 
   const { publishableKey } = await fetch(
     "http://localhost:8080/api/payments/config"
@@ -47,6 +57,13 @@ onMounted(async () => {
     "http://localhost:8080/api/payments/create-payment-intent",
     {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount: totalPrice * 100, // convert to cents
+        currency: "sgd",
+      }),
     }
   ).then((res) => {
     console.log(res);
@@ -88,11 +105,32 @@ const handleSubmit = async () => {
   } else {
     messages.value.push("An unexpected error occured."); // display any error message
   }
+  if (!error.type) {
+    confirmBooking("stripe");
+  }
 
   isLoading.value = false; // this is to prevent duplicate submissions when waiting for the payment confirmation response from stripe
 };
 
-// maintains PCI compliance requirements
+// confirm booking
+const confirmBooking = async (payType) => {
+  console.log("confirm booking");
+  const bookingResponse = await fetch(
+    `http://localhost:8080/booking/new/${payType}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: 1,
+        eventId: eventData.value.eventId,
+        numOfTickets: numTickets,
+      }),
+    }
+  ).then((res) => res.json());
+  console.log(bookingResponse);
+};
 
 const toggleForm = () => {
   showForm.value = !showForm.value;
@@ -108,13 +146,21 @@ const required = (v) => !!v || "Field is required";
 
 const min = (v) => (v && v.length >= 8) || "Min 8 characters";
 
+// when user pays with wallet
 const onSubmitWallet = async () => {
-  console.log("payed with wallet");
+  console.log("paid with wallet");
+  if (!form.value) {
+    return;
+  }
   const response = await fetch(
     `http://localhost:8080/api/auth/verify_password/${password}`
   ).then((res) => res.json());
   console.log(response);
-  if (response.data == true) {
+  if (response.data == false) {
+    alert("Incorrect password");
+    return;
+  } else if (response.data == true) {
+    confirmBooking("ewallet");
     // redirect to success page
     window.location.href = `${window.location.origin}/payment/return`;
   }
@@ -221,8 +267,27 @@ const onSubmitWallet = async () => {
                   {{ eventData.endTime }}
                 </p>
                 <p><b>Venue: </b> {{ eventData.eventLoc }}</p>
-                <p><b>Ticket Price: </b> {{ eventData.ticketPrice }}</p>
-                <p><b>Total Price: </b> {{ eventData.ticketPrice }}</p>
+
+                <hr />
+                <br />
+                <p><b>Payment Summary: </b></p>
+                <v-table>
+                  <thead>
+                    <tr>
+                      <th class="text-left black-text">Ticket Price:</th>
+                      <th class="text-left">Number of tickets:</th>
+                      <th class="text-left">Total Price:</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="text-center">${{ eventData.ticketPrice }}</td>
+                      <td class="text-center">{{ numTickets }}</td>
+                      <td class="text-center">${{ totalPrice }}</td>
+                    </tr>
+                  </tbody>
+                </v-table>
+                <br />
                 <div style="color: gray">
                   To proceed, please pay with Stripe or opt for e-wallet
                   payment.

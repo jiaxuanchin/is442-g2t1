@@ -6,4 +6,7 @@ import lombok.Data;
 public class PaymentDTO {
     private String clientSecret;
     private String publishableKey;
+
+    private int amount;
+    private String currency;
 }
