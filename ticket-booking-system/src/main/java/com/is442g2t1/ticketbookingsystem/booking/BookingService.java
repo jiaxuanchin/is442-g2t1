@@ -155,6 +155,16 @@ public class BookingService {
             }
 
             double totalTicketPrice = calculateTotalTicketPrice(booking);
+            if (payType.equals("ewallet")) {
+                if (totalTicketPrice > customer.getBalance()) {
+                    return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
+                } else {
+                    // Deduct the ticket price from the customer's balance
+                    customer.reduceBalance(totalTicketPrice);
+                    userRepository.save(user);
+                }
+            }
+            
             String bookingId = Integer.toString(booking.getBookingId());
             String subject = "Event Booking Confirmation (Booking ID: " + bookingId + ")";
 
@@ -171,17 +181,6 @@ public class BookingService {
             + "G2T1 Event Management Team";
 
             emailService.sendEmail(customer.getEmail(), subject, body);
-
-            
-            if (payType.equals("ewallet")) {
-                if (totalTicketPrice > customer.getBalance()) {
-                    return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
-                } else {
-                    // Deduct the ticket price from the customer's balance
-                    customer.reduceBalance(totalTicketPrice);
-                    userRepository.save(user);
-                }
-            }
 
             return ResponseEntity.ok("Booking created");
 
