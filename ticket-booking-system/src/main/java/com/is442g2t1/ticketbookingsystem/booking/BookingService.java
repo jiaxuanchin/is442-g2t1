@@ -120,12 +120,7 @@ public class BookingService {
                 return ResponseEntity.status(400).body("User is not a customer");
             }
             Customer customer = (Customer) user;
-            double totalTicketPrice = calculateTotalTicketPrice(booking);
-            if (payType.equals("ewallet")) {
-                if (totalTicketPrice > customer.getBalance()) {
-                    return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
-                }
-            }
+        
 
             // Fetch the event associated with the booking
             int eventId = booking.getEventId();
@@ -144,11 +139,11 @@ public class BookingService {
             event.setFilled(newFilledCapacity);
             eventRepository.save(event);
 
-            // Deduct the ticket price from the customer's balance
-            if (payType.equals("ewallet")) {
-                customer.reduceBalance(totalTicketPrice);
-                userRepository.save(user);
-            }
+            
+            // if (payType.equals("ewallet")) {
+            //     customer.reduceBalance(totalTicketPrice);
+            //     userRepository.save(user);
+            // }
 
             bookingRepository.save(booking);
 
@@ -159,6 +154,7 @@ public class BookingService {
                 return ResponseEntity.status(404).body("Error creating booking");
             }
 
+            double totalTicketPrice = calculateTotalTicketPrice(booking);
             String bookingId = Integer.toString(booking.getBookingId());
             String subject = "Event Booking Confirmation (Booking ID: " + bookingId + ")";
 
@@ -175,6 +171,17 @@ public class BookingService {
             + "G2T1 Event Management Team";
 
             emailService.sendEmail(customer.getEmail(), subject, body);
+
+            
+            if (payType.equals("ewallet")) {
+                if (totalTicketPrice > customer.getBalance()) {
+                    return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
+                } else {
+                    // Deduct the ticket price from the customer's balance
+                    customer.reduceBalance(totalTicketPrice);
+                    userRepository.save(user);
+                }
+            }
 
             return ResponseEntity.ok("Booking created");
 

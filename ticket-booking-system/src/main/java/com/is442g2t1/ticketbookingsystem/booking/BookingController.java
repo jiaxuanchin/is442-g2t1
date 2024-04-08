@@ -49,7 +49,7 @@ public class BookingController {
         return result;
     }
 
-    @PostMapping("/new")
+    @PostMapping("/new/{payType}")
     public ResponseEntity createBooking(@RequestBody Booking booking, @PathVariable String payType) {
         
         ResponseEntity result = this.bookingService.createBooking(booking, payType);
