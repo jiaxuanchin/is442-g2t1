@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.is442g2t1.ticketbookingsystem.booking.Booking;
 
 @RestController
 @RequestMapping("/ticket")
+@CrossOrigin(origins = "http://127.0.0.1:5173, http://localhost:5173")
 public class TicketController {
 
     private TicketService ticketService;
