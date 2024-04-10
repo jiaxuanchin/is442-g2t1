@@ -24,13 +24,27 @@ export default {
   methods: {
     async verifyTicket() {
       try {
-        const response = await axios.post('http://your-backend-api/verify-ticket', {
-          ticketId: this.ticketId
-        });
-        this.verificationResult = response.data.status; // Assuming the API returns { status: 'Valid' or 'Invalid' }
+        const ticketId = this.ticketId.replace(/^0+/, '');
+        const response = await axios.get('http://localhost:8080/ticket/' + ticketId);
+      
+        if (response.data.attendance === true) {
+          this.verificationResult = 'Ticket has been used.';
+        } else if (response.data.attendance === false) {
+          const update = await axios.put('http://localhost:8080/ticket/update/attendance/' + ticketId);
+          if (!update) {
+            this.verificationResult = 'Error updating attendance status.';
+          } else {
+            const message = `Ticket is in booking ID ${response.data.bookingId} and attendance has been successfully marked.`;
+            this.verificationResult = message;
+          }
+        }
       } catch (error) {
         console.error('Error verifying ticket:', error);
-        this.verificationResult = 'Error during verification process';
+        if (error.response.data === 'Ticket not found') {
+          this.verificationResult = 'Ticket ID does not exist.';
+        } else {
+          this.verificationResult = 'Error during verification process.';
+        }
       }
     },
   },
