@@ -11,6 +11,21 @@ import chart from '@images/cards/chart-success.png'
 import card from '@images/cards/credit-card-primary.png'
 import paypal from '@images/cards/paypal-error.png'
 import wallet from '@images/cards/wallet-info.png'
+
+// Check for login
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  if (!token) { // || isTokenExpired(token)
+    // Redirect to login
+    router.push('/login')
+
+  }
+})
 </script>
 
 <template>

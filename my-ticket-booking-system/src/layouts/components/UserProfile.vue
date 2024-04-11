@@ -3,6 +3,33 @@ import avatar1 from '@images/avatars/avatar-1.png'
 
 let userRole = "Customer" // To Do: get this from db and modify
 
+// logout
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+
+const router = useRouter()
+
+const logout = async () => {
+  try {
+    await axios.get('http://localhost:8080/api/auth/logout', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+
+    // Clear client-side storage (jwt token and user id)
+    localStorage.removeItem('token')
+    localStorage.removeItem('user_id')
+
+    // Redirect to login page
+    router.push('/login')
+
+  } catch (error) {
+    console.error("Logout failed:", error)
+
+  }
+}
+
 </script>
 
 <template>
@@ -96,7 +123,7 @@ let userRole = "Customer" // To Do: get this from db and modify
             <VListItemTitle>My Wallet</VListItemTitle>
           </VListItem>
 
-          <!-- 👉 FAQ -->
+          <!-- 👉 FAQ
           <VListItem link>
             <template #prepend>
               <VIcon
@@ -107,13 +134,13 @@ let userRole = "Customer" // To Do: get this from db and modify
             </template>
 
             <VListItemTitle>FAQ</VListItemTitle>
-          </VListItem>
+          </VListItem> -->
 
           <!-- Divider -->
           <VDivider class="my-2" />
 
           <!-- 👉 Logout -->
-          <VListItem to="/login">
+          <VListItem @click="logout">
             <template #prepend>
               <VIcon
                 class="me-2"
