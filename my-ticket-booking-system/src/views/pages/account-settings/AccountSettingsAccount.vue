@@ -1,10 +1,17 @@
 <script setup>
+import axios from 'axios';
+import { ref, onMounted} from 'vue';
+
+// Set the user_id in local storage --> To remove after testing
+localStorage.setItem('user_id', '1');
+
+// Avatar image
 import avatar1 from '@images/avatars/avatar-1.png'
 
 const accountData = {
   avatarImg: avatar1,
-  firstName: 'john',
-  lastName: 'Doe',
+  user_fname: 'john',
+  user_lname: 'Doe',
   email: 'johnDoe@example.com',
   phone: '+(65) 9534-3543',
 }
@@ -13,17 +20,19 @@ const refInputEl = ref()
 const accountDataLocal = ref(structuredClone(accountData))
 const isAccountDeactivated = ref(false)
 
-// To deactivate the account
-import { ref } from 'vue';
-
-// Define a method to deactivate the account
+// The method to deactivate the account
 const deactivateAccount = () => {
-  // To do: Can perform account deactivation logic here
+  // To do: Perform the deactivation logic but not sure if we will do
 };
 
-const resetForm = () => {
-  accountDataLocal.value = structuredClone(accountData)
-}
+const resetForm = async () => {
+  try {
+    const userId = localStorage.getItem('user_id'); 
+    await fetchCustomerInfo(userId);
+  } catch (error) {
+    console.error('Error resetting form:', error);
+  }
+};
 
 const changeAvatar = file => {
   const fileReader = new FileReader()
@@ -41,6 +50,60 @@ const changeAvatar = file => {
 const resetAvatar = () => {
   accountDataLocal.value.avatarImg = accountData.avatarImg
 }
+
+// Update the customer information from the database
+const saveChanges = async () => {
+  try{
+    const userId = localStorage.getItem('user_id'); 
+    await updateCustomerInfo(userId, accountDataLocal.value.user_fname,accountDataLocal.value.user_lname,accountDataLocal.value.email);
+    await fetchCustomerInfo(userId);
+    alert('Changes saved successfully!');
+  } catch (error){
+    console.log("Error saving changes: ", error);
+    alert('Error saving changes: ' + error.message);
+  }
+};
+
+// Method to fetch customer info
+const fetchCustomerInfo = async (userId) => {
+  try {
+    const response = await axios.get(`http://localhost:8080/UserEntity/${userId}`,{
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    const customerData = response.data;
+    accountDataLocal.value = { ...accountDataLocal.value, ...customerData }; // This helps to merge the existing value to the new value
+  } catch (error) {
+    console.error('Error fetching customer info:', error);
+  }
+};
+
+// Fetch customer info when the component is mounted
+onMounted(() => {
+  const userId = localStorage.getItem('user_id');
+  fetchCustomerInfo(userId);
+});
+
+// Method to update customer information
+const updateCustomerInfo = async (userId, user_fname, user_lname, email) => {
+  try {
+    const response = await axios.put(`http://localhost:8080/UserEntity/update/${userId}`, null, {
+      params: {
+        user_fname,
+        user_lname,
+        email,
+      },
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    console.log(response.data); // Log the response from the backend
+  } catch (error) {
+    console.error('Error updating customer information:', error);
+    throw error; // Rethrow the error to be caught by the caller
+  }
+};
 
 </script>
 
@@ -112,7 +175,7 @@ const resetAvatar = () => {
                 cols="12"
               >
                 <VTextField
-                  v-model="accountDataLocal.firstName"
+                  v-model="accountDataLocal.user_fname"
                   placeholder="John"
                   label="First Name"
                 />
@@ -124,7 +187,7 @@ const resetAvatar = () => {
                 cols="12"
               >
                 <VTextField
-                  v-model="accountDataLocal.lastName"
+                  v-model="accountDataLocal.user_lname"
                   placeholder="Doe"
                   label="Last Name"
                 />
@@ -144,7 +207,7 @@ const resetAvatar = () => {
               </VCol>
 
               <!-- 👉 Phone -->
-              <VCol
+              <!-- <VCol
                 cols="12"
                 md="6"
               >
@@ -153,14 +216,14 @@ const resetAvatar = () => {
                   label="Phone Number"
                   placeholder="+(65) 9534-3543"
                 />
-              </VCol>
+              </VCol> -->
 
               <!-- 👉 Form Actions -->
               <VCol
                 cols="12"
                 class="d-flex flex-wrap gap-4"
               >
-                <VBtn>Save changes</VBtn>
+                <VBtn @click="saveChanges">Save changes</VBtn>
 
                 <VBtn
                   color="secondary"
