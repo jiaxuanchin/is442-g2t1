@@ -1,15 +1,51 @@
 <script setup>
-import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+// import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import logo from '@images/logo.svg?raw'
 
+const router = useRouter()
+
 const form = ref({
-  username: '',
+  fname: '',
+  lname: '',
   email: '',
   password: '',
-  privacyPolicies: false,
 })
 
 const isPasswordVisible = ref(false)
+const errorMessage = ref('')
+const successMessage = ref('')
+
+// send to signup api
+const handleSignUp = async () => {
+  errorMessage.value = ''
+  successMessage.value = ''
+
+  try {
+    await axios.post('http://localhost:8080/api/auth/signup', {
+      user_fname: form.value.fname,
+      user_lname: form.value.lname,
+      email: form.value.email,
+      password: form.value.password,
+    })
+    
+    successMessage.value = 'Signup successful. Redirecting to login...'
+    
+    // Redirect to login after a short delay
+    setTimeout(() => {
+      router.push('/login')
+    }, 3000)
+  } catch (error) {
+    if (error.response && error.response.data) {
+      // Handle errors returned from your backend
+      errorMessage.value = error.response.data.message || 'An error occurred during signup.'
+    } else {
+      errorMessage.value = 'An error occurred. Please try again.'
+    }
+  }
+}
 </script>
 
 <template>
@@ -29,29 +65,33 @@ const isPasswordVisible = ref(false)
         </template>
 
         <VCardTitle class="text-2xl font-weight-bold">
-          sneat
+          Ticket Booking System
         </VCardTitle>
       </VCardItem>
 
       <VCardText class="pt-2">
         <h5 class="text-h5 mb-1">
-          Adventure starts here 🚀
+          Concert adventure starts here 🚀
         </h5>
-        <p class="mb-0">
-          Make your app management easy and fun!
-        </p>
       </VCardText>
 
       <VCardText>
-        <VForm @submit.prevent="$router.push('/')">
+        <VForm @submit.prevent="handleSignUp">
           <VRow>
-            <!-- Username -->
+            <!-- Firstname -->
             <VCol cols="12">
               <VTextField
-                v-model="form.username"
+                v-model="form.fname"
                 autofocus
-                label="Username"
-                placeholder="Johndoe"
+                label="First name"
+              />
+            </VCol>
+            <!-- Firstname -->
+            <VCol cols="12">
+              <VTextField
+                v-model="form.lname"
+                autofocus
+                label="Last name"
               />
             </VCol>
             <!-- email -->
@@ -59,7 +99,6 @@ const isPasswordVisible = ref(false)
               <VTextField
                 v-model="form.email"
                 label="Email"
-                placeholder="johndoe@email.com"
                 type="email"
               />
             </VCol>
@@ -69,13 +108,12 @@ const isPasswordVisible = ref(false)
               <VTextField
                 v-model="form.password"
                 label="Password"
-                placeholder="············"
                 :type="isPasswordVisible ? 'text' : 'password'"
                 :append-inner-icon="isPasswordVisible ? 'bx-hide' : 'bx-show'"
                 @click:append-inner="isPasswordVisible = !isPasswordVisible"
               />
               <div class="d-flex align-center mt-1 mb-4">
-                <VCheckbox
+                <!-- <VCheckbox
                   id="privacy-policy"
                   v-model="form.privacyPolicies"
                   inline
@@ -89,7 +127,7 @@ const isPasswordVisible = ref(false)
                     href="javascript:void(0)"
                     class="text-primary"
                   >privacy policy & terms</a>
-                </VLabel>
+                </VLabel> -->
               </div>
 
               <VBtn
@@ -113,24 +151,12 @@ const isPasswordVisible = ref(false)
                 Sign in instead
               </RouterLink>
             </VCol>
-
-            <VCol
-              cols="12"
-              class="d-flex align-center"
-            >
-              <VDivider />
-              <span class="mx-4">or</span>
-              <VDivider />
-            </VCol>
-
-            <!-- auth providers -->
-            <VCol
-              cols="12"
-              class="text-center"
-            >
-              <AuthProvider />
-            </VCol>
           </VRow>
+          <!-- Error message -->
+          <VAlert type="error" v-if="errorMessage">{{ errorMessage }}</VAlert>
+
+          <!-- Success message -->
+          <VAlert type="success" v-if="successMessage">{{ successMessage }}</VAlert>
         </VForm>
       </VCardText>
     </VCard>
