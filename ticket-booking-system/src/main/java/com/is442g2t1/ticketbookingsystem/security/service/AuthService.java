@@ -8,7 +8,7 @@ import com.is442g2t1.ticketbookingsystem.User.UserRepository;
 import com.is442g2t1.ticketbookingsystem.security.DTO.AuthResponseDTO;
 import com.is442g2t1.ticketbookingsystem.security.DTO.LoginDTO;
 import com.is442g2t1.ticketbookingsystem.security.DTO.RegisterDTO;
-import com.is442g2t1.ticketbookingsystem.security.jwt.JWTGenerator;
+import com.is442g2t1.ticketbookingsystem.security.jwt.JWTService;
 import com.is442g2t1.ticketbookingsystem.security.token.Token;
 import com.is442g2t1.ticketbookingsystem.security.token.TokenRepository;
 
@@ -34,11 +34,11 @@ public class AuthService {
     private RoleRepository roleRepository;
     private TokenRepository tokenRepository;
     private PasswordEncoder passwordEncoder;
-    private JWTGenerator jwtGenerator;
+    private JWTService jwtGenerator;
 
     @Autowired
     public AuthService(AuthenticationManager authenticationManager, UserRepository userRepository,
-                        RoleRepository roleRepository, TokenRepository tokenRepository, PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator) {
+                        RoleRepository roleRepository, TokenRepository tokenRepository, PasswordEncoder passwordEncoder, JWTService jwtGenerator) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;

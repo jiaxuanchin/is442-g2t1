@@ -1,5 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.security.jwt;
 import java.util.Date;
+import java.util.function.Function;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -7,6 +8,8 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.security.Key;
+
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -18,7 +21,7 @@ import org.springframework.stereotype.Component;
 import com.is442g2t1.ticketbookingsystem.security.service.UserDetailsImpl;
 
 @Component
-public class JWTGenerator {
+public class JWTService {
 
 	private Key key() {
     	return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SecurityConstants.JWT_Secret));
@@ -43,6 +46,15 @@ public class JWTGenerator {
 		return token;
 	}
 
+	private Claims extractAllClaims(String token) {
+		return Jwts
+			.parserBuilder()
+			.setSigningKey(key())
+			.build()
+			.parseClaimsJws(token)
+			.getBody();
+	}
+
 	public String getEmailFromJWT(String token){
 		// Claims claims = Jwts.parserBuilder()
 		// 		.setSigningKey(key)
@@ -51,15 +63,12 @@ public class JWTGenerator {
 		// 		.getBody();
 		// return claims.getSubject(); // retrieve the subject claim, which represents the username associated with the token
 
-		String email = Jwts.parserBuilder()
-			.setSigningKey(key())
-			.build()
-			.parseClaimsJws(token)
-			.getBody()
-			.getSubject();
+		Claims claims = extractAllClaims(token);
+
+		String email = claims.getSubject();
 
 		// ----------------------------- CHECKPOINT -----------------------------
-		System.out.println("[CHECKPOINT JWTGenerator] Getting email from token: " + email);
+		System.out.println("[CHECKPOINT JWTService] Getting email from token: " + email);
 		// -----------------------------------------------------------------------
 
 		return email;
@@ -69,15 +78,22 @@ public class JWTGenerator {
 		try {
 
 			// ----------------------------- CHECKPOINT -----------------------------
-			System.out.println("[CHECKPOINT JWTGenerator] Validating token " + token);
+			System.out.println("[CHECKPOINT JWTService] Validating token " + token);
 			// -----------------------------------------------------------------------
 
+			// check token against signing key from signature
 			Jwts.parserBuilder()
 				.setSigningKey(key())
 				.build()
 				.parse(token);
 
-			return true;
+				Claims claims = extractAllClaims(token);
+
+			if (!isTokenExpired(token)) {
+				return true;
+			} 
+
+			throw new ExpiredJwtException(null, claims, "Token is expired");
 
 		} catch (MalformedJwtException e) {
 			System.out.println("Invalid JWT token: " + e.getMessage());
@@ -99,4 +115,29 @@ public class JWTGenerator {
         }
         return null;
     }
+
+	public String extractUsername(String token) {
+
+		Claims claims = extractAllClaims(token);
+		return claims.get("user_id").toString();
+	}
+
+	private Date extractExpiration(String token) {
+
+		Claims claims = extractAllClaims(token);
+		return claims.getExpiration();
+	}
+
+	private boolean isTokenExpired(String token) {
+
+		return extractExpiration(token).before(new Date());
+	}
+
+	// public String extractRole(String token) {
+		
+		// Claims claims = extractAllClaims(token);
+		// return claims.get("role_id").toString();
+
+	// }
+
 }

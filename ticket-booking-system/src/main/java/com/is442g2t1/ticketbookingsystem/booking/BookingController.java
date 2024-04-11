@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.is442g2t1.ticketbookingsystem.security.jwt.JWTGenerator;
+import com.is442g2t1.ticketbookingsystem.security.jwt.JWTService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -21,10 +21,10 @@ public class BookingController {
 
     private BookingService bookingService;
 
-    private JWTGenerator jwtGenerator;
+    private JWTService jwtGenerator;
 
     @Autowired
-    public BookingController(BookingService bookingService, JWTGenerator jwtGenerator) {
+    public BookingController(BookingService bookingService, JWTService jwtGenerator) {
         this.bookingService = bookingService;
         this.jwtGenerator = jwtGenerator;
     }

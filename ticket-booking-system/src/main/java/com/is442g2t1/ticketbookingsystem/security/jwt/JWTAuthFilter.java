@@ -27,7 +27,7 @@ import java.io.IOException;
 public class JWTAuthFilter extends OncePerRequestFilter {
     
     @Autowired
-    private JWTGenerator tokenGenerator;
+    private JWTService tokenGenerator;
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
