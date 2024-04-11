@@ -15,17 +15,31 @@ import wallet from '@images/cards/wallet-info.png'
 // Check for login
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import jwtDecode from 'jwt-decode';
 
 const router = useRouter()
 
 onMounted(() => {
   const token = localStorage.getItem('token')
-  if (!token) { // || isTokenExpired(token)
+  if (!token || isTokenExpired(token)) { 
     // Redirect to login
     router.push('/login')
 
   }
 })
+
+function isTokenExpired(token) {
+  const decodedToken = jwtDecode(token)
+  const currentTime = Date.now() / 1000
+  // console.log(decodedToken)
+
+  if (decodedToken.exp < currentTime) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user_id')
+  }
+
+  return decodedToken.exp < currentTime
+}
 </script>
 
 <template>
