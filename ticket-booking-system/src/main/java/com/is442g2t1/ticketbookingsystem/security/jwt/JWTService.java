@@ -1,6 +1,5 @@
 package com.is442g2t1.ticketbookingsystem.security.jwt;
 import java.util.Date;
-import java.util.function.Function;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -56,12 +55,6 @@ public class JWTService {
 	}
 
 	public String getEmailFromJWT(String token){
-		// Claims claims = Jwts.parserBuilder()
-		// 		.setSigningKey(key)
-		// 		.build()
-		// 		.parseClaimsJws(token)
-		// 		.getBody();
-		// return claims.getSubject(); // retrieve the subject claim, which represents the username associated with the token
 
 		Claims claims = extractAllClaims(token);
 
@@ -76,7 +69,6 @@ public class JWTService {
 	
 	public boolean validateToken(String token) {
 		try {
-
 			// ----------------------------- CHECKPOINT -----------------------------
 			System.out.println("[CHECKPOINT JWTService] Validating token " + token);
 			// -----------------------------------------------------------------------

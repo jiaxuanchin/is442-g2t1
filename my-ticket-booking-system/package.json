@@ -23,6 +23,7 @@
     "axios": "1.4.0",
     "axios-mock-adapter": "^1.21.4",
     "chart.js": "^4.1.2",
+    "cors": "^2.8.5",
     "eslint-import-resolver-alias": "^1.1.2",
     "import-meta-resolve": "^4.0.0",
     "jwt-decode": "^3.1.2",

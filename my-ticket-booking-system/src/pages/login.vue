@@ -1,14 +1,42 @@
 <script setup>
-import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+// import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import logo from '@images/logo.svg?raw'
+
+const router = useRouter()
 
 const form = ref({
   email: '',
   password: '',
-  remember: false,
 })
 
 const isPasswordVisible = ref(false)
+const errorMessage = ref('') // To display error message
+
+// send to signin api
+const handleSubmit = async () => {
+  try {
+    const response = await axios.post('http://localhost:8080/api/auth/signin', {
+      email: form.value.email,
+      password: form.value.password,
+    })
+    
+    if (response.status === 200) {
+      localStorage.setItem('token', response.data.accessToken)
+      localStorage.setItem('user_id', response.data.id)
+      router.push('/dashboard') // Redirect on successful login
+    } else {
+      errorMessage.value = 'Login failed. Please check your credentials.'
+    }
+
+  } catch (error) {
+    errorMessage.value = 'Login failed. Please check your credentials.'
+
+  }
+}
+
 </script>
 
 <template>
@@ -28,28 +56,27 @@ const isPasswordVisible = ref(false)
         </template>
 
         <VCardTitle class="text-2xl font-weight-bold">
-          sneat
+          G2T1's Ticket Booking System
         </VCardTitle>
       </VCardItem>
 
       <VCardText class="pt-2">
         <h5 class="text-h5 mb-1">
-          Welcome to sneat! 👋🏻
+          Welcome! 👋🏻
         </h5>
         <p class="mb-0">
-          Please sign-in to your account and start the adventure
+          Please sign-in to your account to start booking.
         </p>
       </VCardText>
 
       <VCardText>
-        <VForm @submit.prevent="$router.push('/')">
+        <VForm @submit.prevent="handleSubmit">
           <VRow>
             <!-- email -->
             <VCol cols="12">
               <VTextField
                 v-model="form.email"
                 autofocus
-                placeholder="johndoe@email.com"
                 label="Email"
                 type="email"
               />
@@ -60,25 +87,12 @@ const isPasswordVisible = ref(false)
               <VTextField
                 v-model="form.password"
                 label="Password"
-                placeholder="············"
                 :type="isPasswordVisible ? 'text' : 'password'"
                 :append-inner-icon="isPasswordVisible ? 'bx-hide' : 'bx-show'"
                 @click:append-inner="isPasswordVisible = !isPasswordVisible"
               />
 
-              <!-- remember me checkbox -->
               <div class="d-flex align-center justify-space-between flex-wrap mt-1 mb-4">
-                <VCheckbox
-                  v-model="form.remember"
-                  label="Remember me"
-                />
-
-                <RouterLink
-                  class="text-primary ms-2 mb-1"
-                  to="javascript:void(0)"
-                >
-                  Forgot Password?
-                </RouterLink>
               </div>
 
               <!-- login button -->
@@ -95,7 +109,7 @@ const isPasswordVisible = ref(false)
               cols="12"
               class="text-center text-base"
             >
-              <span>New on our platform?</span>
+              <span>Don't have an account?</span>
               <RouterLink
                 class="text-primary ms-2"
                 to="/register"
@@ -104,22 +118,26 @@ const isPasswordVisible = ref(false)
               </RouterLink>
             </VCol>
 
-            <VCol
+            <VCardText v-if="errorMessage">
+              <VAlert type="error">{{ errorMessage }}</VAlert>
+            </VCardText>
+
+            <!-- <VCol
               cols="12"
               class="d-flex align-center"
             >
               <VDivider />
               <span class="mx-4">or</span>
               <VDivider />
-            </VCol>
+            </VCol> -->
 
             <!-- auth providers -->
-            <VCol
+            <!-- <VCol
               cols="12"
               class="text-center"
             >
               <AuthProvider />
-            </VCol>
+            </VCol> -->
           </VRow>
         </VForm>
       </VCardText>
