@@ -18,12 +18,20 @@ const router = useRouter();
 onMounted(async () => {
   try {
     // Fetch booking details
-    const bookingResponse = await axios.get(`http://localhost:8080/booking/${bookingId}`);
+    const bookingResponse = await axios.get(`http://localhost:8080/booking/${bookingId}`,{
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
     const bookingData = bookingResponse.data;
     const numTicketsBought = bookingData.tickets.length;
     
     // Fetch event information
-    const eventResponse = await axios.get(`http://localhost:8080/event/searchById/${bookingData.eventId}`);
+    const eventResponse = await axios.get(`http://localhost:8080/event/searchById/${bookingData.eventId}`,{
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
     const eventData = eventResponse.data.data;
 
     // Update reactive variables
