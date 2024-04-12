@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 
     private AuthService authService;
@@ -28,19 +26,6 @@ public class AuthController {
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
-
-    // ------------------------ TESTER METHODS (TO BE REMOVED) ------------------------
-    @GetMapping("/all1")
-    public String allAccess() {
-        return "Public Content.";
-    }
-
-    @GetMapping("/user")
-    @PreAuthorize("hasAnyAuthority('customer', 'event_manager')")
-    public String userAccess() {
-        return "User Content.";
-    }
-    // -------------------------------------------------------------------------------
 
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody LoginDTO loginRequest){
@@ -58,7 +43,7 @@ public class AuthController {
     public ResponseEntity<String> signup(@RequestBody RegisterDTO registerDto) {
 
         try {
-            return authService.signup(registerDto); // frontend to redirct them to login page to login
+            return authService.signup(registerDto);
         
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -74,6 +59,21 @@ public class AuthController {
 
         return authService.verifyPassword(request, password.substring(1, password.length()-1));
 
+    }
+
+    // change password, post method /change_password
+    @PostMapping("/change_password")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
+    public ResponseEntity<?> changePassword(HttpServletRequest request, @RequestBody String password) {
+        return authService.changePassword(request, password.substring(1, password.length()-1));
+
+    }
+
+    // /add-ticketing-officer, post method
+    @PostMapping("/add-ticketing-officer")
+    @PreAuthorize("hasAnyAuthority('event_manager')")
+    public ResponseEntity<?> addTicketingOfficer(HttpServletRequest request, @RequestBody RegisterDTO registerDto) {
+        return authService.addTicketingOfficer(request, registerDto);
     }
 
 }

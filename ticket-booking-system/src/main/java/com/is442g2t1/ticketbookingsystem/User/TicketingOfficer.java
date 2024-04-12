@@ -16,7 +16,8 @@ public class TicketingOfficer extends UserEntity {
     }
 
     public TicketingOfficer(Role role, String user_fname, String user_lname, String email, String password) {
-        super(role, user_fname, user_lname, email, password);
+        super(role, user_fname, user_lname, email, password, 0.0);
+
     }
     
 }

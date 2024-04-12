@@ -85,7 +85,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth ->
                 auth.requestMatchers("/api/auth/**")
                     .permitAll()
-                    // .requestMatchers("/event_manager/**").hasRole("event_manager") // to change url
+                    .requestMatchers("/booking/**").hasAnyAuthority("event_manager") // for generic filtering
                     .anyRequest()
                     .authenticated()       
             )

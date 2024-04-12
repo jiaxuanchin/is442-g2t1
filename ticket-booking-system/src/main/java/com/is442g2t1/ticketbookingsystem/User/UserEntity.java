@@ -41,12 +41,24 @@ public class UserEntity {
     @Column(name = "user_type" , insertable = false, updatable = false)
     private String user_type = "customer";
 
+    @Column(name = "balance")
+    private Double balance;
+
     public UserEntity(Role role, String user_fname, String user_lname, String email, String password){
         this.role = role;
         this.user_fname = user_fname;
         this.user_lname = user_lname;
         this.email = email;
         this.password = password;
+    }
+
+    public UserEntity(Role role, String user_fname, String user_lname, String email, String password, double balance){
+        this.role = role;
+        this.user_fname = user_fname;
+        this.user_lname = user_lname;
+        this.email = email;
+        this.password = password;
+        this.balance = (Double) null;
     }
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

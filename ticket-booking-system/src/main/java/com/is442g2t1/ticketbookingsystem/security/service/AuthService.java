@@ -3,6 +3,7 @@ package com.is442g2t1.ticketbookingsystem.security.service;
 import com.is442g2t1.ticketbookingsystem.User.Customer;
 import com.is442g2t1.ticketbookingsystem.User.Role;
 import com.is442g2t1.ticketbookingsystem.User.RoleRepository;
+import com.is442g2t1.ticketbookingsystem.User.TicketingOfficer;
 import com.is442g2t1.ticketbookingsystem.User.UserEntity;
 import com.is442g2t1.ticketbookingsystem.User.UserRepository;
 import com.is442g2t1.ticketbookingsystem.security.DTO.AuthResponseDTO;
@@ -137,6 +138,52 @@ public class AuthService {
         }
     }
 
+    public ResponseEntity<?> changePassword(HttpServletRequest request, String password) {
+        try {
+            String token = jwtGenerator.extractJwtFromRequest(request);
+            String email = jwtGenerator.getEmailFromJWT(token);
+    
+            UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+    
+            user.setPassword(passwordEncoder.encode(password));
+            userRepository.save(user);
+
+            return new ResponseEntity<>("Password changed successfully!", HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
+        }
+    }
+
+    public ResponseEntity<?> addTicketingOfficer(HttpServletRequest request, RegisterDTO registerDto) {
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            return new ResponseEntity<>("Email is taken!", HttpStatus.BAD_REQUEST);
+        }
+
+        Role role = roleRepository.findByName("ticketing_officer").orElse(null);
+
+        if (role == null) {
+            return new ResponseEntity<>("Role not found!", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            UserEntity user = new TicketingOfficer(role, registerDto.getUser_fname(),registerDto.getUser_lname(),registerDto.getEmail(), 
+                passwordEncoder.encode(registerDto.getPassword())
+            );
+
+            System.out.println("[CHECKPOINT AuthController] PRINT USER DETAILS: " + user.toString());
+
+            userRepository.save(user);
+            
+            return new ResponseEntity<>("Ticketing officer added successfully!", HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     private void saveUserToken(UserEntity user, String token) {
 
         Token buildToken = Token.builder()
@@ -161,7 +208,7 @@ public class AuthService {
         validUserTokens.forEach(token -> {
             token.setRevoked(true);
             token.setExpired(true);
-            // tokenRepository.save(token);
+
         });
 
         tokenRepository.saveAll(validUserTokens);
