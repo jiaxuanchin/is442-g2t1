@@ -2,49 +2,45 @@
   <div class="verify-ticket">
     <h3>Verify Ticket</h3>
     <form @submit.prevent="verifyTicket">
-      <input type="text" v-model="ticketId" placeholder="Enter Ticket ID" required>
+      <input
+        type="text"
+        v-model="ticketId"
+        placeholder="Enter Ticket ID"
+        required
+      />
       <button type="submit">Verify</button>
     </form>
     <div v-if="verificationResult !== null">
-      <p>Verification Status: <strong>{{ verificationResult }}</strong></p>
+      <p>
+        Verification Status: <strong>{{ verificationResult }}</strong>
+      </p>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
-      ticketId: '',
+      ticketId: "",
       verificationResult: null,
     };
   },
   methods: {
     async verifyTicket() {
       try {
-        const ticketId = this.ticketId.replace(/^0+/, '');
-        const response = await axios.get('http://localhost:8080/ticket/' + ticketId);
-      
-        if (response.data.attendance === true) {
-          this.verificationResult = 'Ticket has been used.';
-        } else if (response.data.attendance === false) {
-          const update = await axios.put('http://localhost:8080/ticket/update/attendance/' + ticketId);
-          if (!update) {
-            this.verificationResult = 'Error updating attendance status.';
-          } else {
-            const message = `Ticket is in booking ID ${response.data.bookingId} and attendance has been successfully marked.`;
-            this.verificationResult = message;
+        const response = await axios.post(
+          "http://your-backend-api/verify-ticket",
+          {
+            ticketId: this.ticketId,
           }
-        }
+        );
+        this.verificationResult = response.data.status; // Assuming the API returns { status: 'Valid' or 'Invalid' }
       } catch (error) {
-        console.error('Error verifying ticket:', error);
-        if (error.response.data === 'Ticket not found') {
-          this.verificationResult = 'Ticket ID does not exist.';
-        } else {
-          this.verificationResult = 'Error during verification process.';
-        }
+        console.error("Error verifying ticket:", error);
+        this.verificationResult = "Error during verification process";
       }
     },
   },
@@ -53,11 +49,12 @@ export default {
 
 <!-- Add this to the style section of each form component -->
 <style scoped>
-.verify-ticket, .onsite-sales {
+.verify-ticket,
+.onsite-sales {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 h3 {
@@ -70,7 +67,8 @@ form {
   flex-direction: column;
 }
 
-input[type="text"], input[type="number"] {
+input[type="text"],
+input[type="number"] {
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ccc;
@@ -79,7 +77,7 @@ input[type="text"], input[type="number"] {
 
 button {
   padding: 10px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -100,4 +98,3 @@ button:hover {
   text-align: center;
 }
 </style>
-

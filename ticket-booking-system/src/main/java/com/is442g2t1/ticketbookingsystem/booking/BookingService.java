@@ -122,6 +122,7 @@ public class BookingService {
                 return ResponseEntity.status(400).body("User is not a customer");
             }
             Customer customer = (Customer) user;
+            
 
             // Fetch the event associated with the booking
             int eventId = booking.getEventId();
@@ -140,10 +141,11 @@ public class BookingService {
             event.setFilled(newFilledCapacity);
             eventRepository.save(event);
 
-            // if (payType.equals("ewallet")) {
-            //     customer.reduceBalance(totalTicketPrice);
-            //     userRepository.save(user);
-            // }
+            // Deduct the ticket price from the customer's balance
+            if (payType.equals("ewallet")) {
+                customer.reduceBalance(totalTicketPrice);
+                userRepository.save(user);
+            }
 
             bookingRepository.save(booking);
 
@@ -158,7 +160,6 @@ public class BookingService {
             if (payType.equals("ewallet")) {
                 if (totalTicketPrice > customer.getBalance()) {
                     return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
-                } else {
                     // Deduct the ticket price from the customer's balance
                     customer.reduceBalance(totalTicketPrice);
                     userRepository.save(user);
@@ -168,18 +169,15 @@ public class BookingService {
             String bookingId = Integer.toString(booking.getBookingId());
             String subject = "Event Booking Confirmation (Booking ID: " + bookingId + ")";
 
-            // Include the user's name in the email body
-            String body = "Dear " + customer.getUser_fname() + ",\n\n"
-                    + "Thank you for your booking. Your tickets have been successfully purchased for " + '"'
-                    + event.getEventDesc() + '"' + " " + event.getEventTitle() + ".\n\n"
-                    + "Date (YYYY-MM-DD): " + event.getEventDate().toString() + "\n"
-                    + "Location: " + event.getEventLoc() + "\n"
-                    + "Time: " + event.getStartTime() + " - " + event.getEndTime() + "\n"
-                    + "Number of Tickets Bought: " + booking.getNumOfTickets() + "\n"
-                    + "Total Amount Paid: $" + totalTicketPrice + "0\n\n"
-                    + "Please log in to our web app to view your tickets. For any further assistance, please contact us by replying to this email.\n\n"
-                    + "Brought to you by,\n"
-                    + "G2T1 Event Management Team";
+            + "Thank you for your booking. Your tickets have been successfully purchased for " + '"' + event.getEventDesc() + '"' + " " + event.getEventTitle() + ".\n\n"
+            + "Date (YYYY-MM-DD): " + event.getEventDate().toString() + "\n"
+            + "Location: " + event.getEventLoc() + "\n"
+            + "Time: " + event.getStartTime() + " - " + event.getEndTime() + "\n"
+            + "Number of Tickets Bought: " + booking.getNumOfTickets() + "\n"
+            + "Total Amount Paid: $" + totalTicketPrice + "0\n\n"
+            + "Please log in to our web app to view your tickets. For any further assistance, please contact us by replying to this email.\n\n"
+            + "Brought to you by,\n"
+            + "G2T1 Event Management Team";
 
             emailService.sendEmail(customer.getEmail(), subject, body);
 

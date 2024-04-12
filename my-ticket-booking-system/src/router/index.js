@@ -89,11 +89,6 @@ const router = createRouter({
           props: true,
         },
         {
-          path: "/event-details-event-manager/:eventId",
-          component: () => import("../pages/event-details-event-manager.vue"),
-          props: true,
-        },
-        {
           path: "/edit-event/:eventId",
           component: () => import("../pages/edit-event.vue"),
           props: true,

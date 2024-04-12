@@ -1,7 +1,5 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { ref } from "vue";
-// import { resolveConfig } from "vite";
 
 const { params } = useRoute();
 const eventId = params.eventId;
@@ -10,81 +8,8 @@ const ticketData = {
   quantity: 1,
 };
 
-const router = useRouter();
-
 const refInputEl = ref();
 const ticketDataLocal = ref(structuredClone(ticketData));
-
-const goToCheckout = async () => {
-  // check tickets entered
-  if (ticketDataLocal.value.quantity < 1) {
-    alert("Please select at least 1 ticket");
-    return;
-  } else if (ticketDataLocal.value.quantity > 5) {
-    alert("You can only purchase up to 5 tickets per transaction");
-    return;
-  }
-
-  // check if can book
-  const responseBook = await fetch(`http://localhost:8080/booking/check`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      userId: 1,
-      eventId: 1,
-      numOfTickets: ticketDataLocal.value.quantity,
-    }),
-  }).then((res) => {
-    if (res.status == 400) {
-      res.json().then((data) => {
-        console.log(data);
-        alert(data.error);
-      });
-    }
-    return res;
-  });
-  if (responseBook.status == 400) {
-    return;
-  }
-  const data = {
-    numTickets: ticketDataLocal.value.quantity,
-    eventId: eventId,
-  };
-  let userId = parseInt(localStorage.getItem("user_id"));
-
-  //  NOTE: remove later
-  if (!userId) {
-    userId = 3;
-  }
-
-  const response = await fetch(
-    `http://localhost:8080/UserEntity/${userId}`
-  ).then((res) => res.json());
-  console.log(response);
-
-  // CORRECT CODE NOTE:
-  // const response = await axios.get(`http://localhost:8080/UserEntity/${userId}`,{
-  //     headers: {
-  //       'Authorization': `Bearer ${localStorage.getItem('token')}`
-  //     }
-  //   });
-
-  if (response.role.name == "customer") {
-    router.push({
-      name: "CheckoutForm",
-      params: { data: JSON.stringify(data) },
-    });
-  } else if (response.role.name == "ticketing_officer") {
-    router.push({
-      name: "CheckoutFormTicketingOfficer",
-      params: { data: JSON.stringify(data) },
-    });
-  } else {
-    alert("You are not authorized to purchase tickets");
-  }
-};
 </script>
 
 <template>
@@ -230,9 +155,6 @@ const goToCheckout = async () => {
                   v-model="ticketDataLocal.quantity"
                   label="Ticket Quantity"
                   placeholder="1"
-                  type="number"
-                  min="1"
-                  max="5"
                 />
               </VCol>
 
@@ -255,8 +177,12 @@ const goToCheckout = async () => {
             <VRow>
               <VCol cols="12" class="text-end mt-4">
                 <!-- Use 'text-end' class to align content to the right -->
-
-                <VBtn @click="goToCheckout"> Purchase Tickets </VBtn>
+                <router-link
+                  :to="'/other-page/' + eventId"
+                  style="display: flex; justify-content: flex-end"
+                >
+                  <VBtn> Purchase Tickets </VBtn>
+                </router-link>
               </VCol>
             </VRow>
           </VForm>

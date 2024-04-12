@@ -1,7 +1,18 @@
 package com.is442g2t1.ticketbookingsystem.event;
 
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
+<<<<<<< HEAD
 import com.is442g2t1.ticketbookingsystem.booking.BookingService;
+=======
+import com.is442g2t1.ticketbookingsystem.User.UserEntity;
+import com.is442g2t1.ticketbookingsystem.User.UserRepository;
+import com.is442g2t1.ticketbookingsystem.booking.Booking;
+import com.is442g2t1.ticketbookingsystem.booking.BookingService;
+import com.is442g2t1.ticketbookingsystem.ticket.Ticket;
+import com.is442g2t1.ticketbookingsystem.ticket.TicketRepository;
+import com.is442g2t1.ticketbookingsystem.email.EmailService;
+
+>>>>>>> b167f479b6d3c5a54caf8ce839003d21a57caf5b
 import com.is442g2t1.response.StatusResponse;
 import com.is442g2t1.response.SuccessResponse;
 import org.apache.http.HttpStatus;
@@ -9,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -26,12 +36,16 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final BookingService bookingService;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingService bookingService) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingService bookingService, UserRepository userRepository, EmailService emailService) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.bookingService = bookingService;
+        this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     public List<Event> getAllEvent() {
@@ -68,7 +82,7 @@ public class EventService {
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(invalidCapacityResponse);
             }
 
-            // optional to set cancel fee
+            // optional to set cancellation fee
             if (eventCreateDTO.getCancelFee() != null && eventCreateDTO.getCancelFee() <= 0) {
                 StatusResponse invalidCapacityResponse = new StatusResponse("Cancel fee must be greater than 0",
                         HttpStatus.SC_BAD_REQUEST);
@@ -128,7 +142,6 @@ public class EventService {
                     eventCreateDTO.getStartTime() == null || eventCreateDTO.getStartTime().isBlank() ||
                     eventCreateDTO.getEndTime() == null || eventCreateDTO.getEndTime().isBlank() ||
                     eventCreateDTO.getCapacity() == null || eventCreateDTO.getTicketPrice() == null) {
-                // rewardPoints can be 0, this is dependent on the admin
                 StatusResponse statusResponse = new StatusResponse("Fields cannot be empty", HttpStatus.SC_BAD_REQUEST);
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(statusResponse);
             }
@@ -146,7 +159,7 @@ public class EventService {
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(invalidCapacityResponse);
             }
 
-            // optional to set cancel fee
+            // optional to set cancellation fee
             if (eventCreateDTO.getCancelFee() != null && eventCreateDTO.getCancelFee() <= 0) {
                 StatusResponse invalidCapacityResponse = new StatusResponse("Cancel fee must be greater than 0",
                         HttpStatus.SC_BAD_REQUEST);
