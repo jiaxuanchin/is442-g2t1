@@ -5,8 +5,8 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="Users")
-@Data  // create the getter and setter functions for us
+@Table(name = "Users")
+@Data // create the getter and setter functions for us
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Creates a single table strategy for each class hierarchy
 @DiscriminatorColumn(name = "user_type") // Column used to differentiate the subclass in the single table
@@ -34,7 +34,7 @@ public class UserEntity {
     @Column(name = "password")
     private String password;
 
-    public UserEntity(Role role, String user_fname, String user_lname, String email, String password){
+    public UserEntity(Role role, String user_fname, String user_lname, String email, String password) {
         this.role = role;
         this.user_fname = user_fname;
         this.user_lname = user_lname;

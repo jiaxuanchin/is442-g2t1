@@ -1,9 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.event;
 
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
-<<<<<<< HEAD
-import com.is442g2t1.ticketbookingsystem.booking.BookingService;
-=======
 import com.is442g2t1.ticketbookingsystem.User.UserEntity;
 import com.is442g2t1.ticketbookingsystem.User.UserRepository;
 import com.is442g2t1.ticketbookingsystem.booking.Booking;
@@ -12,7 +9,6 @@ import com.is442g2t1.ticketbookingsystem.ticket.Ticket;
 import com.is442g2t1.ticketbookingsystem.ticket.TicketRepository;
 import com.is442g2t1.ticketbookingsystem.email.EmailService;
 
->>>>>>> b167f479b6d3c5a54caf8ce839003d21a57caf5b
 import com.is442g2t1.response.StatusResponse;
 import com.is442g2t1.response.SuccessResponse;
 import org.apache.http.HttpStatus;
@@ -40,7 +36,8 @@ public class EventService {
     private final EmailService emailService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingService bookingService, UserRepository userRepository, EmailService emailService) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingService bookingService,
+            UserRepository userRepository, EmailService emailService) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.bookingService = bookingService;
@@ -271,7 +268,7 @@ public class EventService {
             SuccessResponse successResponse = new SuccessResponse("Event cancelled successfully", HttpStatus.SC_OK,
                     eventId);
             return ResponseEntity.ok().body(successResponse);
-    
+
         } catch (Exception e) {
             e.printStackTrace();
             StatusResponse statusResponse = new StatusResponse("Error cancelling event: " + e.getMessage(),

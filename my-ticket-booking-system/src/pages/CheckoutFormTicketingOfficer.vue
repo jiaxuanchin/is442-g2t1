@@ -12,7 +12,7 @@ const password = ref("");
 const show1 = ref(false);
 const form = ref(false);
 
-const user_id = localStorage.getItem("user_id");
+let userId = ref(1);
 
 let numTickets = ref(0);
 let totalPrice = ref(0);
@@ -49,7 +49,7 @@ const confirmBooking = async (payType) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: user_id, // NOTE: hardcoded for now
+        userId: userId, // NOTE: hardcoded for now
         eventId: eventData.value.eventId,
         numOfTickets: numTickets,
       }),
@@ -69,7 +69,18 @@ const onSubmitWallet = async () => {
   if (!form.value) {
     return;
   }
-
+  // retrieve customer using email
+  console.log(email.value);
+  const customer = await fetch(
+    `http://localhost:8080/UserEntity/get/${email.value}`
+    // {
+    //   headers: {
+    //     Authorization: `Bearer ${localStorage.getItem("token")}`,
+    //   },
+    // }
+  ).then((res) => res.json());
+  console.log(customer);
+  userId = customer.userId;
   // check password
   const response = await axios
     .get(`http://localhost:8080/api/auth/verify_password/${password}`, {

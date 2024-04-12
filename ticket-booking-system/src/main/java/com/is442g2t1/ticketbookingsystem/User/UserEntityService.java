@@ -12,13 +12,14 @@ public class UserEntityService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserEntityService(UserRepository userRepository, RoleService roleService){
+    public UserEntityService(UserRepository userRepository, RoleService roleService) {
         this.userRepository = userRepository;
         this.roleService = roleService;
     }
 
     // Method to create a new user with different roles
-    public ResponseEntity<?> createUser(String roleName, String user_fname, String user_lname, String email, String password) {
+    public ResponseEntity<?> createUser(String roleName, String user_fname, String user_lname, String email,
+            String password) {
         ResponseEntity<?> roleResponse = roleService.getRoleByName(roleName);
         if (roleResponse.getStatusCode().is2xxSuccessful()) {
             Role role = (Role) roleResponse.getBody();
@@ -30,23 +31,51 @@ public class UserEntityService {
     }
 
     // Method to update a user's profile details
-    public ResponseEntity<?> updateUserProfile(int userId, String user_fname, String user_lname, String email, String password) {
-        try{
+    public ResponseEntity<?> updateUserProfile(int userId, String user_fname, String user_lname, String email) {
+        try {
             UserEntity existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
             existingUser.setUser_fname(user_fname);
             existingUser.setUser_lname(user_lname);
             existingUser.setEmail(email);
-            existingUser.setPassword(password);
 
             UserEntity updatedUser = userRepository.save(existingUser);
 
             return ResponseEntity.ok(updatedUser);
-        } catch (IllegalArgumentException e ){
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + userId);
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
+
+    // Fetch the information of the users --> firstname, lastname, email, phone
+    public ResponseEntity<?> getUserEntityInfo(int userId) {
+        try {
+            UserEntity existingUserEntity = (UserEntity) userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+            return ResponseEntity.ok(existingUserEntity);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
+        }
+    }
+
+    // Method to retrieve a user by email
+    public ResponseEntity<?> getUserByEmail(String email) {
+        try {
+            Optional<UserEntity> userOptional = userRepository.findByEmail(email);
+            if (userOptional == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+
+            UserEntity user = userOptional.get();
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
 }

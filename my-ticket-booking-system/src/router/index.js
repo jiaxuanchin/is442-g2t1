@@ -116,7 +116,8 @@ const router = createRouter({
     { path: "/payment/:data", name: "CheckoutForm", component: CheckoutForm },
     { path: "/payment/return", component: Return },
     {
-      path: "/ticketing-officer/checkout",
+      path: "/ticketing-officer/checkout/:data",
+      name: "CheckoutFormTicketingOfficer",
       component: CheckoutFormTicketingOfficer,
     },
   ],

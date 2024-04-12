@@ -39,6 +39,11 @@ onMounted(async () => {
   const user = await fetch(`http://localhost:8080/UserEntity/${userId}`).then(
     (res) => res.json()
   );
+  // const user = await axios.get(`http://localhost:8080/UserEntity/${userId}`,{
+  //     headers: {
+  //       'Authorization': `Bearer ${localStorage.getItem('token')}`
+  //     }
+  //   });
   console.log(user.balance);
   balance = user.balance;
   email = user.email;
@@ -128,7 +133,6 @@ const handleSubmit = async () => {
   isLoading.value = false; // this is to prevent duplicate submissions when waiting for the payment confirmation response from stripe
 };
 
-<<<<<<< HEAD
 // confirm booking
 const confirmBooking = async (payType) => {
   console.log("confirm booking");
@@ -149,9 +153,6 @@ const confirmBooking = async (payType) => {
   console.log(bookingResponse);
   return true;
 };
-=======
-// maintains PCI compliance requirements
->>>>>>> b167f479b6d3c5a54caf8ce839003d21a57caf5b
 
 const toggleForm = () => {
   showForm.value = !showForm.value;
