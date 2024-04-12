@@ -24,7 +24,6 @@ USE `ticket-booking-system`;
 --
 -- Table structure for table `Roles`
 --
-select * from user;
 
 DROP TABLE IF EXISTS Role;
 
@@ -50,7 +49,7 @@ CREATE TABLE IF NOT EXISTS Users (
 --   salt VARCHAR(50) NOT NULL,
  `password` VARCHAR(255) NOT NULL,
   user_type VARCHAR(50) NOT NULL,
-  balance DOUBLE PRECISION DEFAULT 1000,
+  balance DOUBLE PRECISION DEFAULT NULL,
   FOREIGN KEY (role_id) REFERENCES Role(role_id)
 );
 
@@ -148,7 +147,7 @@ INSERT INTO Role (role_id, role_name) VALUES
 
 INSERT INTO Users (user_id, role_id, user_fname,user_lname,email, `password`, user_type, balance) VALUES
 (1, 1, 'Eunice','Ong','euniceong.2021@scis.smu.edu.sg', '$2a$10$9iPJ9/xQEIJlHzFHcvUEX.3Z8Trj9G/.M4.AKdjsr1zW83iFgpThC', 'customer', 1000),
-(2, 2, 'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', '$2a$10$SQ67EdPDW/yWSbFr065A1O131e1T0iKm6plIclQ8Xf6DhZjCCV80S', 'event_manager', 1000),
+(2, 2, 'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', '$2a$10$SQ67EdPDW/yWSbFr065A1O131e1T0iKm6plIclQ8Xf6DhZjCCV80S', 'event_manager', NULL),
 (3, 3, 'Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', '$2a$10$5SAphSHTMrFBiO1sXr3Y3u3ybrqHXDopn2g1jl8u2X.unz2vUkfwu', 'ticketing_officer', NULL);
 
 
@@ -161,9 +160,11 @@ INSERT INTO Event (event_id, event_title, event_date, event_description, event_l
 
 INSERT INTO Booking VALUES
 (1,1,4,2, TIMESTAMP('2023-09-13 10:04:30')),
-(2,1,3,1, TIMESTAMP('2024-01-02 11:27:33'));
+(2,1,3,1, TIMESTAMP('2024-01-02 11:27:33')),
+(3,1,2,1, TIMESTAMP('2024-01-02 12:27:33')),
+(4,1,3,1, TIMESTAMP('2024-01-02 22:27:33')),
+(5,1,3,1, TIMESTAMP('2024-01-02 23:27:33'));
 
-select * from users;
 
 INSERT INTO Ticket VALUES
 (00000001, 1, false),
@@ -182,4 +183,4 @@ INSERT INTO Ticket VALUES
 INSERT INTO Token VALUES
 (1, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJldW5pY2VvbmcuMjAyMUBzY2lzLnNtdS5lZHUuc2ciLCJ1c2VyX2lkIjoxLCJyb2xlX2lkIjp7ImlkIjoxLCJuYW1lIjoiY3VzdG9tZXIifSwiaWF0IjoxNzExNTEzMjE1LCJleHAiOjE3MTE1OTk2MTV9.zh6RdIoKNMzJa7_yZ-vZHllJI7gAceMpwr1sLacHNB4', true, true, 1),
 (2, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJldW5pY2VvbmcuMjAyMUBzY2lzLnNtdS5lZHUuc2ciLCJ1c2VyX2lkIjoxLCJyb2xlX2lkIjp7ImlkIjoxLCJuYW1lIjoiY3VzdG9tZXIifSwiaWF0IjoxNzExNTIxNjY3LCJleHAiOjE3MTE2MDgwNjd9.QnZTq9R4_4bypTP0G2_LlK_GIafSMjcqEL0Q-DCC2Fw', false, false, 1),
-(3, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqeGNoaW4uMjAyMUBzY2lzLnNtdS5lZHUuc2ciLCJ1c2VyX2lkIjo0LCJyb2xlX2lkIjp7ImlkIjoxLCJuYW1lIjoiY3VzdG9tZXIifSwiaWF0IjoxNzExMjkxNTg2LCJleHAiOjE3MTEzNzc5ODZ9.iKZjd2U59B-ZFG9KTl4c29m-wTUAtG7wjVl738Kh0NU', false, false, 4);
+(3, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqeGNoaW4uMjAyMUBzY2lzLnNtdS5lZHUuc2ciLCJ1c2VyX2lkIjo0LCJyb2xlX2lkIjp7ImlkIjoxLCJuYW1lIjoiY3VzdG9tZXIifSwiaWF0IjoxNzExMjkxNTg2LCJleHAiOjE3MTEzNzc5ODZ9.iKZjd2U59B-ZFG9KTl4c29m-wTUAtG7wjVl738Kh0NU', false, false, 3);
