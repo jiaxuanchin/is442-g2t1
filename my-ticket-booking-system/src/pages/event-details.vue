@@ -52,10 +52,38 @@ const goToCheckout = async () => {
     numTickets: ticketDataLocal.value.quantity,
     eventId: eventId,
   };
-  router.push({
-    name: "CheckoutForm",
-    params: { data: JSON.stringify(data) },
-  });
+  let userId = parseInt(localStorage.getItem("user_id"));
+
+  //  NOTE: remove later
+  if (!userId) {
+    userId = 3;
+  }
+
+  const response = await fetch(
+    `http://localhost:8080/UserEntity/${userId}`
+  ).then((res) => res.json());
+  console.log(response);
+
+  // CORRECT CODE NOTE:
+  // const response = await axios.get(`http://localhost:8080/UserEntity/${userId}`,{
+  //     headers: {
+  //       'Authorization': `Bearer ${localStorage.getItem('token')}`
+  //     }
+  //   });
+
+  if (response.role.name == "customer") {
+    router.push({
+      name: "CheckoutForm",
+      params: { data: JSON.stringify(data) },
+    });
+  } else if (response.role.name == "ticketing_officer") {
+    router.push({
+      name: "CheckoutFormTicketingOfficer",
+      params: { data: JSON.stringify(data) },
+    });
+  } else {
+    alert("You are not authorized to purchase tickets");
+  }
 };
 </script>
 

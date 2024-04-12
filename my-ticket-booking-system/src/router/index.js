@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import CheckoutForm from "@/pages/CheckoutForm.vue";
 import Return from "@/pages/ReturnView.vue";
+import CheckoutFormTicketingOfficer from "@/pages/CheckoutFormTicketingOfficer.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -119,6 +120,10 @@ const router = createRouter({
     },
     { path: "/payment/:data", name: "CheckoutForm", component: CheckoutForm },
     { path: "/payment/return", component: Return },
+    {
+      path: "/ticketing-officer/checkout",
+      component: CheckoutFormTicketingOfficer,
+    },
   ],
 });
 

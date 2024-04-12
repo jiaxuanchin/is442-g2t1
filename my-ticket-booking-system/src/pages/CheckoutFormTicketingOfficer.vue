@@ -1,48 +1,24 @@
 <script setup>
 import { ref, onMounted } from "vue";
 // ref: to create reactive variables
-import { loadStripe } from "@stripe/stripe-js"; // import stripe object
-
-// import SrMessages from "./SrMessages.vue"; // display messages
-
-const isLoading = ref(false); // track whether data is loaded
-const messages = ref([]); // store payment messages
-
-let stripe; // hold Stripe object
-let elements; // hold Stripe Elements object
-
-const route = useRoute();
 
 const eventData = ref(null);
+const route = useRoute();
 
-let email = ref("");
+const email = ref("");
 const loading = ref(false);
 const password = ref("");
 
 const show1 = ref(false);
 const form = ref(false);
 
-let balance = ref(0);
-
-let userId = parseInt(localStorage.getItem("user_id"));
+const user_id = localStorage.getItem("user_id");
 
 let numTickets = ref(0);
 let totalPrice = ref(0);
 
-//  NOTE: remove later
-if (!userId) {
-  userId = 1;
-}
-
 onMounted(async () => {
-  // GET USER:
-  const user = await fetch(`http://localhost:8080/UserEntity/${userId}`).then(
-    (res) => res.json()
-  );
-  console.log(user.balance);
-  balance = user.balance;
-  email = user.email;
-
+  // fetch publishable key
   const data = JSON.parse(route.params.data);
   const eventId = data.eventId;
   console.log(eventId);
@@ -60,73 +36,7 @@ onMounted(async () => {
   console.log(response);
 
   totalPrice = numTickets * eventData.value.ticketPrice;
-
-  const { publishableKey } = await fetch(
-    "http://localhost:8080/api/payments/config"
-  ).then((res) => res.json());
-
-  stripe = await loadStripe(publishableKey); // initialize the Stripe object
-  console.log(publishableKey);
-
-  // fetch client secret -> to confirm payment
-  const { clientSecret } = await fetch(
-    "http://localhost:8080/api/payments/create-payment-intent",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        amount: totalPrice * 100, // convert to cents
-        currency: "sgd",
-      }),
-    }
-  ).then((res) => {
-    console.log(res);
-
-    return res.json();
-  });
-
-  messages.value.push(`Client secret returned.`);
-  console.log(messages);
-
-  // create payment form element
-
-  elements = stripe.elements({ clientSecret });
-
-  const paymentElement = elements.create("payment");
-
-  paymentElement.mount("#payment-element"); // mount payment form to DOM to display
 });
-
-// when user submits form
-const handleSubmit = async () => {
-  console.log("submitted form");
-  if (isLoading.value) {
-    return;
-  }
-
-  isLoading.value = true;
-
-  const responseBooking = confirmBooking("stripe");
-  console.log(responseBooking);
-
-  // confirm payment
-  const { error } = await stripe.confirmPayment({
-    elements,
-    confirmParams: {
-      return_url: `${window.location.origin}/payment/return`, // generates Return.vue
-    },
-  });
-
-  if (error.type === "card_error" || error.type === "validation_error") {
-    messages.value.push(error.message);
-  } else {
-    messages.value.push("An unexpected error occured."); // display any error message
-  }
-
-  isLoading.value = false; // this is to prevent duplicate submissions when waiting for the payment confirmation response from stripe
-};
 
 // confirm booking
 const confirmBooking = async (payType) => {
@@ -139,7 +49,7 @@ const confirmBooking = async (payType) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: userId, // NOTE
+        userId: user_id, // NOTE: hardcoded for now
         eventId: eventData.value.eventId,
         numOfTickets: numTickets,
       }),
@@ -148,16 +58,6 @@ const confirmBooking = async (payType) => {
   console.log(bookingResponse);
   return true;
 };
-
-const toggleForm = () => {
-  showForm.value = !showForm.value;
-};
-
-const hideForm = () => {
-  showForm.value = false;
-};
-
-const showForm = ref(true); // track whether form is shown
 
 const required = (v) => !!v || "Field is required";
 
@@ -169,6 +69,7 @@ const onSubmitWallet = async () => {
   if (!form.value) {
     return;
   }
+
   // check password
   const response = await axios
     .get(`http://localhost:8080/api/auth/verify_password/${password}`, {
@@ -196,79 +97,50 @@ const onSubmitWallet = async () => {
   <div class="container">
     <h1>Payment</h1>
     <v-row>
-      <v-col cols="6">
-        <div id="content">
-          <v-expansion-panels>
-            <v-expansion-panel
-              title="Stripe Payment"
-              :value="showForm"
-              @click="toggleForm"
-            >
-              <main v-show="showForm">
-                <p>Please enter your card details.</p>
+      <v-col cols="6" class="mt-7">
+        <v-card color="indigo-darken-3">
+          <v-card-item>
+            <v-form v-model="form" @submit.prevent="onSubmitWallet">
+              <v-text-field
+                v-model="email"
+                :readonly="loading"
+                :rules="[required]"
+                class="mb-2"
+                label="Email"
+                clearable
+              ></v-text-field>
 
-                <form id="payment-form" @submit.prevent="handleSubmit">
-                  <div id="payment-element" />
-                  <button id="submit" :disabled="isLoading">Pay now</button>
-                  <!-- <sr-messages :messages="messages" /> -->
-                </form>
-              </main>
-            </v-expansion-panel>
-            <v-expansion-panel title="Wallet" @click="hideForm">
-              <v-expansion-panel-text>
-                <!-- <v-text-field
-                  v-model="trip.name"
-                  placeholder="Caribbean Cruise"
-                  hide-details
-                ></v-text-field> -->
+              <v-text-field
+                v-model="password"
+                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="show1 ? 'text' : 'password'"
+                :readonly="loading"
+                :rules="[required, min]"
+                label="Password"
+                placeholder="Enter your password"
+                clearable
+                counter
+                @click:append="show1 = !show1"
+              ></v-text-field>
 
-                <v-expansion-panel-text>
-                  Current wallet balance: ${{ balance }}
-                </v-expansion-panel-text>
-                <v-expansion-panel-text>
-                  <v-form v-model="form" @submit.prevent="onSubmitWallet">
-                    <v-text-field
-                      v-model="email"
-                      :readonly="loading"
-                      :rules="[required]"
-                      class="mb-2"
-                      label="Email"
-                      clearable
-                    ></v-text-field>
+              <br />
 
-                    <v-text-field
-                      v-model="password"
-                      :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                      :type="show1 ? 'text' : 'password'"
-                      :readonly="loading"
-                      :rules="[required, min]"
-                      label="Password"
-                      placeholder="Enter your password"
-                      clearable
-                      counter
-                      @click:append="show1 = !show1"
-                    ></v-text-field>
-
-                    <br />
-
-                    <v-btn
-                      :disabled="!form"
-                      :loading="loading"
-                      color="success"
-                      size="large"
-                      type="submit"
-                      variant="elevated"
-                      block
-                    >
-                      Pay
-                    </v-btn>
-                  </v-form>
-                </v-expansion-panel-text>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </div>
+              <v-btn
+                :disabled="!form"
+                :loading="loading"
+                color="success"
+                size="large"
+                type="submit"
+                variant="elevated"
+                block
+              >
+                Pay
+              </v-btn>
+            </v-form>
+          </v-card-item>
+        </v-card>
       </v-col>
+
       <v-col cols="6" class="mt-7">
         <v-card color="indigo-darken-3">
           <v-card-item>
