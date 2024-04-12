@@ -157,30 +157,41 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<?> addTicketingOfficer(HttpServletRequest request, RegisterDTO registerDto) {
-        if (userRepository.existsByEmail(registerDto.getEmail())) {
-            return new ResponseEntity<>("Email is taken!", HttpStatus.BAD_REQUEST);
-        }
+    // public ResponseEntity<?> addTicketingOfficer(HttpServletRequest request, RegisterDTO registerDto) {
+    //     if (userRepository.existsByEmail(registerDto.getEmail())) {
+    //         return new ResponseEntity<>("Email is taken!", HttpStatus.BAD_REQUEST);
+    //     }
 
-        Role role = roleRepository.findByName("ticketing_officer").orElse(null);
+    //     Role role = roleRepository.findByName("ticketing_officer").orElse(null);
 
-        if (role == null) {
-            return new ResponseEntity<>("Role not found!", HttpStatus.BAD_REQUEST);
-        }
+    //     if (role == null) {
+    //         return new ResponseEntity<>("Role not found!", HttpStatus.BAD_REQUEST);
+    //     }
 
-        try {
-            UserEntity user = new TicketingOfficer(role, registerDto.getUser_fname(),registerDto.getUser_lname(),registerDto.getEmail(), 
-                passwordEncoder.encode(registerDto.getPassword())
-            );
+    //     try {
+    //         UserEntity user = new TicketingOfficer(role, registerDto.getUser_fname(),registerDto.getUser_lname(),registerDto.getEmail(), 
+    //             passwordEncoder.encode(registerDto.getPassword())
+    //         );
 
-            System.out.println("[CHECKPOINT AuthController] PRINT USER DETAILS: " + user.toString());
+    //         System.out.println("[CHECKPOINT AuthController] PRINT USER DETAILS: " + user.toString());
 
-            userRepository.save(user);
+    //         userRepository.save(user);
             
-            return new ResponseEntity<>("Ticketing officer added successfully!", HttpStatus.OK);
+    //         return new ResponseEntity<>("Ticketing officer added successfully!", HttpStatus.OK);
+
+    //     } catch (Exception e) {
+    //         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    //     }
+    // }
+
+    public ResponseEntity<?> encodePassword(String password) {
+        try {
+            String encodedPassword = passwordEncoder.encode(password);
+            return new ResponseEntity<>(encodedPassword, HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            
         }
     }
 

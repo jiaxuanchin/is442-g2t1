@@ -13,17 +13,17 @@ import jakarta.persistence.*;
 
 public class Customer extends UserEntity{
     @Column(name = "balance")
-    private double balance;
+    private Double balance;
 
     // Constructor without RoleService dependency
     public Customer(String user_fname, String user_lname, String email, String password) {
         super(null, user_fname, user_lname, email, password);
-        this.balance = 1000;
+        this.balance = 1000.0;
     }
 
     public Customer(Role role, String user_fname, String user_lname, String email, String password) {
         super(role, user_fname, user_lname, email, password);
-        this.balance = 1000;
+        this.balance = 1000.0;
     }
 
     // Method to reduce balance

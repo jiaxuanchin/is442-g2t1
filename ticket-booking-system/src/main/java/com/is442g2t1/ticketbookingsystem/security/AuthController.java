@@ -69,11 +69,18 @@ public class AuthController {
 
     }
 
-    // /add-ticketing-officer, post method
-    @PostMapping("/add-ticketing-officer")
+    // // /add-ticketing-officer, post method
+    // @PostMapping("/add-ticketing-officer")
+    // @PreAuthorize("hasAnyAuthority('event_manager')")
+    // public ResponseEntity<?> addTicketingOfficer(HttpServletRequest request, @RequestBody RegisterDTO registerDto) {
+    //     return authService.addTicketingOfficer(request, registerDto);
+    // }
+
+    @PostMapping("/encode_password")
     @PreAuthorize("hasAnyAuthority('event_manager')")
-    public ResponseEntity<?> addTicketingOfficer(HttpServletRequest request, @RequestBody RegisterDTO registerDto) {
-        return authService.addTicketingOfficer(request, registerDto);
+    public ResponseEntity<?> encodePassword(@RequestBody String password) {
+        return authService.encodePassword(password.substring(1, password.length()-1));
+        
     }
 
 }
