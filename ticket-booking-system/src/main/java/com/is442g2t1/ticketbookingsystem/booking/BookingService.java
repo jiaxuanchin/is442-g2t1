@@ -70,7 +70,7 @@ public class BookingService {
     public ResponseEntity getUserBooking(int userId) {
         try {
             List<Booking> booking = this.bookingRepository.findByUserId(userId);
-            if (booking.equals(booking)) {
+            if (booking.isEmpty()) {
                 return ResponseEntity.status(404).body("Booking not found");
             }
             return ResponseEntity.ok(booking);
