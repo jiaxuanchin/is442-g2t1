@@ -15,7 +15,11 @@ const ticketDataLocal = ref(structuredClone(ticketData))
 const eventData = ref(null)
 
 // Fetch event details from the API
-axios.get(`http://localhost:8080/event/searchById/${eventId}`)
+axios.get(`http://localhost:8080/event/searchById/${eventId}`, {
+  headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+})
   .then(response => {
     // Update the eventData with the response data
     eventData.value = response.data.data
@@ -79,7 +83,21 @@ function formatTime(timeString) {
   return formattedTime;
 }
 
+// Computed property to determine if the form should be hidden
+const isSalesStartDatePast = computed(() => {
+  console.log('salesDates:', salesDates.value);
+  if (!salesDates.value || !salesDates.value.salesStartDate) {
+    return false;
+  }
+  const today = new Date();
+  const salesStartDate = salesDates.value.salesStartDate;
+  console.log("today: ", today)
+  console.log('salesStartDate:', salesStartDate);
+  console.log(salesStartDate < today)
+  return salesStartDate > today;
+});
 </script>
+
 
 <template>
   <VRow>
@@ -194,52 +212,49 @@ function formatTime(timeString) {
     </VCard>
   </VCol>
 
-  <!-- The form for quantity of tickets required -->
-    <VCol cols="12">
-      <VCard title="Choose your tickets">
-        <VCardText>
-          <VForm class="mt-6">
+<!-- The form for quantity of tickets required -->
+  <VCol cols="12" v-if="!isSalesStartDatePast">
+    <VCard title="Choose your tickets">
+      <VCardText>
+        <VForm class="mt-6">
 
-            <VRow>
+          <VRow>
 
-              <!-- 👉 Quantity of tickets -->
-              <VCol
-                cols="12"
-              >
-                <VTextField
-                  v-model="ticketDataLocal.quantity"
-                  label="Ticket Quantity"
-                  placeholder="1"
-                />
-              </VCol>
+            <!-- 👉 Quantity of tickets -->
+            <VCol
+              cols="12"
+            >
+              <VTextField
+                v-model="ticketDataLocal.quantity"
+                label="Ticket Quantity"
+                placeholder="1"
+              />
+            </VCol>
 
-              <!-- Note -->
-              <div style="padding-left: 20px;margin-bottom: 10px;margin-top: 10px">
-                <span>Note:</span>
-                <ul style="padding-left: 30px; margin-left: 0;">
-                  <li>Limited to only 5 tickets per transaction.</li>
-                </ul>
-              </div>
-            </VRow>
+            <!-- Note -->
+            <div style="padding-left: 20px;margin-bottom: 10px;margin-top: 10px">
+              <span>Note:</span>
+              <ul style="padding-left: 30px; margin-left: 0;">
+                <li>Limited to only 5 tickets per transaction.</li>
+              </ul>
+            </div>
+          </VRow>
 
-            
+          <!-- 👉 Submit the forms -->
+          <VRow>
+            <VCol cols="12" class="text-end mt-4"> <!-- Use 'text-end' class to align content to the right -->
+              <router-link :to="'/other-page/' + eventId" style="display: flex; justify-content: flex-end;">
+                <VBtn>
+                  Purchase Tickets
+                </VBtn>
+              </router-link>
+            </VCol>
+          </VRow>
 
-            <!-- 👉 Submit the forms -->
-            <VRow>
-              <VCol cols="12" class="text-end mt-4"> <!-- Use 'text-end' class to align content to the right -->
-                <router-link :to="'/other-page/' + eventId" style="display: flex; justify-content: flex-end;">
-                  <VBtn>
-                    Purchase Tickets
-                  </VBtn>
-                </router-link>
-              </VCol>
-            </VRow>
-
-            
-
-          </VForm>  
-        </VCardText>
-      </VCard>
-    </VCol>
-  </VRow>
+        </VForm>  
+      </VCardText>
+    </VCard>
+  </VCol>
+</VRow>
 </template>
+
