@@ -1,6 +1,7 @@
 package com.is442g2t1.ticketbookingsystem.event;
 
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
+import com.is442g2t1.ticketbookingsystem.booking.BookingService;
 import com.is442g2t1.response.StatusResponse;
 import com.is442g2t1.response.SuccessResponse;
 import org.apache.http.HttpStatus;
@@ -24,11 +25,13 @@ import jakarta.transaction.Transactional;
 public class EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
+    private final BookingService bookingService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, EventMapper eventMapper) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingService bookingService) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
+        this.bookingService = bookingService;
     }
 
     public List<Event> getAllEvent() {
@@ -236,7 +239,7 @@ public class EventService {
         }
     }
 
-    public ResponseEntity<?> deleteById(int eventId) {
+    public ResponseEntity<?> cancelEvent(int eventId) {
         try {
             // Check if the event exists
             Optional<Event> optionalEvent = eventRepository.findById(eventId);
@@ -246,16 +249,19 @@ public class EventService {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(notFoundResponse);
             }
 
+            // Cancel all bookings under the event
+            ResponseEntity cancellationResponse = bookingService.cancelAllBookingsUnderEvent(eventId);
+
             // Delete the event from the database
             eventRepository.deleteById(eventId);
 
-            SuccessResponse successResponse = new SuccessResponse("Event deleted successfully", HttpStatus.SC_OK,
+            SuccessResponse successResponse = new SuccessResponse("Event cancelled successfully", HttpStatus.SC_OK,
                     eventId);
             return ResponseEntity.ok().body(successResponse);
-
+    
         } catch (Exception e) {
             e.printStackTrace();
-            StatusResponse statusResponse = new StatusResponse("Error deleting event: " + e.getMessage(),
+            StatusResponse statusResponse = new StatusResponse("Error cancelling event: " + e.getMessage(),
                     HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(statusResponse);
         }
