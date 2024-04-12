@@ -1,19 +1,33 @@
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import axios from 'axios';
+import { constructFrom } from 'date-fns';
 
-const { params } = useRoute();
-const eventId = params.eventId;
-const editing = ref(false);  // Tracks if we are in editing mode
+const BASE_URL = 'http://localhost:8080/event'; 
+const route = useRoute();
+const router = useRouter();
+const eventId = ref(route.params.eventId);
+const eventDetails = ref({});
 
-const eventDetails = reactive({
-  name: 'Sample Event Name',
-  location: 'Singapore Indoor Stadium',
-  start: '23 December 2023, 4pm',
-  end: '23 December 2023, 8pm',
-  description: 'This is a sample event description',
-  salesStart: '27 December 2023, 12am',
-  salesEnd: '22 December 2023, 4pm'
+// Tracks if we are in editing mode
+const editing = ref(false);  
+
+
+onMounted(async () => {
+  if (!eventId.value) {
+    console.error('No event ID provided');
+    return;
+  }
+  
+  try {
+    console.log('Fetching event details');
+    const response = await axios.get(`${BASE_URL}/searchById/${eventId.value}`);
+    console.log(response.data);
+    eventDetails.value = response.data.data;
+  } catch (error) {
+    console.error('Error fetching event details:', error);
+  }
 });
 
 // Function to toggle editing mode
@@ -21,16 +35,21 @@ const toggleEdit = () => {
   editing.value = !editing.value;
 };
 
-// Function to save changes
-const saveChanges = () => {
-  // Logic to save the changes, such as calling an API endpoint
-  console.log('Changes saved', eventDetails.value);
-  toggleEdit();  // Turn off editing mode after saving
+const saveChanges = async () => {
+  try {
+    await axios.put(`${BASE_URL}/editEvent/${eventId.value}`, eventDetails.value);
+    console.log('Changes saved');
+    alert('Event updated successfully');
+    editing.value = false;
+  } catch (error) {
+    console.error('Error updating event:', error);
+    alert('An error occurred while updating the event.');
+  }
 };
+
 
 // Function to cancel changes and exit editing mode
 const cancelEdit = () => {
-  // Here, you could restore previous values if necessary
   toggleEdit();
 };
 </script>
@@ -43,28 +62,49 @@ const cancelEdit = () => {
         <VCardText>
           <template v-if="editing">
             <div class="mb-4"> 
-              <VTextField label="Event Name" v-model="eventDetails.eventName" outlined dense solo-inverted />
+              <VTextField label="Event Title" v-model="eventDetails.eventTitle" outlined dense solo-inverted />
+            </div>
+            <div class="mb-4"> 
+              <VTextField label="Event Date" v-model="eventDetails.eventDate" outlined dense solo-inverted type="date"/>
             </div>
             <div class="mb-4">
-              <VTextField label="Location" v-model="eventDetails.location" outlined dense solo-inverted />
+              <VTextarea label="Event Description" v-model="eventDetails.eventDesc" outlined rows="5" solo-inverted />
             </div>
             <div class="mb-4">
-              <VTextField label="Start" v-model="eventDetails.start" outlined dense solo-inverted />
+              <VTextField label="Event Location" v-model="eventDetails.eventLoc" outlined dense solo-inverted />
             </div>
             <div class="mb-4">
-              <VTextField label="End" v-model="eventDetails.end" outlined dense solo-inverted />
+              <VTextField label="Start Time" v-model="eventDetails.startTime" outlined dense solo-inverted type="time" />
             </div>
             <div class="mb-4">
-              <VTextarea label="Description" v-model="eventDetails.description" outlined rows="5" solo-inverted />
-          
+              <VTextField label="End Time" v-model="eventDetails.endTime" outlined dense solo-inverted  type="time"/>
             </div>
+            <div class="mb-4">
+              <VTextField label="Ticket Price" v-model="eventDetails.ticketPrice" outlined dense solo-inverted prefix="$" type="number"/>
+            </div> 
+            <div class="mb-4">
+              <VTextField label="Filled" v-model="eventDetails.filled" outlined dense solo-inverted type="number"/>
+            </div> 
+            <div class="mb-4">
+              <VTextField label="Capacity" v-model="eventDetails.capacity" outlined dense solo-inverted type="number"/>
+            </div> 
+            <div class="mb-4">
+              <VTextField label="Cancel Fee" v-model="eventDetails.cancelFee" outlined dense solo-inverted prefix="$" type="number"/>
+            </div> 
           </template>
+
+          
           <template v-else>
-            <div class="mb-3"><b>Event Name:</b> {{ eventDetails.eventName }}</div>
-            <div class="mb-3"><b>Location:</b> {{ eventDetails.location }}</div>
-            <div class="mb-3"><b>Start:</b> {{ eventDetails.start }}</div>
-            <div class="mb-3"><b>End:</b> {{ eventDetails.end }}</div>
-            <div class="mb-3"><b>Description:</b> {{ eventDetails.description }}</div>
+            <div class="mb-3"><b>Event Title:</b> {{ eventDetails.eventTitle }}</div>
+            <div class="mb-3"><b>Event Date:</b> {{ eventDetails.eventDate }}</div>
+            <div class="mb-3"><b>Event Description:</b> {{ eventDetails.eventDesc }}</div>
+            <div class="mb-3"><b>Event Location:</b> {{ eventDetails.eventLoc }}</div>
+            <div class="mb-3"><b>Start Time:</b> {{ eventDetails.startTime }}</div>
+            <div class="mb-3"><b>End Time:</b> {{ eventDetails.endTime }}</div>
+            <div class="mb-3"><b>Ticket Price:</b> {{ eventDetails.ticketPrice }}</div>
+            <div class="mb-3"><b>Filled:</b> {{ eventDetails.filled }}</div>
+            <div class="mb-3"><b>Capacity:</b> {{ eventDetails.capacity }}</div>
+            <div class="mb-3"><b>Cancel Fee:</b> {{ eventDetails.cancelFee }}</div>
           </template>
         </VCardText>
         <VCardActions class="justify-space-between pt-4"> 

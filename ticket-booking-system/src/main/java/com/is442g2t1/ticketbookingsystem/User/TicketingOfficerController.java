@@ -27,8 +27,4 @@ public class TicketingOfficerController {
         return ticketingOfficerService.processOnsiteTicketSales(eventId, numOfTickets, customerId);
     }
 
-    // @PostMapping("/issueETicket")
-    // public ResponseEntity<?> issueETicket(@RequestParam int bookingId, @RequestParam String customerEmail) {
-    //     return ticketingOfficerService.issueETicket(bookingId, customerEmail);
-    // }
 }

@@ -2,9 +2,34 @@
 import { useTheme } from 'vuetify'
 import illustrationJohnDark from '@images/cards/illustration-john-dark.png'
 import illustrationJohnLight from '@images/cards/illustration-john-light.png'
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 
+const BASE_URL = 'http://localhost:8080/event'; 
 const { global } = useTheme()
 const illustrationJohn = computed(() => global.name.value === 'dark' ? illustrationJohnDark : illustrationJohnLight)
+const route = useRoute();
+const router = useRouter();
+const eventId = ref(route.params.eventId);
+const eventDetails = ref({});
+
+onMounted(async () => {
+  if (!eventId.value) {
+    console.error('No event ID provided');
+    return;
+  }
+  
+  try {
+    console.log('Fetching event details');
+    const response = await axios.get(`${BASE_URL}/searchById/${eventId.value}`);
+    console.log(response.data);
+    eventDetails.value = response.data.data;
+  } catch (error) {
+    console.error('Error fetching event details:', error);
+  }
+});
+
 </script>
 
 <template>
@@ -20,18 +45,16 @@ const illustrationJohn = computed(() => global.name.value === 'dark' ? illustrat
         </VCardItem>
 
         <VCardText>
-          <span>
-            Event Name: The Era Tour
-            <br>
-            Event ID: 1
-            <br>
-            Event Description: The Era Tour is a musical concert that will be held in the city center.
-            <br>
-            Event tickets price: Sold out
-            <br>
-            Event Date: 2023-03-03
-
-          </span>
+          <div class="mb-3"><b>Event Title:</b> {{ eventDetails.eventTitle }}</div>
+            <div class="mb-3"><b>Event Date:</b> {{ eventDetails.eventDate }}</div>
+            <div class="mb-3"><b>Event Description:</b> {{ eventDetails.eventDesc }}</div>
+            <div class="mb-3"><b>Event Location:</b> {{ eventDetails.eventLoc }}</div>
+            <div class="mb-3"><b>Start Time:</b> {{ eventDetails.startTime }}</div>
+            <div class="mb-3"><b>End Time:</b> {{ eventDetails.endTime }}</div>
+            <div class="mb-3"><b>Ticket Price:</b> $ {{ eventDetails.ticketPrice }}</div>
+            <div class="mb-3"><b>Filled:</b> {{ eventDetails.filled }}</div>
+            <div class="mb-3"><b>Capacity:</b> {{ eventDetails.capacity }}</div>
+            <div class="mb-3"><b>Cancel Fee: </b> $ {{ eventDetails.cancelFee }}</div>
           <br>
           <VBtn
             variant="tonal"

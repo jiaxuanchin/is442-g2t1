@@ -72,7 +72,8 @@ const router = createRouter({
           props: true
         },
         {
-          path: 'sales-statistics',
+          path: '/sales-statistics/:eventId',
+          name: 'SalesStatistics',
           component: () => import('../pages/sales-statistics.vue'),
           props: true
         },
@@ -88,9 +89,11 @@ const router = createRouter({
         },
         {
           path: '/edit-event/:eventId',
+          name: 'EditEvent',
           component: () => import('../pages/edit-event.vue'),
           props: true
         },
+        
         
       ],
     },

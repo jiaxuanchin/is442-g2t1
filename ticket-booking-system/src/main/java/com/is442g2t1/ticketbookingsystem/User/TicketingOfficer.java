@@ -12,5 +12,9 @@ import jakarta.persistence.*;
 @DiscriminatorValue("ticketing_officer")
 
 public class TicketingOfficer extends UserEntity{
-    
+    // Constructor without RoleService dependency
+    public TicketingOfficer(String user_fname, String user_lname, String email, String password) {
+        super(null, user_fname, user_lname, email, password);
+    }
+
 }

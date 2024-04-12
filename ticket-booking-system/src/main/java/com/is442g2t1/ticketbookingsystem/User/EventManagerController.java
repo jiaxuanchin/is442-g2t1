@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/eventmanager") 
 public class EventManagerController {
 
@@ -47,7 +48,8 @@ public class EventManagerController {
     }
 
     @GetMapping("/statistics/{eventId}")
-    public ResponseEntity<String> generateSalesStatistics(@PathVariable int eventId) {
+    public ResponseEntity<?> generateSalesStatistics(@PathVariable Integer eventId) {
         return eventManagerService.generateSalesStatistics(eventId);
     }
+
 }
