@@ -1,43 +1,115 @@
 <script setup>
-const events = ref([
-  {
-    name: 'Event 1',
-    description: 'Event 1 description',
-    date: '2023-03-23',
-    location: 'The Capitol',
-    time: '18:00 - 21:00',
-    tickets: 4,
-    id: 1
-  },
-  {
-    name: 'Event 2',
-    description: 'Event 2 description',
-    date: '2023-03-23',
-    location: 'The Capitol',
-    time: '18:00 - 21:00',
-    tickets: 4,
-    id: 1
-  },
-]);
+import { ref } from 'vue';
+import axios from 'axios';
 
+const events = ref([]);
 let confirmationDialog = ref(false);
 let cancelIndex = null;
 
-const cancelEvent = (index) => {
-  events.value.splice(index, 1);
-  confirmationDialog.value = false; // Close the confirmation dialog after cancellation
+const cancelEvent = async (index) => {
+  try {
+    const bookingId = events.value[index].bookingId;
+    await axios.delete(`http://localhost:8080/booking/delete/${bookingId}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    events.value.splice(index, 1);
+    confirmationDialog.value = false;
+    alert('Booking canceled successfully!');
+  } catch (error) {
+    console.error('Error canceling booking:', error);
+    alert('Failed to cancel booking. Please try again later.');
+  }
 };
 
 const showConfirmationDialog = (index) => {
-  confirmationDialog.value = true; // Show the confirmation dialog when cancel button is clicked
-  cancelIndex = index; // Store the index of the event to be cancelled
+  console.log('Showing confirmation dialog for index:', index);
+  cancelIndex = index;
+  confirmationDialog.value = true;
 };
+
+const fetchUserBookings = async () => {
+  try {
+    const userId = localStorage.getItem('user_id'); // Get the user ID from local storage
+    const response = await axios.get(`http://localhost:8080/booking/user/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    const bookings = response.data;
+
+    const updatedEvents = await Promise.all(bookings.map(async (booking) => {
+      // Get event details
+      const eventResponse = await axios.get(`http://localhost:8080/event/searchById/${booking.eventId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      // Return merged event details with numOfTickets
+      return {
+        ...eventResponse.data.data,
+        tickets: booking.numOfTickets, // Use numOfTickets from the booking
+        bookingId: booking.bookingId
+      };
+    }));
+
+    // Filter events based on whether they have already happened
+    const today = new Date();
+    const pastEvents = updatedEvents.filter(event => {
+      const eventStart = new Date(event.eventDate + ' ' + event.startTime);
+      return eventStart >= today;
+    });
+
+    // Map the pastEvents array to match the structure of the events array
+    const mappedEvents = pastEvents.map(event => ({
+      name: event.eventTitle,
+      description: event.eventDesc,
+      date: event.eventDate,
+      location: event.eventLoc,
+      time: `${event.startTime} - ${event.endTime}`,
+      tickets: event.tickets,
+      id: event.eventId,
+      bookingId: event.bookingId,
+      cancelable: isEventCancelable(event)
+    }));
+
+    events.value = mappedEvents;
+  } catch (error) {
+    console.error('Error fetching user bookings:', error);
+  }
+};
+
+const isEventCancelable = (event) => {
+  if (!event.eventDate || !event.startTime) {
+    return false; // or any other appropriate action
+  }
+
+  const eventDateParts = event.eventDate.split('-');
+  const startTimeParts = event.startTime.split(':');
+
+  const eventStart = new Date(
+    parseInt(eventDateParts[0]),   // Year
+    parseInt(eventDateParts[1]) - 1, // Month (Note: Months are zero-based in JavaScript)
+    parseInt(eventDateParts[2]),   // Day
+    parseInt(startTimeParts[0]),  // Hour
+    parseInt(startTimeParts[1])    // Minute
+  );
+
+  const currentTime = new Date();
+  const timeDiff = eventStart - currentTime;
+  const hoursDiff = timeDiff / (1000 * 60 * 60);
+  return hoursDiff > 48;
+};
+
+fetchUserBookings();
 
 </script>
 
 <template>
   <VRow>
-    <!-- 👉 Booking card -->
+    <!-- Booking card -->
     <VCol
       v-for="(event, index) in events"
       :key="index"
@@ -59,9 +131,9 @@ const showConfirmationDialog = (index) => {
             </VCardItem>
 
             <VCardText>
-                <p>Event Description: {{ event.description }}</p> 
-                <p>Date: {{ event.date }}</p> 
-                <p>Location: {{ event.location }}</p>
+              <p>Event Description: {{ event.description }}</p>
+              <p>Date: {{ event.date }}</p>
+              <p>Location: {{ event.location }}</p>
             </VCardText>
 
             <VCardText>
@@ -87,23 +159,23 @@ const showConfirmationDialog = (index) => {
                 </p>
               </div>
               <!-- View more details button -->
-              <VBtn class="mt-8" :to="'/booking-details/' + event.id">
+              <VBtn class="mt-8" :to="'/booking-details/' + event.bookingId">
                 More details
               </VBtn>
 
               <!-- Cancellation button -->
-              <VBtn class="mt-8 ms-2" @click="showConfirmationDialog(index)" color="error">
+              <VBtn v-if="event.cancelable" class="mt-8 ms-2" @click="showConfirmationDialog(index)" color="error">
                 Cancel Booking
               </VBtn>
 
-              <!-- Confirmation dialog -->
-              <VDialog v-model="confirmationDialog" max-width="500">
+              <!-- Confirmation dialog for this booking -->
+              <VDialog v-if="confirmationDialog && cancelIndex === index" v-model="confirmationDialog" max-width="500">
                 <VCard>
                   <VCardText>
-                    <div>Are you sure you want to cancel the booking for "{{ events[cancelIndex].name }}"?</div>
+                    <div>Are you sure you want to cancel the booking for "{{ event.name }}"?</div>
                   </VCardText>
                   <VCardActions>
-                    <VBtn color="error" @click="cancelEvent(cancelIndex)">Yes, Cancel Booking</VBtn>
+                    <VBtn color="error" @click="cancelEvent(index)">Yes, Cancel Booking</VBtn>
                     <VBtn @click="confirmationDialog = false">No, Keep Booking</VBtn>
                   </VCardActions>
                 </VCard>
@@ -114,7 +186,6 @@ const showConfirmationDialog = (index) => {
         </VRow>
       </VCard>
     </VCol>
-    <!-- !SECTION -->
-
+    <!-- End of Booking card -->
   </VRow>
 </template>
