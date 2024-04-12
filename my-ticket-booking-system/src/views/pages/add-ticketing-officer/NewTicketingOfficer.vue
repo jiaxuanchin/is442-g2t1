@@ -1,12 +1,46 @@
 <script setup>
-const firstName = ref('')
-const lastName = ref('')
-const email = ref('')
-const checkbox = ref(false)
+import { ref } from 'vue';
+
+const firstName = ref('');
+const lastName = ref('');
+const email = ref('');
+const password = ref('');
+
+async function handleSubmit() {
+  const params = new URLSearchParams();
+  params.append('user_fname', firstName.value);
+  params.append('user_lname', lastName.value);
+  params.append('email', email.value);
+  params.append('password', password.value);
+
+  try {
+    const response = await fetch(`http://localhost:8080/UserEntity/createTicketingOfficer?${params.toString()}`, {
+      method: 'POST',
+    });
+
+    if (response.ok) {
+      alert('Ticketing officer created successfully!');
+      handleReset();
+    } else {
+      const errorData = await response.json();
+      alert('Error: ' + errorData.message);
+    }
+  } catch (error) {
+    alert('Error: ' + error.message);
+  }
+}
+
+function handleReset() {
+  firstName.value = '';
+  lastName.value = '';
+  email.value = '';
+  password.value = '';
+}
+
 </script>
 
 <template>
-  <VForm @submit.prevent="() => {}">
+  <VForm @submit.prevent="handleSubmit">
     <VRow>
       <!-- 👉 First Name -->
       <VCol
@@ -44,23 +78,23 @@ const checkbox = ref(false)
         />
       </VCol>
 
-
+      <!-- 👉 Password -->
       <VCol
         cols="12"
-        class="d-flex gap-4"
+        md="6"
       >
-        <VBtn type="submit">
-          Submit
-        </VBtn>
-
-        <VBtn
-          type="reset"
-          color="secondary"
-          variant="tonal"
-        >
-          Reset
-        </VBtn>
+        <VTextField
+          v-model="password"
+          label="Password"
+          placeholder=".........."
+        />
       </VCol>
+
+
+    <VCol cols="12" class="d-flex gap-4">
+      <VBtn type="submit">Submit</VBtn>
+      <VBtn type="button" @click="handleReset">Reset</VBtn>
+    </VCol>
     </VRow>
   </VForm>
 </template>

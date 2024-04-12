@@ -4,20 +4,23 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
 @Service
 public class UserEntityService {
 
-    // private final RoleService roleService;
+    private final RoleService roleService;
     private final UserRepository userRepository;
+    private final RestTemplate restTemplate;
+    private final String passwordEncoderUrl = "http://localhost:8080/api/auth/encode_password";
 
     @Autowired
-    public UserEntityService(UserRepository userRepository){
+    public UserEntityService(UserRepository userRepository, RoleService roleService, RestTemplate restTemplate) {
         this.userRepository = userRepository;
-        // this.roleService = roleService;
+        this.roleService = roleService;
+        this.restTemplate = restTemplate;
     }
 
     // Method to create a new user with different roles
@@ -80,4 +83,29 @@ public class UserEntityService {
         }
     }
 
+    public ResponseEntity<?> createTicketingOfficer(String user_fname, String user_lname, String email, String password) {
+        ResponseEntity<?> existingUserResponse = getUserByEmail(email);
+        if (existingUserResponse.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with email " + email + " already exists");
+        }
+
+        ResponseEntity<?> roleResponse = roleService.getRoleByName("ticketing_officer");
+        if (!roleResponse.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Role 'ticketing_officer' not found");
+        }
+
+        // Encode the password using the password encoder API
+        // ResponseEntity<String> encodeResponse = restTemplate.postForEntity(passwordEncoderUrl, password, String.class);
+        // if (!encodeResponse.getStatusCode().is2xxSuccessful()) {
+        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password encoding failed");
+        // }
+
+        // String encodedPassword = encodeResponse.getBody();
+
+        Role role = (Role) roleResponse.getBody();
+        // TicketingOfficer newTicketingOfficer = new TicketingOfficer(user_fname, user_lname, email, encodedPassword);
+        TicketingOfficer newTicketingOfficer = new TicketingOfficer(user_fname, user_lname, email, password);
+        newTicketingOfficer.setRole(role);
+        return ResponseEntity.ok(userRepository.save(newTicketingOfficer));
+    }
 }
