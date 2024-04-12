@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 // import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import logo from '@images/logo.svg?raw'
 
 const router = useRouter()
+const route = useRoute()
 
 const form = ref({
   email: '',
@@ -14,6 +15,13 @@ const form = ref({
 
 const isPasswordVisible = ref(false)
 const errorMessage = ref('') // To display error message
+
+onMounted(() => {
+  // Check if there's a message in the query params and set it as the error message
+  if (route.query.message) {
+    errorMessage.value = route.query.message
+  }
+})
 
 // send to signin api
 const handleSubmit = async () => {
@@ -32,7 +40,7 @@ const handleSubmit = async () => {
     }
 
   } catch (error) {
-    errorMessage.value = 'Login failed. Please check your credentials.'
+    errorMessage.value = 'Login failed. Please try again.'
 
   }
 }

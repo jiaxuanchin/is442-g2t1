@@ -21,10 +21,11 @@ const router = useRouter()
 
 onMounted(() => {
   const token = localStorage.getItem('token')
-  if (!token || isTokenExpired(token)) { 
-    // Redirect to login
+  if (!token) { 
     router.push('/login')
 
+  } else if (isTokenExpired(token)) {
+    router.push({ path: '/login', query: { message: 'Token expired, please login again.' } })
   }
 })
 
