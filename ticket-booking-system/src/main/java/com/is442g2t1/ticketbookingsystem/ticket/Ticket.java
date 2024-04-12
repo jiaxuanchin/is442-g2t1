@@ -1,6 +1,5 @@
 package com.is442g2t1.ticketbookingsystem.ticket;
 
-
 import org.springframework.data.annotation.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -26,7 +25,7 @@ import lombok.ToString;
 @Getter
 @Setter
 public class Ticket {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_id")
@@ -48,7 +47,7 @@ public class Ticket {
 
     @Override
     public String toString() {
-        
+
         if (booking != null) {
             return "Ticket{" +
                     "ticketId=" + ticketId +

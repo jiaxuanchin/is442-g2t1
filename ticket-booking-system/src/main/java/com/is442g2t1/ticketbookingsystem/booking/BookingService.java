@@ -11,9 +11,7 @@ import com.is442g2t1.ticketbookingsystem.event.Event;
 import com.is442g2t1.ticketbookingsystem.event.EventRepository;
 import com.is442g2t1.ticketbookingsystem.email.EmailService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,9 +29,11 @@ public class BookingService {
     private EventRepository eventRepository;
     private EmailService emailService;
     private WebClient webClient;
-    
+
     @Autowired
-    public BookingService(BookingRepository bookingRepository, TicketRepository ticketRepository, TicketService ticketService, UserRepository userRepository, EventRepository eventRepository, EmailService emailService, WebClient webClient) {
+    public BookingService(BookingRepository bookingRepository, TicketRepository ticketRepository,
+            TicketService ticketService, UserRepository userRepository, EventRepository eventRepository,
+            EmailService emailService, WebClient webClient) {
         this.bookingRepository = bookingRepository;
         this.ticketRepository = ticketRepository;
         this.ticketService = ticketService;
@@ -46,11 +46,11 @@ public class BookingService {
     public ResponseEntity getAllBookings() {
         try {
             System.out.println(this.bookingRepository.findAll());
-            
+
             List<Booking> bookings = this.bookingRepository.findAll();
             return ResponseEntity.ok(bookings);
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
@@ -62,12 +62,12 @@ public class BookingService {
                 return ResponseEntity.status(404).body("Booking not found");
             }
             return ResponseEntity.ok(booking);
-            
-        } catch(Exception e) {
+
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
-    
+
     public ResponseEntity getUserBooking(int userId) {
         try {
             List<Booking> booking = this.bookingRepository.findByUserId(userId);
@@ -76,7 +76,7 @@ public class BookingService {
             }
             return ResponseEntity.ok(booking);
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
@@ -86,23 +86,25 @@ public class BookingService {
             List<Booking> booking = this.bookingRepository.findByEventId(eventId);
             return ResponseEntity.ok(booking);
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
-    } 
+    }
 
     public ResponseEntity checkIfCanBook(Booking booking) {
         // Fetch the event associated with the booking
         int eventId = booking.getEventId();
         Event event = eventRepository.findById(eventId)
-            .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
 
         // Check if the event capacity is full
         if ((booking.getNumOfTickets() + event.getFilled()) > event.getCapacity()) {
             int remainingNum = event.getCapacity() - event.getFilled();
-            return ResponseEntity.status(400).body("Event capacity is full. Remaining number of tickets: " + remainingNum);
+            String message = "Event capacity is full. Remaining number of tickets: " + remainingNum;
+            return ResponseEntity.status(400)
+                    .body(Map.of("error", message));
         }
-        return null;
+        return ResponseEntity.ok(true);
     }
 
     public ResponseEntity createBooking(String token, Booking booking, String payType) {
@@ -115,23 +117,17 @@ public class BookingService {
                 return ResponseEntity.status(404).body("User not found");
             }
             UserEntity user = userOptional.get();
-            
+
             // Check if the user is a customer and has enough balance to purchase tickets
             if (!(user instanceof Customer)) {
                 return ResponseEntity.status(400).body("User is not a customer");
             }
             Customer customer = (Customer) user;
-            double totalTicketPrice = calculateTotalTicketPrice(booking);
-            if (payType.equals("ewallet")) {
-                if (totalTicketPrice > customer.getBalance()) {
-                    return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
-                }
-            }
 
             // Fetch the event associated with the booking
             int eventId = booking.getEventId();
             Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+                    .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
 
             // Check if the event capacity is full
             // if (booking.getNumOfTickets() + event.getFilled() > event.getCapacity()) {
@@ -145,11 +141,10 @@ public class BookingService {
             event.setFilled(newFilledCapacity);
             eventRepository.save(event);
 
-            // Deduct the ticket price from the customer's balance
-            if (payType.equals("ewallet")) {
-                customer.reduceBalance(totalTicketPrice);
-                userRepository.save(user);
-            }
+            // if (payType.equals("ewallet")) {
+            //     customer.reduceBalance(totalTicketPrice);
+            //     userRepository.save(user);
+            // }
 
             bookingRepository.save(booking);
 
@@ -160,26 +155,38 @@ public class BookingService {
                 return ResponseEntity.status(404).body("Error creating booking: " + result.getBody());
             }
 
+            double totalTicketPrice = calculateTotalTicketPrice(booking);
+            if (payType.equals("ewallet")) {
+                if (totalTicketPrice > customer.getBalance()) {
+                    return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
+                } else {
+                    // Deduct the ticket price from the customer's balance
+                    customer.reduceBalance(totalTicketPrice);
+                    userRepository.save(user);
+                }
+            }
+
             String bookingId = Integer.toString(booking.getBookingId());
             String subject = "Event Booking Confirmation (Booking ID: " + bookingId + ")";
 
             // Include the user's name in the email body
             String body = "Dear " + customer.getUser_fname() + ",\n\n"
-            + "Thank you for your booking. Your tickets have been successfully purchased for " + '"' + event.getEventDesc() + '"' + " " + event.getEventTitle() + ".\n\n"
-            + "Date (YYYY-MM-DD): " + event.getEventDate().toString() + "\n"
-            + "Location: " + event.getEventLoc() + "\n"
-            + "Time: " + event.getStartTime() + " - " + event.getEndTime() + "\n"
-            + "Number of Tickets Bought: " + booking.getNumOfTickets() + "\n"
-            + "Total Amount Paid: $" + totalTicketPrice + "0\n\n"
-            + "Please log in to our web app to view your tickets. For any further assistance, please contact us by replying to this email.\n\n"
-            + "Brought to you by,\n"
-            + "G2T1 Event Management Team";
+                    + "Thank you for your booking. Your tickets have been successfully purchased for " + '"'
+                    + event.getEventDesc() + '"' + " " + event.getEventTitle() + ".\n\n"
+                    + "Date (YYYY-MM-DD): " + event.getEventDate().toString() + "\n"
+                    + "Location: " + event.getEventLoc() + "\n"
+                    + "Time: " + event.getStartTime() + " - " + event.getEndTime() + "\n"
+                    + "Number of Tickets Bought: " + booking.getNumOfTickets() + "\n"
+                    + "Total Amount Paid: $" + totalTicketPrice + "0\n\n"
+                    + "Please log in to our web app to view your tickets. For any further assistance, please contact us by replying to this email.\n\n"
+                    + "Brought to you by,\n"
+                    + "G2T1 Event Management Team";
 
             emailService.sendEmail(customer.getEmail(), subject, body);
 
             return ResponseEntity.ok("Booking created");
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
@@ -191,7 +198,7 @@ public class BookingService {
             Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
             if (!bookingOptional.isPresent()) {
                 return ResponseEntity.status(404).body("Booking not found");
-            } 
+            }
             Booking booking = bookingOptional.get();
 
             int userId = booking.getUserId();
@@ -200,7 +207,7 @@ public class BookingService {
                 return ResponseEntity.status(404).body("User not found");
             }
             UserEntity user = userOptional.get();
-            
+
             // Check if the user is a customer and has enough balance to purchase tickets
             if (!(user instanceof Customer)) {
                 return ResponseEntity.status(400).body("User is not a customer");
@@ -211,7 +218,7 @@ public class BookingService {
             // Fetch the event associated with the booking
             int eventId = booking.getEventId();
             Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+                    .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
 
             // Calculate the new filled capacity
             int newFilledCapacity = event.getFilled() - booking.getNumOfTickets();
@@ -228,15 +235,16 @@ public class BookingService {
 
             // Include the user's name in the email body
             String body = "Dear " + user.getUser_fname() + ",\n\n"
-            + "We have received your booking cancellation. Your tickets have been successfully refunded for " + '"' + event.getEventDesc() + '"' + " " + event.getEventTitle() + ".\n\n"
-            + "Date (YYYY-MM-DD): " + event.getEventDate().toString() + "\n"
-            + "Location: " + event.getEventLoc() + "\n"
-            + "Time: " + event.getStartTime() + " - " + event.getEndTime() + "\n"
-            + "Number of Tickets Refunded: " + booking.getNumOfTickets() + "\n"
-            + "Total Amount To Be Refunded: $" + (totalTicketPrice - event.getCancelFee()) + "0\n\n"
-            + "Please log in to our web app to check the refund into your e-wallet. For any further assistance, please contact us by replying to this email.\n\n"
-            + "Brought to you by,\n"
-            + "G2T1 Event Management Team";
+                    + "We have received your booking cancellation. Your tickets have been successfully refunded for "
+                    + '"' + event.getEventDesc() + '"' + " " + event.getEventTitle() + ".\n\n"
+                    + "Date (YYYY-MM-DD): " + event.getEventDate().toString() + "\n"
+                    + "Location: " + event.getEventLoc() + "\n"
+                    + "Time: " + event.getStartTime() + " - " + event.getEndTime() + "\n"
+                    + "Number of Tickets Refunded: " + booking.getNumOfTickets() + "\n"
+                    + "Total Amount To Be Refunded: $" + (totalTicketPrice - event.getCancelFee()) + "0\n\n"
+                    + "Please log in to our web app to check the refund into your e-wallet. For any further assistance, please contact us by replying to this email.\n\n"
+                    + "Brought to you by,\n"
+                    + "G2T1 Event Management Team";
 
             emailService.sendEmail(user.getEmail(), subject, body);
 
@@ -244,7 +252,7 @@ public class BookingService {
 
             return ResponseEntity.ok("Booking cancelled");
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
@@ -268,14 +276,14 @@ public class BookingService {
                 Optional<UserEntity> userOptional = userRepository.findById(booking.getUserId());
                 if (userOptional.isPresent()) {
                     UserEntity user = userOptional.get();
-                    
+
                     // Check if the user is a customer
                     if (user instanceof Customer) {
                         Customer customer = (Customer) user;
-                        
+
                         // Increase balance with refund amount
                         customer.increaseBalance(refundAmount);
-                        
+
                         // Save the updated user entity
                         userRepository.save(customer);
                     }
@@ -301,9 +309,9 @@ public class BookingService {
             .build();
 
             for (int i = 0; i < booking.getNumOfTickets(); i++) {
-               // Create a new Ticket object for each iteration
+                // Create a new Ticket object for each iteration
                 Ticket ticket = new Ticket(booking);
-                
+
                 // Save the ticket
                 // ResponseEntity ticketResponse = ticketService.createTicket(ticket); // Original code from Eunice
 
@@ -320,7 +328,7 @@ public class BookingService {
             }
             return ResponseEntity.ok("Tickets purchased successfully");
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
@@ -332,7 +340,7 @@ public class BookingService {
             Optional<Event> eventOptional = eventRepository.findById(booking.getEventId());
             if (eventOptional.isPresent()) {
                 Event event = eventOptional.get();
-                
+
                 // Calculate the total ticket price based on the ticket price and number of tickets
                 double ticketPrice = event.getTicketPrice();
                 int numOfTickets = booking.getNumOfTickets();
@@ -360,19 +368,20 @@ public class BookingService {
             // Fetch the event associated with the booking
             int eventId = booking.getEventId();
             Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+                    .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
 
             // Construct email subject and body
             String subject = "Event Booking Cancellation (Booking ID: " + booking.getBookingId() + ")";
             String body = "Dear " + name + ",\n\n"
-                + "We regret to inform you that the event " + '"' + event.getEventDesc() + '"' + " " + event.getEventTitle() + " has been cancelled.\n\n"
-                + "Refunds have already been credited into your e-wallet. For any further assistance, please contact us by replying to this email.\n\n"
-                + "Brought to you by,\n"
-                + "G2T1 Event Management Team";
+                    + "We regret to inform you that the event " + '"' + event.getEventDesc() + '"' + " "
+                    + event.getEventTitle() + " has been cancelled.\n\n"
+                    + "Refunds have already been credited into your e-wallet. For any further assistance, please contact us by replying to this email.\n\n"
+                    + "Brought to you by,\n"
+                    + "G2T1 Event Management Team";
 
             // Send cancellation email
             emailService.sendEmail(email, subject, body);
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.err.println("Error sending cancellation email: " + e.getMessage());
         }
     }

@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="Users")
-@Data  // create the getter and setter functions for us
+@Table(name = "Users")
+@Data // create the getter and setter functions for us
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Creates a single table strategy for each class hierarchy
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING) // Column used to differentiate the subclass in the single table

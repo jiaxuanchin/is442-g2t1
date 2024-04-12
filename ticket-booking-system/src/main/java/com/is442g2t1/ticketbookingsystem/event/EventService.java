@@ -36,7 +36,8 @@ public class EventService {
     private final EmailService emailService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingService bookingService, UserRepository userRepository, EmailService emailService) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingService bookingService,
+            UserRepository userRepository, EmailService emailService) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.bookingService = bookingService;
@@ -267,7 +268,7 @@ public class EventService {
             SuccessResponse successResponse = new SuccessResponse("Event cancelled successfully", HttpStatus.SC_OK,
                     eventId);
             return ResponseEntity.ok().body(successResponse);
-    
+
         } catch (Exception e) {
             e.printStackTrace();
             StatusResponse statusResponse = new StatusResponse("Error cancelling event: " + e.getMessage(),

@@ -3,6 +3,7 @@ package com.is442g2t1.ticketbookingsystem.booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/booking")
+@CrossOrigin(origins = "http://127.0.0.1:5173")
 public class BookingController {
 
     private BookingService bookingService;
@@ -73,6 +75,14 @@ public class BookingController {
     public ResponseEntity cancelBooking(@PathVariable int bookingId) {
 
         ResponseEntity result = this.bookingService.cancelBooking(bookingId);
+        return result;
+    }
+
+    @CrossOrigin
+    @PostMapping("/check")
+    public ResponseEntity checkIfCanBook(@RequestBody Booking booking) {
+
+        ResponseEntity result = this.bookingService.checkIfCanBook(booking);
         return result;
     }
 

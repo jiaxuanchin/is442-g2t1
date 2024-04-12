@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import io.github.cdimascio.dotenv.*;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://127.0.0.1:5173")
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
@@ -37,15 +38,22 @@ public class PaymentController {
 
     @CrossOrigin
     @PostMapping("/create-payment-intent")
-    public ResponseEntity createPaymentIntent() {
+    public ResponseEntity createPaymentIntent(@RequestBody PaymentDTO paymentDTO) {
         System.out.println("reach payment intent please");
         System.out.println(stripeSecretKey);
+
+        System.out.println(paymentDTO);
+        long totalPrice = (long) paymentDTO.getAmount();
+        String currency = paymentDTO.getCurrency();
+        System.out.println(totalPrice);
+        System.out.println(currency);
+
         Dotenv dotenv = Dotenv.load();
         Stripe.apiKey = dotenv.get("STRIPE_SECRET_KEY");
         try {
             PaymentIntentCreateParams params = new PaymentIntentCreateParams.Builder()
-                    .setCurrency("usd")
-                    .setAmount(1000L)
+                    .setCurrency(currency)
+                    .setAmount(totalPrice)
                     .setAutomaticPaymentMethods(
                             PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
                                     .setEnabled(true)

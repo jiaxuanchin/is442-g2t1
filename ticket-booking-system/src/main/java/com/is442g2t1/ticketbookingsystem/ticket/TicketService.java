@@ -11,7 +11,7 @@ import com.is442g2t1.ticketbookingsystem.booking.Booking;
 
 @Service
 public class TicketService {
-    
+
     private TicketRepository ticketRepository;
 
     @Autowired
@@ -29,7 +29,7 @@ public class TicketService {
 
             System.out.println(tickets.toString());
             return ResponseEntity.ok(tickets);
-            
+
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
@@ -75,7 +75,7 @@ public class TicketService {
 
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error creating ticket");
-            
+
         }
     }
 

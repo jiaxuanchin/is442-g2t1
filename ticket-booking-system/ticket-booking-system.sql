@@ -24,6 +24,7 @@ USE `ticket-booking-system`;
 --
 -- Table structure for table `Roles`
 --
+select * from user;
 
 DROP TABLE IF EXISTS Role;
 
@@ -147,7 +148,7 @@ INSERT INTO Role (role_id, role_name) VALUES
 
 INSERT INTO Users (user_id, role_id, user_fname,user_lname,email, `password`, user_type, balance) VALUES
 (1, 1, 'Eunice','Ong','euniceong.2021@scis.smu.edu.sg', '$2a$10$9iPJ9/xQEIJlHzFHcvUEX.3Z8Trj9G/.M4.AKdjsr1zW83iFgpThC', 'customer', 1000),
-(2, 2, 'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', '$2a$10$SQ67EdPDW/yWSbFr065A1O131e1T0iKm6plIclQ8Xf6DhZjCCV80S', 'event_manager', NULL),
+(2, 2, 'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', '$2a$10$SQ67EdPDW/yWSbFr065A1O131e1T0iKm6plIclQ8Xf6DhZjCCV80S', 'event_manager', 1000),
 (3, 3, 'Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', '$2a$10$5SAphSHTMrFBiO1sXr3Y3u3ybrqHXDopn2g1jl8u2X.unz2vUkfwu', 'ticketing_officer', NULL);
 
 
@@ -161,6 +162,8 @@ INSERT INTO Event (event_id, event_title, event_date, event_description, event_l
 INSERT INTO Booking VALUES
 (1,1,4,2, TIMESTAMP('2023-09-13 10:04:30')),
 (2,1,3,1, TIMESTAMP('2024-01-02 11:27:33'));
+
+select * from users;
 
 INSERT INTO Ticket VALUES
 (00000001, 1, false),

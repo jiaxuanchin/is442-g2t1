@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
 @Entity
-@Data  // create the getter and setter functions for us
+@Data // create the getter and setter functions for us
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 @DiscriminatorValue("customer")
 
-public class Customer extends UserEntity{
+public class Customer extends UserEntity {
     @Column(name = "balance")
     private Double balance;
 
