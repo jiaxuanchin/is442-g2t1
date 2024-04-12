@@ -4,8 +4,11 @@ import com.is442g2t1.response.SuccessResponse;
 import com.is442g2t1.ticketbookingsystem.event.Event;
 import com.is442g2t1.ticketbookingsystem.event.EventService;
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
-
-
+import com.is442g2t1.ticketbookingsystem.event.EventRepository;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.bind.annotation.RestController;
 import java.io.BufferedWriter;
 import java.nio.file.Paths;
 import java.nio.file.Path;
@@ -18,22 +21,22 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
+
 @Service
 public class EventManagerService {
 
-    private EventService eventService; 
-
     private final RestTemplate restTemplate;
-    private final String eventBaseUrl = "http://localhost:8080/event/";
-
-
+    private final EventService eventService;
+    private final String eventBaseUrl = "http://localhost:8080/event";
 
     @Autowired
-    public EventManagerService(RestTemplate restTemplate) {
+    public EventManagerService(RestTemplate restTemplate, EventService eventService) {
         this.restTemplate = restTemplate;
+        this.eventService = eventService;
+        
     }
 
-    // Create a new event
+    // // Create a new event
     public ResponseEntity<?> createEvent(EventCreateDTO eventCreateDTO) {
         return restTemplate.postForEntity(eventBaseUrl + "/createEvent", eventCreateDTO, ResponseEntity.class);
     }
@@ -71,20 +74,35 @@ public class EventManagerService {
         Cancel events if necessary
     */
 
-    public ResponseEntity<String> generateSalesStatistics(int eventId) {
-        ResponseEntity<Event> eventResponse = restTemplate.getForEntity(eventBaseUrl + "/searchById/" + eventId, Event.class);
+    public ResponseEntity<?> generateSalesStatistics(Integer eventId) {
         
-        if (eventResponse.getStatusCode() != HttpStatus.OK) {
-            return ResponseEntity.status(eventResponse.getStatusCode()).body("Event not found");
+        ResponseEntity<?> response = eventService.searchById(eventId);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.status(response.getStatusCode()).body("Event not found or error occurred");
         }
 
-        Event event = eventResponse.getBody();
+        Object responseBody = response.getBody();
+        if (!(responseBody instanceof SuccessResponse)) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected response body type");
+        }
 
-        int totalNumTickets = event.getCapacity();
-        int ticketsAvailable = event.getFilled();
-        int ticketsSold = totalNumTickets - ticketsAvailable;
+        SuccessResponse successResponse = (SuccessResponse) responseBody;
+        Object data = successResponse.getData();
+        if (!(data instanceof Event)) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Data type is not Event");
+        }
+
+        Event event = (Event) data;
+
+        if (event.getCapacity() == null || event.getFilled() == null || event.getTicketPrice() == null) {
+            return ResponseEntity.badRequest().body("Essential event details are missing.");
+        }
+
+        Integer totalNumTickets = event.getCapacity();
+        Integer ticketsAvailable = event.getFilled();
+        Integer ticketsSold = totalNumTickets - ticketsAvailable;
         double revenue = ticketsSold * event.getTicketPrice();
-        int customerAttendance = ticketsSold; 
+        Integer customerAttendance = ticketsSold;
 
         String csvContent = String.format(
                 "Event Name, Total Tickets, Tickets Sold, Tickets Available, Customer Attendance, Ticket Sales\n%s, %d, %d, %d, %d, %.2f",
@@ -103,6 +121,7 @@ public class EventManagerService {
             return ResponseEntity.internalServerError().body("Failed to generate report: " + e.getMessage());
         }
     }
+
     
 }
     

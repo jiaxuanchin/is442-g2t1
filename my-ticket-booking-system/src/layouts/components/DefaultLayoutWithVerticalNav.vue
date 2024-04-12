@@ -91,13 +91,6 @@ const upgradeBanner = computed(() => {
       />
       <VerticalNavLink
         :item="{
-          title: 'Sales Statistics',
-          icon: 'mdi-account-cog-outline',
-          to: '/sales-statistics',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
           title: 'User Management',
           icon: 'mdi-account-cog-outline',
           to: '/add-ticketing-officer',

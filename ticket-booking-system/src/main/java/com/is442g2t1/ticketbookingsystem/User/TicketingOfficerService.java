@@ -124,31 +124,6 @@ public class TicketingOfficerService {
         return ResponseEntity.ok().body("Onsite ticket sales processed successfully.");
     }
 
-    // public ResponseEntity<?> issueETicket(int bookingId, String customerEmail) {
 
-    //     // Fetch booking details
-    //     ResponseEntity<Booking> bookingResponse = restTemplate.getForEntity(bookingBaseUrl + "/getOneBooking/" + bookingId, Booking.class);
-    //     if (!bookingResponse.getStatusCode().is2xxSuccessful()) {
-    //         return bookingResponse; 
-    //     }
-
-    //     Booking booking = (Booking) bookingResponse.getBody();
-    //     if (booking == null) {
-    //         return ResponseEntity.status(404).body("Booking not found");
-    //     }
-
-    //     // Generate e-ticket information
-    //     String eTicketInfo = "E-Ticket for Booking ID: " + bookingId + "\n" +
-    //                          "Event ID: " + booking.getEventId() + "\n" +
-    //                          "Number of Tickets: " + booking.getNumOfTickets() + "\n" +
-    //                          "Date of Issue: " + java.time.LocalDate.now();
-
-    //     // Send e-ticket information via email
-
-    //     ResponseEntity<?> emailResponse = restTemplate.getForEntity(emailBaseUrl + "/sendEmail/" + customerEmail + "/Your E-Ticket/" + eTicketInfo, String.class);
-
-    //     // Return successful response
-    //     return ResponseEntity.ok("E-Ticket issued successfully to " + customerEmail);
-    // }
     
 }

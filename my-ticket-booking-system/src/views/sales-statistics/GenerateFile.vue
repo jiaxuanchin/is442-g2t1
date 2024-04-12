@@ -3,9 +3,14 @@ import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 
 import pages2 from '@images/pages/2.png'
-
+const route = useRoute();
+const router = useRouter();
+const eventId = ref(route.params.eventId);
 
 const avatars = [
   avatar1,
@@ -15,39 +20,64 @@ const avatars = [
 ]
 
 const isCardDetailsVisible = ref(false)
+const BASE_URL = 'http://localhost:8080/eventmanager'; 
+
+onMounted(() => {
+  eventId.value = route.params.eventId;
+  console.log(eventId.value);
+});
+
+
+const downloadReport = async () => {
+  // ...existing code...
+  if (!eventId.value) {
+    alert('Event ID is not available.');
+    return;
+  }
+
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: `${BASE_URL}/statistics/${eventId.value}`,
+      responseType: 'blob',
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'event-report.csv');  
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
+    // ...existing code to handle the download...
+  } catch (error) {
+    if (error.response && error.response.status === 403) {
+      alert('You do not have permission to download this report.');
+    } else if (error.response && error.response.status === 404) {
+      alert('The report could not be found.');
+    } else {
+      alert('An error occurred while downloading the report.');
+    }
+    console.error('Failed to download report:', error);
+  }
+};
+
 </script>
 
 <template>
   <VRow>
-
-    <!-- 👉 Robert Meyer -->
-    <VCol
-    >
+    <VCol>
       <VCard>
-
-        <!-- image to download csv file -->
         <VImg :src="pages2" />
-
         <VCardText class="position-relative">
-
-          <!-- Title, Subtitle & Action Button -->
-          <div class="d-flex justify-space-between flex-wrap pt-8">
-            <div class="me-2 mb-2">
-              <VCardTitle class="pa-0">
-                The Era Tour
-              </VCardTitle>
-              <VCardSubtitle class="text-caption pa-0">
-                London, UK
-              </VCardSubtitle>
-            </div>
-            <!-- button to download csv file -->
-            <VBtn>Download report</VBtn>
+          <div class="d-flex justify-center flex-wrap pt-8">
+            <VBtn @click="downloadReport">Download report for this event</VBtn>
           </div>
         </VCardText>
       </VCard>
     </VCol>
   </VRow>
 </template>
+
 
 <style lang="scss" scoped>
 .avatar-center {
