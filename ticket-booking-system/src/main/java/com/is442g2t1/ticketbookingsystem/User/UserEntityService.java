@@ -8,26 +8,26 @@ import org.springframework.http.HttpStatus;
 @Service
 public class UserEntityService {
 
-    private final RoleService roleService;
+    // private final RoleService roleService;
     private final UserRepository userRepository;
 
     @Autowired
-    public UserEntityService(UserRepository userRepository, RoleService roleService){
+    public UserEntityService(UserRepository userRepository){
         this.userRepository = userRepository;
-        this.roleService = roleService;
+        // this.roleService = roleService;
     }
 
     // Method to create a new user with different roles
-    public ResponseEntity<?> createUser(String roleName, String user_fname, String user_lname, String email, String password) {
-        ResponseEntity<?> roleResponse = roleService.getRoleByName(roleName);
-        if (roleResponse.getStatusCode().is2xxSuccessful()) {
-            Role role = (Role) roleResponse.getBody();
-            UserEntity newUser = new UserEntity(role, user_fname, user_lname, email, password); 
-            return ResponseEntity.ok(userRepository.save(newUser));
-        } else {
-            return roleResponse;
-        }
-    }
+    // public ResponseEntity<?> createUser(String roleName, String user_fname, String user_lname, String email, String password) {
+    //     ResponseEntity<?> roleResponse = roleService.getRoleByName(roleName);
+    //     if (roleResponse.getStatusCode().is2xxSuccessful()) {
+    //         Role role = (Role) roleResponse.getBody();
+    //         UserEntity newUser = new UserEntity(role, user_fname, user_lname, email, password); 
+    //         return ResponseEntity.ok(userRepository.save(newUser));
+    //     } else {
+    //         return roleResponse;
+    //     }
+    // }
 
     // Method to update a user's profile details
     public ResponseEntity<?> updateUserProfile(int userId, String user_fname, String user_lname, String email) {

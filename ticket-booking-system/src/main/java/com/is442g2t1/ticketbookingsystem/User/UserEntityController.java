@@ -18,14 +18,14 @@ public class UserEntityController {
     }
 
     // Just for testing: Can comment out, register will do this job
-    @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestParam String roleName,
-                                         @RequestParam String user_fname,
-                                         @RequestParam String user_lname,
-                                         @RequestParam String email,
-                                         @RequestParam String password) {
-        return userEntityService.createUser(roleName, user_fname, user_lname, email, password);
-    }
+    // @PostMapping("/create")
+    // public ResponseEntity<?> createUser(@RequestParam String roleName,
+    //                                      @RequestParam String user_fname,
+    //                                      @RequestParam String user_lname,
+    //                                      @RequestParam String email,
+    //                                      @RequestParam String password) {
+    //     return userEntityService.createUser(roleName, user_fname, user_lname, email, password);
+    // }
 
     // This is required: Allow users to update their profile
     @PutMapping("/update/{userId}")
