@@ -52,6 +52,25 @@ const saveChanges = async () => {
 const cancelEdit = () => {
   toggleEdit();
 };
+
+//function to delete an event
+const deleteEvent = async () => {
+  const confirmation = confirm("Are you sure you want to delete this event?");
+  if (!confirmation) {
+    return; // Stop if the user does not confirm
+  }
+
+  try {
+    await axios.delete(`${BASE_URL}/cancelEvent/${eventId.value}`);
+    console.log('Event deleted');
+    alert('Event deleted successfully');
+    // Route to event-management.vue after deletion
+    router.push('/event-management');
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    alert('An error occurred while deleting the event.');
+  }
+};
 </script>
 
 <template>
@@ -112,6 +131,13 @@ const cancelEdit = () => {
           <VBtn v-if="editing" color="primary" @click="saveChanges">Save</VBtn>
           <VBtn v-else color="primary" @click="toggleEdit">Edit</VBtn>
         </VCardActions>
+      </VCard>
+    </VCol>
+
+
+    <VCol cols="12">
+      <VCard>
+        <VBtn color="error" @click="deleteEvent" block>Delete Event</VBtn>
       </VCard>
     </VCol>
 
@@ -220,3 +246,6 @@ const cancelEdit = () => {
 
   </VRow>
 </template>
+
+
+
