@@ -1,11 +1,12 @@
 <script setup>
 import { useTheme } from 'vuetify'
+import { onBeforeMount } from 'vue'
 import VerticalNavSectionTitle from '@/@layouts/components/VerticalNavSectionTitle.vue'
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
 import axios from 'axios';
 
-localStorage.setItem('user_id', '2');
+localStorage.setItem('user_id', '3');
 console.log(localStorage.getItem('user_id'));
 
 
@@ -38,8 +39,8 @@ const fetchUserRole = async () => {
   }
 };
 
-// Call fetchUserRole function when the component is mounted
-fetchUserRole();
+// Call fetchUserRole function before mounting the component
+onBeforeMount(fetchUserRole);
 
 </script>
 

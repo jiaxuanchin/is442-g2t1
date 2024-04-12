@@ -2,10 +2,6 @@
 
 import axios from 'axios';
 
-
-// Set the user_id in local storage --> To remove after testing
-localStorage.setItem('user_id', '1');
-
 const events = ref([
 ]);
 
