@@ -1,7 +1,8 @@
 <script setup>
 import { useRoute } from 'vue-router'
+import axios from 'axios'
 
-const {params} = useRoute()
+const { params } = useRoute()
 const eventId = params.eventId
 
 const ticketData = {
@@ -11,6 +12,73 @@ const ticketData = {
 const refInputEl = ref()
 const ticketDataLocal = ref(structuredClone(ticketData))
 
+const eventData = ref(null)
+
+// Fetch event details from the API
+axios.get(`http://localhost:8080/event/searchById/${eventId}`)
+  .then(response => {
+    // Update the eventData with the response data
+    eventData.value = response.data.data
+    console.log(response.data.data)
+  })
+  .catch(error => {
+    console.error('Error fetching event details:', error)
+  })
+
+// Function to calculate sales start and end dates based on event details
+function calculateSalesDates(event) {
+  if (!event) return null;
+
+  // Parse event date and start time
+  const eventDate = new Date(event.eventDate);
+  const startTime = event.startTime.split(':').map(Number);
+
+  // Calculate sales start date (6 months before the event date and time)
+  const salesStartDate = new Date(eventDate);
+  salesStartDate.setMonth(salesStartDate.getMonth() - 6);
+  salesStartDate.setHours(startTime[0], startTime[1]);
+
+  // Calculate sales end date (24 hours before the event start time)
+  const salesEndDate = new Date(eventDate);
+  salesEndDate.setDate(salesEndDate.getDate() - 1);
+  salesEndDate.setHours(startTime[0], startTime[1]);
+
+  return { 
+    salesStartDate, 
+    salesEndDate 
+  };
+}
+
+const salesDates = ref(null);
+
+watchEffect(() => {
+  // Recalculate salesDates whenever eventData changes
+  salesDates.value = calculateSalesDates(eventData.value);
+});
+
+function formatDate(dateString) {
+  const parts = dateString.split('-');
+  // Ensure parts are numbers
+  const year = parseInt(parts[0]);
+  const month = parseInt(parts[1]);
+  const day = parseInt(parts[2]);
+  // Create a new date object
+  const date = new Date(year, month - 1, day);
+  // Get the formatted date string
+  const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+  return formattedDate;
+}
+
+function formatTime(timeString) {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  const date = new Date();
+  date.setHours(hours);
+  date.setMinutes(minutes);
+  // Use toLocaleTimeString() with appropriate options
+  const formattedTime = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+  return formattedTime;
+}
+
 </script>
 
 <template>
@@ -18,17 +86,17 @@ const ticketDataLocal = ref(structuredClone(ticketData))
     <VCol cols="12">
 
       <!-- Start of event details -->
-      <VCard>
+      <VCard  v-if="eventData">
         <VCardText class="d-flex flex-column gap-y-8">
 
           <div>
             <h6 class="text-h6">
-              Event Name
+              {{eventData.eventTitle}}
             </h6>
-            <span>Location: Singapore indoor stadium</span><br>
-            <span>Start: 23 December 2023, 4pm</span><br>
-            <span>End: 23 December 2023, 8pm</span><br><br>
-            <span>Event description</span><br>
+            <span>Location: {{eventData.eventLoc}}</span><br>
+            <span>Start: {{formatDate(eventData.eventDate)}}, {{formatTime(eventData.startTime)}}</span><br>
+            <span>End: {{formatDate(eventData.eventDate)}}, {{formatTime(eventData.endTime)}}</span><br><br>
+            <span> {{eventData.eventDesc}}</span><br>
           </div>
         </VCardText>
       </VCard>
@@ -39,10 +107,14 @@ const ticketDataLocal = ref(structuredClone(ticketData))
       <VCard title="Ticket Sales Information">
         <VCardText class="d-flex flex-column gap-y-8">
 
-          <div>
-            <span>Sales Start: 27 December 2023, 12am </span><br>
-            <span>Sales End: 22 December 2023, 4pm </span><br>
+          <div v-if="salesDates">
+            <span v-if="salesDates.salesStartDate">Sales Start: {{ salesDates.salesStartDate.toLocaleDateString() }}, {{ salesDates.salesStartDate.toLocaleTimeString() }}</span><br>
+            <span v-if="salesDates.salesEndDate">Sales End: {{ salesDates.salesEndDate.toLocaleDateString() }}, {{ salesDates.salesEndDate.toLocaleTimeString() }}</span><br>
           </div>
+          <div v-else>
+            Loading sales information...
+          </div>
+
 
         </VCardText>
       </VCard>
