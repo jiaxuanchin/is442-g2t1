@@ -93,33 +93,6 @@ fetchUserData();
             <VListItemTitle>Profile</VListItemTitle>
           </VListItem>
 
-          <!-- 👉 Settings -->
-          <VListItem v-if="userRole !== 'Customer'" link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="bx-cog"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>My Actions</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 Wallet -->
-          <VListItem :to="'/my-wallet'">
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="bx-dollar"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>My Wallet</VListItemTitle>
-          </VListItem>
-
-
           <!-- Divider -->
           <VDivider class="my-2" />
 

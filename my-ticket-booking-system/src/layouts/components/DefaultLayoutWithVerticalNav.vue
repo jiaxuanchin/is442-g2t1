@@ -3,6 +3,11 @@ import { useTheme } from 'vuetify'
 import VerticalNavSectionTitle from '@/@layouts/components/VerticalNavSectionTitle.vue'
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
+import axios from 'axios';
+
+localStorage.setItem('user_id', '2');
+console.log(localStorage.getItem('user_id'));
+
 
 // Components
 import Footer from '@/layouts/components/Footer.vue'
@@ -14,6 +19,28 @@ const vuetifyTheme = useTheme()
 const upgradeBanner = computed(() => {
   return vuetifyTheme.global.name.value === 'light' ? upgradeBannerLight : upgradeBannerDark
 })
+
+let userRole = ""; // Default value
+// Function to fetch user data and update userRole
+const fetchUserRole = async () => {
+  try {
+    const userId = localStorage.getItem('user_id'); // Get the user ID from local storage
+    const response = await axios.get(`http://localhost:8080/UserEntity/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    const userData = response.data; 
+    userRole = userData.role.name;
+    console.log(userRole)
+  } catch (error) {
+    console.error('Error fetching user role:', error);
+  }
+};
+
+// Call fetchUserRole function when the component is mounted
+fetchUserRole();
+
 </script>
 
 <template>
@@ -53,14 +80,7 @@ const upgradeBanner = computed(() => {
       </div>
     </template>
 
-    <template #vertical-nav-content>
-      <VerticalNavLink
-        :item="{
-          title: 'Dashboard',
-          icon: 'bx-home',
-          to: '/dashboard',
-        }"
-      />
+    <template #vertical-nav-content> 
       <VerticalNavLink
         :item="{
           title: 'Home',
@@ -68,13 +88,8 @@ const upgradeBanner = computed(() => {
           to: '/home',
         }"
       />
-      <VerticalNavLink
-        :item="{
-          title: 'Account Settings',
-          icon: 'mdi-account-cog-outline',
-          to: '/account-settings',
-        }"
-      />
+      
+      <template v-if="userRole === 'customer'">
       <VerticalNavLink
         :item="{
           title: 'My Booking',
@@ -82,6 +97,9 @@ const upgradeBanner = computed(() => {
           to: '/my-bookings',
         }"
       />
+      </template>
+
+      <template v-if="userRole === 'ticketing_officer'">
       <VerticalNavLink
         :item="{
           title: 'Ticket Management',
@@ -89,6 +107,9 @@ const upgradeBanner = computed(() => {
           to: '/ticketing-officer',
         }"
       />
+      </template>
+
+      <template v-if="userRole === 'event_manager'">
       <VerticalNavLink
         :item="{
           title: 'User Management',
@@ -103,78 +124,7 @@ const upgradeBanner = computed(() => {
           to: '/event-management',
         }"
       />
-    
-
-      <!-- 👉 Pages -->
-      <VerticalNavSectionTitle
-        :item="{
-          heading: 'Pages',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Login',
-          icon: 'bx-log-in',
-          to: '/login',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Register',
-          icon: 'bx-user-plus',
-          to: '/register',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Error',
-          icon: 'bx-info-circle',
-          to: '/no-existence',
-        }"
-      />
-
-      <!-- 👉 User Interface -->
-      <VerticalNavSectionTitle
-        :item="{
-          heading: 'User Interface',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Typography',
-          icon: 'mdi-alpha-t-box-outline',
-          to: '/typography',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Icons',
-          icon: 'bx-show',
-          to: '/icons',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Cards',
-          icon: 'bx-credit-card',
-          to: '/cards',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Tables',
-          icon: 'bx-table',
-          to: '/tables',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Form Layouts',
-          icon: 'mdi-form-select',
-          to: '/form-layouts',
-        }"
-      />
-      
+      </template>
       
     </template>
 
