@@ -110,6 +110,9 @@ fetchUserBookings();
 <template>
   <VRow>
     <!-- Booking card -->
+    <div class="ms-5">
+      <p>Note: For events happning before 24 hours, cancellation is not allowed.</p>
+    </div>
     <VCol
       v-for="(event, index) in events"
       :key="index"
@@ -164,7 +167,7 @@ fetchUserBookings();
               </VBtn>
 
               <!-- Cancellation button -->
-              <VBtn v-if="event.cancelable" class="mt-8 ms-2" @click="showConfirmationDialog(index)" color="error">
+              <VBtn class="mt-8 ms-2" @click="showConfirmationDialog(index)" color="error" :disabled="!event.cancelable">
                 Cancel Booking
               </VBtn>
 
