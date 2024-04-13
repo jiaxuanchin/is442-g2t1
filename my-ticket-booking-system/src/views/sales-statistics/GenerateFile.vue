@@ -43,6 +43,7 @@ const downloadReport = async () => {
       url: `${BASE_URL}/statistics/${eventId.value}`,
       responseType: 'blob',
     });
+    console.log(response.data);
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
@@ -50,7 +51,7 @@ const downloadReport = async () => {
     document.body.appendChild(link);
     link.click();
     link.parentNode.removeChild(link);
-    // ...existing code to handle the download...
+
   } catch (error) {
     if (error.response && error.response.status === 403) {
       alert('You do not have permission to download this report.');
@@ -72,7 +73,7 @@ const downloadReport = async () => {
         <VImg :src="pages2" />
         <VCardText class="position-relative">
           <div class="d-flex justify-center flex-wrap pt-8">
-            <VBtn @click="downloadReport">Download report for this event</VBtn>
+            <VBtn @click="downloadReport">Download sales report</VBtn>
           </div>
         </VCardText>
       </VCard>
