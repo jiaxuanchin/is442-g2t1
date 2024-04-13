@@ -22,9 +22,15 @@ onMounted(async () => {
   
   try {
     console.log('Fetching event details');
-    const response = await axios.get(`${BASE_URL}/searchById/${eventId.value}`);
+    const response = await fetch(`${BASE_URL}/searchById/${eventId.value}`, {
+      method: 'GET',
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      }).then(response => response.json());
     console.log(response.data);
-    eventDetails.value = response.data.data;
+    eventDetails.value = response.data;
+
   } catch (error) {
     console.error('Error fetching event details:', error);
   }
@@ -56,13 +62,6 @@ onMounted(async () => {
             <div class="mb-3"><b>Capacity:</b> {{ eventDetails.capacity }}</div>
             <div class="mb-3"><b>Cancel Fee: </b> $ {{ eventDetails.cancelFee }}</div>
           <br>
-          <VBtn
-            variant="tonal"
-            class="mt-4"
-            size="small"
-          >
-            View Event
-          </VBtn>
         </VCardText>
       </VCol>
 

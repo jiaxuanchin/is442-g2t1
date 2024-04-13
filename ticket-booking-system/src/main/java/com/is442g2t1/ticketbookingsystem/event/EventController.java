@@ -33,6 +33,7 @@ public class EventController {
     @PutMapping("/editEvent/{eventId}")
     @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity<?> editEvent(@RequestBody EventCreateDTO eventDTO, @PathVariable Integer eventId) {
+        System.out.println("[HEEEERRRREEEEEE] EventController: editEvent");
         return eventService.editEvent(eventDTO, eventId);
     }
 

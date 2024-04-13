@@ -29,7 +29,6 @@ onMounted(() => {
 
 
 const downloadReport = async () => {
-  // ...existing code...
   if (!eventId.value) {
     alert('Event ID is not available.');
     return;
@@ -38,6 +37,9 @@ const downloadReport = async () => {
   try {
     const response = await axios({
       method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
       url: `${BASE_URL}/statistics/${eventId.value}`,
       responseType: 'blob',
     });

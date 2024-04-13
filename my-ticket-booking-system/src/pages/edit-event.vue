@@ -30,8 +30,8 @@ onMounted(async () => {
         }
       }).then(response => response.json());
 
-    console.log(response);
-    // console.log(response.data);
+    // console.log(response);
+    console.log(response.data);
     eventDetails.value = response.data;
   } catch (error) {
     console.error('Error fetching event details:', error);
@@ -45,16 +45,36 @@ const toggleEdit = () => {
 
 const saveChanges = async () => {
   try {
-    await fetch(`${BASE_URL}/editEvent/${eventId.value}`, eventDetails.value,
+    const response = await fetch(`${BASE_URL}/editEvent/${eventId.value}`,
     {
       method: 'PUT',
       headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      body: JSON.stringify(
+        {
+          eventTitle: eventDetails.value.eventTitle,
+          eventDate: eventDetails.value.eventDate,
+          eventDesc: eventDetails.value.eventDesc,
+          eventLoc: eventDetails.value.eventLoc,
+          startTime: eventDetails.value.startTime,
+          endTime: eventDetails.value.endTime,
+          filled: eventDetails.value.filled,
+          capacity: eventDetails.value.capacity,
+          ticketPrice: eventDetails.value.ticketPrice,
+          cancelFee: eventDetails.value.cancelFee,
         }
+      ),
       }).then(response => response.json());
-    
-    console.log('Changes saved');
-    alert('Event updated successfully');
+
+    if (response.status === 200) {
+      console.log('Changes saved');
+      alert('Event updated successfully');
+    } else {
+      throw new Error('Failed to update event');
+      
+    }
     editing.value = false;
   } catch (error) {
     console.error('Error updating event:', error);
