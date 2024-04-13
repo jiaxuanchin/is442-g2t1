@@ -4,6 +4,7 @@ package com.is442g2t1.ticketbookingsystem.User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -29,6 +30,7 @@ public class CustomerController {
 
     // Reducing the user's balance
     @PutMapping("/reduce-balance/{userId}")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity<?> reduceCustomerBalance(@PathVariable int userId,
                                                    @RequestParam double amount) {
         return customerService.reduceCustomerBalance(userId, amount);
@@ -43,6 +45,7 @@ public class CustomerController {
 
     // Fetch the balance from the customer
     @GetMapping("/get-balance/{userId}")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity<?> getCustomerBalance(@PathVariable int userId){
         return customerService.getCustomerBalance(userId);
     }

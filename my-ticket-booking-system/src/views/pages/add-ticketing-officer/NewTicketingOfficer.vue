@@ -14,9 +14,27 @@ async function handleSubmit() {
   params.append('password', password.value);
 
   try {
-    const response = await fetch(`http://localhost:8080/UserEntity/createTicketingOfficer?${params.toString()}`, {
+    const response = await fetch(`http://localhost:8080/UserEntity/createTicketingOfficer`, {
       method: 'POST',
-    });
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        user_fname: firstName.value,
+        user_lname: lastName.value,
+        email: email.value,
+        password: password.value
+      }),
+      }
+    );
+
+    // const response = await fetch(`http://localhost:8080/UserEntity/createTicketingOfficer/${params.toString()}`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    //   },
+    // });
 
     if (response.ok) {
       alert('Ticketing officer created successfully!');
