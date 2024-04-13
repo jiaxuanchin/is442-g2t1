@@ -78,8 +78,8 @@ public class BookingController {
         return result;
     }
 
-    @CrossOrigin
     @PostMapping("/check")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity checkIfCanBook(@RequestBody Booking booking) {
 
         ResponseEntity result = this.bookingService.checkIfCanBook(booking);

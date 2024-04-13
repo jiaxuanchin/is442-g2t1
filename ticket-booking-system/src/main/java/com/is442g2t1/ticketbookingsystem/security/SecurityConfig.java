@@ -85,7 +85,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth ->
                 auth.requestMatchers("/api/auth/**")
                     .permitAll()
-                    .requestMatchers("/booking/**").hasAnyAuthority("event_manager") // for generic filtering
+                    // .requestMatchers("/booking/**").hasAnyAuthority("event_manager") // for generic filtering
+                    .requestMatchers("/UserEntity/**").hasAnyAuthority("event_manager", "customer")
                     .anyRequest()
                     .authenticated()       
             )
@@ -95,10 +96,9 @@ public class SecurityConfig {
                         .logoutSuccessHandler(
                             (request, response, authentication) -> SecurityContextHolder.clearContext()
                         )
-            );
-    
-        http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+            )
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

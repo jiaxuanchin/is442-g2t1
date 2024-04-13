@@ -28,9 +28,11 @@ onMounted(async () => {
 
   // const response = await this.$http.get(`/searchById/${eventId}`);
   // a;
-  const response = await fetch(
-    `http://localhost:8080/event/searchById/${eventId}`
-  ).then((res) => res.json());
+  const response = await axios.get(`http://localhost:8080/event/searchById/${eventId}`,{
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
 
   eventData.value = response.data;
   console.log(response);
@@ -47,6 +49,7 @@ const confirmBooking = async (payType) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify({
         userId: userId, // NOTE: hardcoded for now
@@ -72,12 +75,12 @@ const onSubmitWallet = async () => {
   // retrieve customer using email
   console.log(email.value);
   const customer = await fetch(
-    `http://localhost:8080/UserEntity/get/${email.value}`
-    // {
-    //   headers: {
-    //     Authorization: `Bearer ${localStorage.getItem("token")}`,
-    //   },
-    // }
+    `http://localhost:8080/UserEntity/get/${email.value}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
   ).then((res) => res.json());
   console.log(customer);
   userId = customer.userId;

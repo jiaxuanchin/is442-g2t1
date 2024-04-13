@@ -29,21 +29,21 @@ let userId = parseInt(localStorage.getItem("user_id"));
 let numTickets = ref(0);
 let totalPrice = ref(0);
 
-//  NOTE: remove later
-if (!userId) {
-  userId = 1;
-}
+// //  NOTE: remove later
+// if (!userId) {
+//   userId = 1;
+// }
 
 onMounted(async () => {
-  // GET USER:
-  const user = await fetch(`http://localhost:8080/UserEntity/${userId}`).then(
-    (res) => res.json()
-  );
-  // const user = await axios.get(`http://localhost:8080/UserEntity/${userId}`,{
-  //     headers: {
-  //       'Authorization': `Bearer ${localStorage.getItem('token')}`
-  //     }
-  //   });
+  // // GET USER:
+  // const user = await fetch(`http://localhost:8080/UserEntity/${userId}`).then(
+  //   (res) => res.json()
+  // );
+  const user = await axios.get(`http://localhost:8080/UserEntity/${userId}`,{
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
   console.log(user.balance);
   balance = user.balance;
   email = user.email;
@@ -57,18 +57,23 @@ onMounted(async () => {
 
   // const response = await this.$http.get(`/searchById/${eventId}`);
   // a;
-  const response = await fetch(
-    `http://localhost:8080/event/searchById/${eventId}`
-  ).then((res) => res.json());
+  const response = await axios.get(`http://localhost:8080/event/searchById/${eventId}`,{
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
 
   eventData.value = response.data;
   console.log(response);
 
   totalPrice = numTickets * eventData.value.ticketPrice;
 
-  const { publishableKey } = await fetch(
-    "http://localhost:8080/api/payments/config"
-  ).then((res) => res.json());
+  const { publishableKey } = await axios.get(`http://localhost:8080/api/payments/config`,{
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  
 
   stripe = await loadStripe(publishableKey); // initialize the Stripe object
   console.log(publishableKey);
@@ -80,6 +85,7 @@ onMounted(async () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify({
         amount: totalPrice * 100, // convert to cents
@@ -142,6 +148,7 @@ const confirmBooking = async (payType) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify({
         userId: userId, // NOTE

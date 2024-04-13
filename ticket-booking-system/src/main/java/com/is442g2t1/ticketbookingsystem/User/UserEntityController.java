@@ -3,6 +3,7 @@ package com.is442g2t1.ticketbookingsystem.User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://127.0.0.1:5173")
@@ -37,15 +38,31 @@ public class UserEntityController {
     }
 
     // Fetch the information of the users --> firstname, lastname, email, phone, balance
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserEntityInfo(@PathVariable int userId) {
+        System.out.println("[CHECKPOINT UserEntityController] GET USER INFO: " + userId);
+
         return userEntityService.getUserEntityInfo(userId);
     }
 
     // Retrieve user details (for password validation of e-wallet) using email
     @GetMapping("/get/{email}")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
-        return userEntityService.getUserByEmail(email);
+        // return userEntityService.getUserByEmail(email);
+
+        try {
+            ResponseEntity test = userEntityService.getUserByEmail(email);
+            System.out.println("[CHECKPOINT UserEntityController] GET USER BY EMAIL: " + test);
+    
+            return test;
+            // return null;
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+
+        }
 
     }
 

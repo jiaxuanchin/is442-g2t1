@@ -10,8 +10,8 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @DiscriminatorValue("customer")
-
 public class Customer extends UserEntity {
+
     @Column(name = "balance")
     private Double balance;
 

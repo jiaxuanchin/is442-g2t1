@@ -1,6 +1,7 @@
 <script setup>
 import { useRoute } from "vue-router";
 import { ref } from "vue";
+import axios from 'axios'
 // import { resolveConfig } from "vite";
 
 const { params } = useRoute();
@@ -30,10 +31,11 @@ const goToCheckout = async () => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
     },
     body: JSON.stringify({
-      userId: 1,
-      eventId: 1,
+      userId: parseInt(localStorage.getItem("user_id")),
+      eventId: eventId,
       numOfTickets: ticketDataLocal.value.quantity,
     }),
   }).then((res) => {
@@ -54,22 +56,19 @@ const goToCheckout = async () => {
   };
   let userId = parseInt(localStorage.getItem("user_id"));
 
-  //  NOTE: remove later
-  if (!userId) {
-    userId = 3;
-  }
-
-  const response = await fetch(
-    `http://localhost:8080/UserEntity/${userId}`
-  ).then((res) => res.json());
-  console.log(response);
-
-  // CORRECT CODE NOTE:
-  // const response = await axios.get(`http://localhost:8080/UserEntity/${userId}`,{
-  //     headers: {
+  // FOR TESTING
+  // const response1 = await axios.get(`http://localhost:8080/booking/all`,{
+  //   headers: {
   //       'Authorization': `Bearer ${localStorage.getItem('token')}`
   //     }
-  //   });
+  //   })
+  // console.log(response1.data);
+
+  const response = await fetch(`http://localhost:8080/UserEntity/${userId}`,{
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
 
   if (response.role.name == "customer") {
     router.push({
