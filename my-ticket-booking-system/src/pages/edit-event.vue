@@ -22,9 +22,17 @@ onMounted(async () => {
   
   try {
     console.log('Fetching event details');
-    const response = await axios.get(`${BASE_URL}/searchById/${eventId.value}`);
-    console.log(response.data);
-    eventDetails.value = response.data.data;
+    const response = await fetch(`${BASE_URL}/searchById/${eventId.value}`,
+    {
+      method: 'GET',
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      }).then(response => response.json());
+
+    console.log(response);
+    // console.log(response.data);
+    eventDetails.value = response.data;
   } catch (error) {
     console.error('Error fetching event details:', error);
   }
@@ -37,7 +45,14 @@ const toggleEdit = () => {
 
 const saveChanges = async () => {
   try {
-    await axios.put(`${BASE_URL}/editEvent/${eventId.value}`, eventDetails.value);
+    await fetch(`${BASE_URL}/editEvent/${eventId.value}`, eventDetails.value,
+    {
+      method: 'PUT',
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      }).then(response => response.json());
+    
     console.log('Changes saved');
     alert('Event updated successfully');
     editing.value = false;
@@ -61,8 +76,15 @@ const deleteEvent = async () => {
   }
 
   try {
-    await axios.delete(`${BASE_URL}/cancelEvent/${eventId.value}`);
+    await fetch(`${BASE_URL}/cancelEvent/${eventId.value}`,
+    {
+      method: 'DELETE',
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      }).then(response => response.json());
     console.log('Event deleted');
+    
     alert('Event deleted successfully');
     // Route to event-management.vue after deletion
     router.push('/event-management');
