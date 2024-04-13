@@ -6,7 +6,6 @@ import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
 import axios from 'axios';
 
-// localStorage.setItem('user_id', '3');
 console.log(localStorage.getItem('user_id'));
 
 
@@ -21,7 +20,8 @@ const upgradeBanner = computed(() => {
   return vuetifyTheme.global.name.value === 'light' ? upgradeBannerLight : upgradeBannerDark
 })
 
-let userRole = ""; // Default value
+const userRole = ref(""); 
+
 // Function to fetch user data and update userRole
 const fetchUserRole = async () => {
   try {
@@ -32,15 +32,16 @@ const fetchUserRole = async () => {
       }
     });
     const userData = response.data; 
-    userRole = userData.role.name;
-    console.log(userRole)
+    userRole.value = userData.role.name;
+    console.log(userRole.value)
   } catch (error) {
     console.error('Error fetching user role:', error);
   }
 };
 
+
 // Call fetchUserRole function before mounting the component
-onBeforeMount(fetchUserRole);
+onMounted(fetchUserRole);
 
 </script>
 
