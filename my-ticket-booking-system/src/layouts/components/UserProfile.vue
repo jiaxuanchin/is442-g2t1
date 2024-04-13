@@ -15,16 +15,14 @@ const fetchUserData = async () => {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     });
-    const userData = response.data; // Assuming the response contains user data including userRole
-    userRole = userData.role.name; // Update userRole with the fetched value
+    const userData = response.data;
+    userRole = userData.role.name;
     userName = userData.user_fname + " " + userData.user_lname
   } catch (error) {
     console.error('Error fetching user data:', error);
-    // Handle error fetching user data
   }
 };
 
-// Call fetchUserData function when the component is mounted
 fetchUserData();
 
 // logout
@@ -119,45 +117,6 @@ const logout = async () => {
 
             <VListItemTitle>Profile</VListItemTitle>
           </VListItem>
-
-          <!-- 👉 Settings -->
-          <VListItem v-if="userRole !== 'Customer'" link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="bx-cog"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>My Actions</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 Wallet -->
-          <VListItem :to="'/my-wallet'">
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="bx-dollar"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>My Wallet</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 FAQ
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="bx-help-circle"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>FAQ</VListItemTitle>
-          </VListItem> -->
 
           <!-- Divider -->
           <VDivider class="my-2" />
