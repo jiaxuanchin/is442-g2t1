@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
@@ -12,29 +13,31 @@ public class UserEntityService {
 
     private final RoleService roleService;
     private final UserRepository userRepository;
+    private final RestTemplate restTemplate;
+    private final String passwordEncoderUrl = "http://localhost:8080/api/auth/encode_password";
 
     @Autowired
-    public UserEntityService(UserRepository userRepository, RoleService roleService) {
+    public UserEntityService(UserRepository userRepository, RoleService roleService, RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.restTemplate = restTemplate;
     }
 
     // Method to create a new user with different roles
-    public ResponseEntity<?> createUser(String roleName, String user_fname, String user_lname, String email,
-            String password) {
-        ResponseEntity<?> roleResponse = roleService.getRoleByName(roleName);
-        if (roleResponse.getStatusCode().is2xxSuccessful()) {
-            Role role = (Role) roleResponse.getBody();
-            UserEntity newUser = new UserEntity(role, user_fname, user_lname, email, password);
-            return ResponseEntity.ok(userRepository.save(newUser));
-        } else {
-            return roleResponse;
-        }
-    }
+    // public ResponseEntity<?> createUser(String roleName, String user_fname, String user_lname, String email, String password) {
+    //     ResponseEntity<?> roleResponse = roleService.getRoleByName(roleName);
+    //     if (roleResponse.getStatusCode().is2xxSuccessful()) {
+    //         Role role = (Role) roleResponse.getBody();
+    //         UserEntity newUser = new UserEntity(role, user_fname, user_lname, email, password); 
+    //         return ResponseEntity.ok(userRepository.save(newUser));
+    //     } else {
+    //         return roleResponse;
+    //     }
+    // }
 
     // Method to update a user's profile details
     public ResponseEntity<?> updateUserProfile(int userId, String user_fname, String user_lname, String email) {
-        try {
+        try{
             UserEntity existingUser = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
@@ -53,7 +56,7 @@ public class UserEntityService {
     }
 
     // Fetch the information of the users --> firstname, lastname, email, phone
-    public ResponseEntity<?> getUserEntityInfo(int userId) {
+    public ResponseEntity<?> getUserEntityInfo(int userId){
         try {
             UserEntity existingUserEntity = (UserEntity) userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
@@ -63,7 +66,7 @@ public class UserEntityService {
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
+        } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
         }
     }
@@ -85,4 +88,29 @@ public class UserEntityService {
         }
     }
 
+    public ResponseEntity<?> createTicketingOfficer(String user_fname, String user_lname, String email, String password) {
+        ResponseEntity<?> existingUserResponse = getUserByEmail(email);
+        if (existingUserResponse.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with email " + email + " already exists");
+        }
+
+        ResponseEntity<?> roleResponse = roleService.getRoleByName("ticketing_officer");
+        if (!roleResponse.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Role 'ticketing_officer' not found");
+        }
+
+        // Encode the password using the password encoder API
+        // ResponseEntity<String> encodeResponse = restTemplate.postForEntity(passwordEncoderUrl, password, String.class);
+        // if (!encodeResponse.getStatusCode().is2xxSuccessful()) {
+        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password encoding failed");
+        // }
+
+        // String encodedPassword = encodeResponse.getBody();
+
+        Role role = (Role) roleResponse.getBody();
+        // TicketingOfficer newTicketingOfficer = new TicketingOfficer(user_fname, user_lname, email, encodedPassword);
+        TicketingOfficer newTicketingOfficer = new TicketingOfficer(user_fname, user_lname, email, password);
+        newTicketingOfficer.setRole(role);
+        return ResponseEntity.ok(userRepository.save(newTicketingOfficer));
+    }
 }

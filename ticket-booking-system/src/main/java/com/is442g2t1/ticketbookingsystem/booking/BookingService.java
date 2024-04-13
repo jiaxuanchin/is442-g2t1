@@ -71,7 +71,7 @@ public class BookingService {
     public ResponseEntity getUserBooking(int userId) {
         try {
             List<Booking> booking = this.bookingRepository.findByUserId(userId);
-            if (booking.equals(booking)) {
+            if (booking.isEmpty()) {
                 return ResponseEntity.status(404).body("Booking not found");
             }
             return ResponseEntity.ok(booking);
@@ -142,6 +142,7 @@ public class BookingService {
             event.setFilled(newFilledCapacity);
             eventRepository.save(event);
 
+            
             // if (payType.equals("ewallet")) {
             //     customer.reduceBalance(totalTicketPrice);
             //     userRepository.save(user);
@@ -167,7 +168,7 @@ public class BookingService {
                     userRepository.save(user);
                 }
             }
-
+            
             String bookingId = Integer.toString(booking.getBookingId());
             String subject = "Event Booking Confirmation (Booking ID: " + bookingId + ")";
 
@@ -215,7 +216,6 @@ public class BookingService {
                 return ResponseEntity.status(400).body("User is not a customer");
             }
             Customer customer = (Customer) user;
-            double totalTicketPrice = calculateTotalTicketPrice(booking);
 
             // Fetch the event associated with the booking
             int eventId = booking.getEventId();
@@ -229,6 +229,7 @@ public class BookingService {
             event.setFilled(newFilledCapacity);
             eventRepository.save(event);
 
+            double totalTicketPrice = calculateTotalTicketPrice(booking);
             // Add the ticket price to the customer's balance
             customer.increaseBalance(totalTicketPrice - event.getCancelFee());
             userRepository.save(user);

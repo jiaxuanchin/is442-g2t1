@@ -15,4 +15,8 @@ public class TicketingOfficer extends UserEntity {
         super();
     }
     
+    public TicketingOfficer(String user_fname, String user_lname, String email, String password) {
+        super(null, user_fname, user_lname, email, password);
+    }
+
 }

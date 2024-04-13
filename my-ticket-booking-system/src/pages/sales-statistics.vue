@@ -1,15 +1,34 @@
 <script setup>
-// import AnalyticsCongratulations from '@/views/dashboard/AnalyticsCongratulations.vue'
-// import AnalyticsProfitReport from '@/views/dashboard/AnalyticsProfitReport.vue'
-
 import AnalyticsEventDetails from '@/views/sales-statistics/AnalyticsEventDetails.vue'
-// import AnalyticsEventAttendance from '@/views/sales-statistics/AnalyticsEventAttendance.vue'
 import AnalyticsEventSales from '@/views/sales-statistics/AnalyticsEventSales.vue'
 import GenerateFile from '@/views/sales-statistics/GenerateFile.vue'
 
 // 👉 Images
 import chart from '@images/cards/chart-success.png'
 import wallet from '@images/cards/wallet-info.png'
+const route = useRoute();
+const router = useRouter();
+const eventId = ref(route.params.eventId);
+const eventDetails = ref({});
+
+const eventManager_URL = 'http://localhost:8080/event'; 
+
+onMounted(async () => {
+  if (!eventId.value) {
+    console.error('No event ID provided');
+    return;
+  }
+  
+  try {
+    console.log('Fetching event details');
+    const response = await axios.get(`${BASE_URL}/searchById/${eventId.value}`);
+    console.log(response.data);
+    eventDetails.value = response.data.data;
+  } catch (error) {
+    console.error('Error fetching event details:', error);
+  }
+});
+
 </script>
 
 <template>

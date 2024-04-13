@@ -74,9 +74,10 @@ const router = createRouter({
           props: true,
         },
         {
-          path: "sales-statistics",
-          component: () => import("../pages/sales-statistics.vue"),
-          props: true,
+          path: '/sales-statistics/:eventId',
+          name: 'SalesStatistics',
+          component: () => import('../pages/sales-statistics.vue'),
+          props: true
         },
         {
           path: "add-ticketing-officer",
@@ -89,10 +90,13 @@ const router = createRouter({
           props: true,
         },
         {
-          path: "/edit-event/:eventId",
-          component: () => import("../pages/edit-event.vue"),
-          props: true,
+          path: '/edit-event/:eventId',
+          name: 'EditEvent',
+          component: () => import('../pages/edit-event.vue'),
+          props: true
         },
+        
+        
       ],
     },
     {

@@ -1,18 +1,68 @@
 <script setup>
-import { VDataTable } from 'vuetify/labs/VDataTable'
+import { VDataTable } from 'vuetify/labs/VDataTable';
+import { ref, computed } from 'vue';
 
 const isCurrentPasswordVisible = ref(false)
 const isNewPasswordVisible = ref(false)
 const isConfirmPasswordVisible = ref(false)
-const currentPassword = ref('12345678')
-const newPassword = ref('87654321')
-const confirmPassword = ref('87654321')
+const currentPassword = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
 
 const passwordRequirements = [
   'Minimum 8 characters long - the more, the better',
   'At least one lowercase character',
   'At least one number, symbol, or whitespace character',
 ]
+
+const isPasswordValid = computed(() => {
+  const hasMinimumLength = newPassword.value.length >= 8;
+  const hasLowercase = /[a-z]/.test(newPassword.value);
+  const hasNumberOrSymbolOrWhitespace = /[0-9\W_]/.test(newPassword.value);
+  
+  const passwordsMatch = newPassword.value === confirmPassword.value;
+  
+  return hasMinimumLength && hasLowercase && hasNumberOrSymbolOrWhitespace && passwordsMatch;
+});
+
+const saveChanges = async () => {
+  const verifyResponse = await fetch('http://localhost:8080/api/auth/verify_password', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify({
+      password: currentPassword.value
+    })
+  });
+
+  const verifyData = await verifyResponse.json();
+
+  if (verifyData.success) {
+    const changePasswordResponse = await fetch('http://localhost:8080/api/auth/change_password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        newPassword: newPassword.value
+      })
+    });
+
+    const changePasswordData = await changePasswordResponse.json();
+
+    if (changePasswordData.success) {
+      alert('Password changed successfully!');
+    } else {
+      alert('Failed to change password.');
+    }
+  } else {
+    alert('Current password is incorrect.');
+  }
+};
+
 </script>
 
 <template>
@@ -100,7 +150,7 @@ const passwordRequirements = [
 
           <!-- 👉 Action Buttons -->
           <VCardText class="d-flex flex-wrap gap-4">
-            <VBtn>Save changes</VBtn>
+            <VBtn @click="saveChanges">Save changes</VBtn>
 
             <VBtn
               type="reset"

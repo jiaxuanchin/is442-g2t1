@@ -1,27 +1,15 @@
 package com.is442g2t1.ticketbookingsystem.event;
 
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
-import com.is442g2t1.ticketbookingsystem.User.UserEntity;
-import com.is442g2t1.ticketbookingsystem.User.UserRepository;
-import com.is442g2t1.ticketbookingsystem.booking.Booking;
 import com.is442g2t1.ticketbookingsystem.booking.BookingService;
-import com.is442g2t1.ticketbookingsystem.ticket.Ticket;
-import com.is442g2t1.ticketbookingsystem.ticket.TicketRepository;
-import com.is442g2t1.ticketbookingsystem.email.EmailService;
 
 import com.is442g2t1.response.StatusResponse;
 import com.is442g2t1.response.SuccessResponse;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,17 +20,12 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final BookingService bookingService;
-    private final UserRepository userRepository;
-    private final EmailService emailService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingService bookingService,
-            UserRepository userRepository, EmailService emailService) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, BookingService bookingService) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.bookingService = bookingService;
-        this.userRepository = userRepository;
-        this.emailService = emailService;
     }
 
     public List<Event> getAllEvent() {
@@ -260,7 +243,7 @@ public class EventService {
             }
 
             // Cancel all bookings under the event
-            ResponseEntity cancellationResponse = bookingService.cancelAllBookingsUnderEvent(eventId);
+            bookingService.cancelAllBookingsUnderEvent(eventId);
 
             // Delete the event from the database
             eventRepository.deleteById(eventId);

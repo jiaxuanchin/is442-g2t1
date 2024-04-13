@@ -1,7 +1,31 @@
 <script setup>
 import avatar1 from '@images/avatars/avatar-1.png'
+import axios from 'axios';
 
-let userRole = "Customer" // To Do: get this from db and modify
+let userRole = "Customer"; // Default value
+let userName = "";
+
+// Function to fetch user data and update userRole
+const fetchUserData = async () => {
+  try {
+    const userId = localStorage.getItem('user_id'); // Get the user ID from local storage
+    console.log(userId)
+    const response = await axios.get(`http://localhost:8080/UserEntity/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    const userData = response.data; // Assuming the response contains user data including userRole
+    userRole = userData.role.name; // Update userRole with the fetched value
+    userName = userData.user_fname + " " + userData.user_lname
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    // Handle error fetching user data
+  }
+};
+
+// Call fetchUserData function when the component is mounted
+fetchUserData();
 
 // logout
 import { useRouter } from 'vue-router'
@@ -78,7 +102,7 @@ const logout = async () => {
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              John Doe
+              {{userName}}
             </VListItemTitle>
             <VListItemSubtitle>{{userRole}}</VListItemSubtitle>
           </VListItem>

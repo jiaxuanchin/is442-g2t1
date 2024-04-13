@@ -44,4 +44,8 @@ public class Customer extends UserEntity {
         }
         balance += amount;
     }
+    
+    // Fetch the user password --> password
+
+    // Update the user password --> password
 }

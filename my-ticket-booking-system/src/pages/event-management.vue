@@ -19,72 +19,26 @@ const randomImage = () => {
   const randomIndex = Math.floor(Math.random() * images.length); // Generate a random index
   return images[randomIndex]; // Return the image URL at the random index
 };
+const cardList = ref([]);
 
-// Define a list of card information
 
-const cardList = [
-  {
-    title: 'Cat',
-    eventId: "2",
-    description: 'Disney is coming to town',
-    date: '2023-09-15',
-    time: '18:00 - 21:00'
-  },
-  {
-    title: 'Musical',
-    eventId: "1",
-    description: 'Disney is coming to town',
-    date: '2023-09-15',
-    time: '18:00 - 21:00'
-  },
-  {
-    title: 'Musical',
-    eventId: "3",
-    description: 'Disney is coming to town',
-    date: '2023-09-15',
-    time: '18:00 - 21:00'
-  },
-  {
-    title: 'Musical',
-    eventId: "4",
-    description: 'Disney is coming to town',
-    date: '2023-09-15',
-    time: '18:00 - 21:00'
-  },
-  {
-    title: 'Musical',
-    eventId: "2",
-    description: 'Disney is coming to town',
-    date: '2023-09-15',
-    time: '18:00 - 21:00'
-  },
-  {
-    title: 'Musical',
-    eventId: "3",
-    description: 'Disney is coming to town',
-    date: '2023-09-15',
-    time: '18:00 - 21:00'
-  },
-  {
-    title: 'Musical',
-    eventId: "4",
-    description: 'Disney is coming to town',
-    date: '2023-09-15',
-    time: '18:00 - 21:00'
-  },
-  {
-    title: 'Musical',
-    eventId: "2",
-    description: 'Disney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to townDisney is coming to town',
-    date: '2023-09-15',
-    time: '18:00 - 21:00'
-  },
+const apiUrl = 'http://localhost:8080/event';
+const fetchEvents = async () => {
+  try {
+    const response = await fetch(apiUrl); 
+    if (!response.ok) throw new Error('Failed to fetch');
+    const data = await response.json();
+    cardList.value = data; 
+  } catch (error) {
+    console.error('Error fetching events:', error);
+  }
+};
 
-]
+onMounted(fetchEvents); 
 
-const truncateDescription = (description) => {
+const truncateDescription = (eventDesc) => {
   const maxLength = 100; // Set the maximum length of the description
-  return description.length > maxLength ? description.slice(0, maxLength) + '...' : description;
+  return eventDesc.length > maxLength ? eventDesc.slice(0, maxLength) + '...' : eventDesc;
 };
 
 </script>
@@ -97,50 +51,54 @@ const truncateDescription = (description) => {
       <VTab value="sales-statistics">Sales Statistics</VTab>
     </VTabs>
 
-    <!-- Tab content for 'Create Event' -->
+    <!-- create event -->
     <VCard v-if="currentTab === 'create'" flat>
       <CreateEvent />
     </VCard>
 
-    <!-- Tab content for 'View Events' -->
+    <!-- Edit events -->
     <VRow v-if="currentTab === 'view'">
-      <!-- Use v-for to generate cards -->
       <VCol v-for="(card, index) in cardList" :key="index" cols="12" sm="4" md="3">
         <VCard>
           <VImg :src="randomImage()" cover />
 
           <VCardItem>
-            <VCardTitle>{{ card.title }}</VCardTitle>
+            <VCardTitle>{{ card.eventTitle }}</VCardTitle>
           </VCardItem>
 
           <VCardText class="card-description" style="font-size: 1.1rem;">
-            {{ card.date }} ({{ card.time }}) <br><br>
-            {{ truncateDescription(card.description) }} <br><br>
+            {{ card.eventDate }} ({{ card.startTime }}) <br><br>
+            {{ truncateDescription(card.eventDesc) }} <br><br>
             <div style="text-align: right;">
-              <VBtn :to="'/edit-event/' + card.eventId">
-                View Event
+
+              <VBtn :to="{ name: 'EditEvent', params: { eventId: card.eventId } }">
+                Edit Event
               </VBtn>
+
             </div>
           </VCardText>
         </VCard>
       </VCol>
     </VRow>
 
+    <!-- sales statistics -->
+
+    
     <VRow v-if="currentTab === 'sales-statistics'">
       <!-- Use v-for to generate cards -->
       <VCol v-for="(card, index) in cardList" :key="index" cols="12" sm="4" md="3">
         <VCard>
-          <VImg :src="randomImage()" cover />
+          <VImg :src="randomImage()" />
 
           <VCardItem>
-            <VCardTitle>{{ card.title }}</VCardTitle>
+            <VCardTitle>{{ card.eventTitle }}</VCardTitle>
           </VCardItem>
 
           <VCardText class="card-description" style="font-size: 1.1rem;">
-            {{ card.date }} ({{ card.time }}) <br><br>
-            {{ truncateDescription(card.description) }} <br><br>
+            {{ card.eventDate }} ({{ card.startTime }}) <br><br>
+            {{ truncateDescription(card.eventDesc) }} <br><br>
             <div style="text-align: right;">
-              <VBtn :to="'/sales-statistics/' ">
+              <VBtn :to="{ name: 'SalesStatistics', params: { eventId: card.eventId } }">
                 Statistics Report
               </VBtn>
             </div>
@@ -148,5 +106,6 @@ const truncateDescription = (description) => {
         </VCard>
       </VCol>
     </VRow>
+
   </VContainer>
 </template>

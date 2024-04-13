@@ -1,5 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.booking;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,8 +18,8 @@ import com.is442g2t1.ticketbookingsystem.security.jwt.JWTService;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
+@CrossOrigin(origins = {"http://127.0.0.1:5173", "http://localhost:5173"})
 @RequestMapping("/booking")
-@CrossOrigin(origins = "http://127.0.0.1:5173")
 public class BookingController {
 
     private BookingService bookingService;

@@ -1,24 +1,69 @@
 <script setup>
+
+import axios from 'axios';
+
 const events = ref([
-  {
-    name: 'Event 1',
-    description: 'Event 1 description',
-    date: '2023-03-23',
-    location: 'The Capitol',
-    time: '18:00 - 21:00',
-    tickets: 4,
-    id: 1
-  },
-  {
-    name: 'Event 2',
-    description: 'Event 2 description',
-    date: '2023-04-15',
-    location: 'City Hall',
-    time: '19:00 - 22:00',
-    tickets: 2,
-    id: 3
-  },
 ]);
+
+const fetchUserBookings = async (userId) => {
+  try {
+    const response = await axios.get(`http://localhost:8080/booking/user/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    const bookings = response.data;
+    
+    const updatedEvents = await Promise.all(bookings.map(async (booking) => {
+      const eventResponse = await axios.get(`http://localhost:8080/event/searchById/${booking.eventId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const event = eventResponse.data.data;
+      
+      // Combine event date and time
+      const eventDateTime = new Date(`${event.eventDate} ${event.startTime}`);
+      const currentTime = new Date();
+
+      // Check if the event date and time are in the past
+      if (eventDateTime <= currentTime) {
+        const tickets = booking.numOfTickets; // Count the number of tickets booked for this event
+        const bookingId = booking.bookingId;
+        return { ...event, tickets,bookingId}; // Return the updated event object with the calculated number of tickets
+      } else {
+        return null; // Return null if the event is in the future
+      }
+    }));
+
+    // Filter out null values (events in the future) and update the events
+    updateEvents(updatedEvents.filter(event => event !== null));
+  } catch (error) {
+    console.error('Error fetching user bookings:', error);
+  }
+};
+
+
+onMounted(() => {
+  const userId = localStorage.getItem('user_id'); // Get the user ID from local storage
+  fetchUserBookings(userId);
+});
+
+// Method to update the frontend with the updated event details
+const updateEvents = (updatedEvents) => {
+  events.value = updatedEvents.map(event => ({
+    name: event.eventTitle,
+    description: event.eventDesc,
+    date: event.eventDate,
+    location: event.eventLoc,
+    time: `${event.startTime} - ${event.endTime}`,
+    tickets: event.tickets, // Use the calculated tickets count
+    id: event.eventId,
+    bookingId: event.bookingId
+  }));
+};
+
+
 </script>
 
 <template>
@@ -72,7 +117,7 @@ const events = ref([
                   <span class="ms-3">{{ event.tickets }} Tickets</span>
                 </p>
               </div>
-              <VBtn class="mt-8" :to="'/booking-details/' + event.id">
+              <VBtn class="mt-8" :to="'/booking-details/' + event.bookingId">
                 More details
               </VBtn>
             </VCardText>

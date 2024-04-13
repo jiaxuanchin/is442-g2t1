@@ -1,14 +1,43 @@
-// ToDo: Fetch info from database
-
 <script setup>
+
 import { VDataTable } from 'vuetify/labs/VDataTable'
+import { ref, onMounted } from 'vue'
+
+// Set the user_id in local storage --> To remove after testing
+localStorage.setItem('user_id', '1');
+
+
+// Define accountBalance as a ref
+const accountBalance = ref('Loading...')
+
+const fetchAccountBalance = async () => {
+  try {
+    const userId = localStorage.getItem('user_id') // Todo: replace this with getting from the localstorage
+
+    const response = await fetch(`http://localhost:8080/customers/get-balance/${userId}`,{
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    const data = await response.json()
+    accountBalance.value = data
+  } catch (error) {
+    console.error('Error fetching account balance:', error.message)
+    accountBalance.value = 'Error fetching balance'
+  }
+}
+
+// Fetch account balance when the component is mounted
+onMounted(fetchAccountBalance)
+
 
 const cardNumber = ref('0000 0000 0000 0000')
 const isExpiryDateVisible = ref(false)
 const isCsvVisible = ref(false)
 const expiryDate = ref('11/25')
 const csv = ref('543')
-const accountBalance = ref('1000.00');
 
 const passwordRequirements = [
   'Minimum 8 characters long - the more, the better',
@@ -35,10 +64,10 @@ const cards = [
 <template>
   <VRow>
     <!-- SECTION: Account e-wallet balance -->
-    <VCol cols="12">
+    <VCol cols="12" class="mb-4">
       <VCard title="Account e-wallet Balance">
-        <VCardText>
-          <p>Current balance</p>
+        <VCardText class="pb-2">
+          <p class="mb-1">Current balance</p>
           <p class="text-h5 font-weight-bold">$ {{ accountBalance }}</p>
         </VCardText>
       </VCard>
@@ -46,15 +75,15 @@ const cards = [
     <!-- !SECTION -->
 
     <!-- SECTION: Your cards -->
-    <VCol cols="12">
+    <VCol cols="12" class="mb-4">
       <VCard title="Your Cards">
         <VTable>
           <thead>
             <tr>
-              <th class="text-uppercase">
+              <th class="table-header-cell">
                 Card holder name
               </th>
-              <th>
+              <th class="table-header-cell">
                 Card number
               </th>
             </tr>
@@ -68,7 +97,7 @@ const cards = [
               <td>
                 {{ item.name }}
               </td>
-              <td>
+              <td class="text-center">
                 {{ item.number }}
               </td>
             </tr>
@@ -77,7 +106,6 @@ const cards = [
       </VCard>
     </VCol>
     <!-- !SECTION -->
-
 
     <!-- SECTION: Add a new card -->
     <VCol cols="12">
@@ -150,3 +178,4 @@ const cards = [
     <!-- !SECTION -->
   </VRow>
 </template>
+

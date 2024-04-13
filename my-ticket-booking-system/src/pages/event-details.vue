@@ -1,11 +1,10 @@
 <script setup>
-import { useRoute } from "vue-router";
+import { useRoute } from 'vue-router'
 import { ref } from "vue";
-// import axios from 'axios'
-// import { resolveConfig } from "vite";
+import axios from 'axios'
 
-const { params } = useRoute();
-const eventId = params.eventId;
+const { params } = useRoute()
+const eventId = params.eventId
 
 const ticketData = {
   quantity: 1,
@@ -88,20 +87,107 @@ const goToCheckout = async () => {
     alert("You are not authorized to purchase tickets");
   }
 };
+const eventData = ref(null)
+
+// Fetch event details from the API
+axios.get(`http://localhost:8080/event/searchById/${eventId}`, {
+  headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+})
+  .then(response => {
+    // Update the eventData with the response data
+    eventData.value = response.data.data
+    console.log(response.data.data)
+  })
+  .catch(error => {
+    console.error('Error fetching event details:', error)
+  })
+
+// Function to calculate sales start and end dates based on event details
+function calculateSalesDates(event) {
+  if (!event) return null;
+
+  // Parse event date and start time
+  const eventDate = new Date(event.eventDate);
+  const startTime = event.startTime.split(':').map(Number);
+
+  // Calculate sales start date (6 months before the event date and time)
+  const salesStartDate = new Date(eventDate);
+  salesStartDate.setMonth(salesStartDate.getMonth() - 6);
+  salesStartDate.setHours(startTime[0], startTime[1]);
+
+  // Calculate sales end date (24 hours before the event start time)
+  const salesEndDate = new Date(eventDate);
+  salesEndDate.setDate(salesEndDate.getDate() - 1);
+  salesEndDate.setHours(startTime[0], startTime[1]);
+
+  return { 
+    salesStartDate, 
+    salesEndDate 
+  };
+}
+
+const salesDates = ref(null);
+
+watchEffect(() => {
+  // Recalculate salesDates whenever eventData changes
+  salesDates.value = calculateSalesDates(eventData.value);
+});
+
+function formatDate(dateString) {
+  const parts = dateString.split('-');
+  // Ensure parts are numbers
+  const year = parseInt(parts[0]);
+  const month = parseInt(parts[1]);
+  const day = parseInt(parts[2]);
+  // Create a new date object
+  const date = new Date(year, month - 1, day);
+  // Get the formatted date string
+  const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+  return formattedDate;
+}
+
+function formatTime(timeString) {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  const date = new Date();
+  date.setHours(hours);
+  date.setMinutes(minutes);
+  // Use toLocaleTimeString() with appropriate options
+  const formattedTime = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+  return formattedTime;
+}
+
+// Computed property to determine if the form should be hidden
+const isSalesStartDatePast = computed(() => {
+  console.log('salesDates:', salesDates.value);
+  if (!salesDates.value || !salesDates.value.salesStartDate) {
+    return false;
+  }
+  const today = new Date();
+  const salesStartDate = salesDates.value.salesStartDate;
+  console.log("today: ", today)
+  console.log('salesStartDate:', salesStartDate);
+  console.log(salesStartDate < today)
+  return salesStartDate > today;
+});
 </script>
+
 
 <template>
   <VRow>
     <VCol cols="12">
       <!-- Start of event details -->
-      <VCard>
+      <VCard  v-if="eventData">
         <VCardText class="d-flex flex-column gap-y-8">
           <div>
-            <h6 class="text-h6">Event Name</h6>
-            <span>Location: Singapore indoor stadium</span><br />
-            <span>Start: 23 December 2023, 4pm</span><br />
-            <span>End: 23 December 2023, 8pm</span><br /><br />
-            <span>Event description</span><br />
+            <h6 class="text-h6">
+              {{eventData.eventTitle}}
+            </h6>
+            <span>Location: {{eventData.eventLoc}}</span><br>
+            <span>Start: {{formatDate(eventData.eventDate)}}, {{formatTime(eventData.startTime)}}</span><br>
+            <span>End: {{formatDate(eventData.eventDate)}}, {{formatTime(eventData.endTime)}}</span><br><br>
+            <span> {{eventData.eventDesc}}</span><br>
           </div>
         </VCardText>
       </VCard>
@@ -111,10 +197,16 @@ const goToCheckout = async () => {
     <VCol cols="12">
       <VCard title="Ticket Sales Information">
         <VCardText class="d-flex flex-column gap-y-8">
-          <div>
-            <span>Sales Start: 27 December 2023, 12am </span><br />
-            <span>Sales End: 22 December 2023, 4pm </span><br />
+
+          <div v-if="salesDates">
+            <span v-if="salesDates.salesStartDate">Sales Start: {{ salesDates.salesStartDate.toLocaleDateString() }}, {{ salesDates.salesStartDate.toLocaleTimeString() }}</span><br>
+            <span v-if="salesDates.salesEndDate">Sales End: {{ salesDates.salesEndDate.toLocaleDateString() }}, {{ salesDates.salesEndDate.toLocaleTimeString() }}</span><br>
           </div>
+          <div v-else>
+            Loading sales information...
+          </div>
+
+
         </VCardText>
       </VCard>
     </VCol>
@@ -221,38 +313,36 @@ const goToCheckout = async () => {
       </VCard>
     </VCol>
 
-    <!-- The form for quantity of tickets required -->
-    <VCol cols="12">
-      <VCard title="Choose your tickets">
-        <VCardText>
-          <VForm class="mt-6">
-            <VRow>
-              <!-- 👉 Quantity of tickets -->
-              <VCol cols="12">
-                <VTextField
-                  v-model="ticketDataLocal.quantity"
-                  label="Ticket Quantity"
+<!-- The form for quantity of tickets required -->
+  <VCol cols="12" v-if="!isSalesStartDatePast">
+    <VCard title="Choose your tickets">
+      <VCardText>
+        <VForm class="mt-6">
+
+          <VRow>
+
+            <!-- 👉 Quantity of tickets -->
+            <VCol
+              cols="12"
+            >
+              <VTextField
+                v-model="ticketDataLocal.quantity"
+                label="Ticket Quantity"
                   placeholder="1"
                   type="number"
                   min="1"
                   max="5"
-                />
-              </VCol>
+              />
+            </VCol>
 
-              <!-- Note -->
-              <div
-                style="
-                  padding-left: 20px;
-                  margin-bottom: 10px;
-                  margin-top: 10px;
-                "
-              >
-                <span>Note:</span>
-                <ul style="padding-left: 30px; margin-left: 0">
-                  <li>Limited to only 5 tickets per transaction.</li>
-                </ul>
-              </div>
-            </VRow>
+            <!-- Note -->
+            <div style="padding-left: 20px;margin-bottom: 10px;margin-top: 10px">
+              <span>Note:</span>
+              <ul style="padding-left: 30px; margin-left: 0;">
+                <li>Limited to only 5 tickets per transaction.</li>
+              </ul>
+            </div>
+          </VRow>
 
             <!-- 👉 Submit the forms -->
             <VRow>
@@ -262,9 +352,11 @@ const goToCheckout = async () => {
                 <VBtn @click="goToCheckout"> Purchase Tickets </VBtn>
               </VCol>
             </VRow>
-          </VForm>
-        </VCardText>
-      </VCard>
-    </VCol>
-  </VRow>
+
+        </VForm>  
+      </VCardText>
+    </VCard>
+  </VCol>
+</VRow>
 </template>
+
