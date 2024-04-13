@@ -2,7 +2,7 @@
   <div class="verify-ticket">
     <h3>Verify Ticket</h3>
     <form @submit.prevent="verifyTicket">
-      <input type="text" v-model="ticketIdInput" placeholder="Enter Ticket ID" required>
+      <input type="text" v-model="ticketId" placeholder="Enter Ticket ID" required>
       <button type="submit">Verify</button>
     </form>
     <div v-if="verificationResult !== null">
@@ -23,17 +23,30 @@ export default {
   },
   methods: {
     async verifyTicket() {
-        try {
-            const ticketId = this.ticketIdInput.replace(/^0+/, '');
-            const response = await axios.get(`http://localhost:8080/ticket/${ticketId}`);
-            // Handle the response
-            console.log(response.data);
-            this.verificationResult = response.data.status; // Assuming the API returns { status: 'Valid' or 'Invalid' }
-        } catch (error) {
-            console.error('Error verifying ticket:', error);
-            this.verificationResult = 'Error during verification process';
+      try {
+        const ticketId = this.ticketId.replace(/^0+/, '');
+        const response = await axios.get('http://localhost:8080/ticket/' + ticketId);
+      
+        if (response.data.attendance === true) {
+          this.verificationResult = 'Ticket has been used.';
+        } else if (response.data.attendance === false) {
+          const update = await axios.put('http://localhost:8080/ticket/update/attendance/' + ticketId);
+          if (!update) {
+            this.verificationResult = 'Error updating attendance status.';
+          } else {
+            const message = `Ticket is in booking ID ${response.data.bookingId} and attendance has been successfully marked.`;
+            this.verificationResult = message;
+          }
         }
-    }
+      } catch (error) {
+        console.error('Error verifying ticket:', error);
+        if (error.response.data === 'Ticket not found') {
+          this.verificationResult = 'Ticket ID does not exist.';
+        } else {
+          this.verificationResult = 'Error during verification process.';
+        }
+      }
+    },
   },
 };
 </script>
@@ -87,4 +100,3 @@ button:hover {
   text-align: center;
 }
 </style>
-

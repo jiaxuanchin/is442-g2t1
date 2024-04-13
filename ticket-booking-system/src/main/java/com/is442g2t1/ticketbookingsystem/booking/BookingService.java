@@ -211,7 +211,6 @@ public class BookingService {
                 return ResponseEntity.status(400).body("User is not a customer");
             }
             Customer customer = (Customer) user;
-            double totalTicketPrice = calculateTotalTicketPrice(booking);
 
             // Fetch the event associated with the booking
             int eventId = booking.getEventId();
@@ -225,6 +224,7 @@ public class BookingService {
             event.setFilled(newFilledCapacity);
             eventRepository.save(event);
 
+            double totalTicketPrice = calculateTotalTicketPrice(booking);
             // Add the ticket price to the customer's balance
             customer.increaseBalance(totalTicketPrice - event.getCancelFee());
             userRepository.save(user);
