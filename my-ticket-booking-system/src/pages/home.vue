@@ -82,7 +82,7 @@ const truncateDescription = (description) => {
   <div>
     <p class="text-2xl mb-6">Upcoming Events</p>
     <VRow>
-      <VCol v-for="(event, index) in upcomingEvents" :key="index" cols="12" sm="4" md="3">
+      <VCol v-for="(event, index) in currentEvents" :key="index" cols="12" sm="4" md="3">
         <VCard>
           <VImg :src="randomImage()" cover />
   
@@ -101,9 +101,9 @@ const truncateDescription = (description) => {
       </VCol>
     </VRow>
 
-    <p class="text-2xl mb-6 mt-6">Current Events</p>
+    <p class="text-2xl mb-6 mt-6">Future Events</p>
     <VRow>
-      <VCol v-for="(event, index) in currentEvents" :key="index" cols="12" sm="4" md="3">
+      <VCol v-for="(event, index) in upcomingEvents" :key="index" cols="12" sm="4" md="3">
         <VCard>
           <VImg :src="randomImage()" cover />
   
