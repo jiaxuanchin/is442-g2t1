@@ -8,30 +8,20 @@
       >
         Verify Ticket
       </div>
-      <div
-        class="tab"
-        :class="{ active: currentTab === 'sales' }"
-        @click="currentTab = 'sales'"
-      >
-        On-Site Sales
-      </div>
     </div>
 
     <div class="tab-content">
       <verify-ticket-form v-if="currentTab === 'verify'"></verify-ticket-form>
-      <onsite-sales-form v-if="currentTab === 'sales'"></onsite-sales-form>
     </div>
   </div>
 </template>
 
 <script>
 import VerifyTicketForm from "./ticketing-verification.vue";
-import OnsiteSalesForm from "./ticketing-sales.vue";
 
 export default {
   components: {
     VerifyTicketForm,
-    OnsiteSalesForm,
   },
   data() {
     return {
