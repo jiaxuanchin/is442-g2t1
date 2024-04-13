@@ -18,7 +18,7 @@
     >
       <VCard>
         <VImg src="https://cdn.jsdelivr.net/gh/themeselection/ts-assets/sneat/sneat-vuetify-vuejs-admin-template/banner/banner.png" />
-        <VCardTitle>Sneat - Vuetify Admin Template</VCardTitle>
+        <VCardTitle>G2T1 Ticket Booking System</VCardTitle>
         <VCardText>
           Sneat Admin is the most developer friendly & highly customisable Admin Dashboard Template based on Vuetify.
         </VCardText>
