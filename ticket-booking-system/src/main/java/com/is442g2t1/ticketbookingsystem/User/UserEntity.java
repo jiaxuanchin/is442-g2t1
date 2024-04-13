@@ -2,6 +2,7 @@ package com.is442g2t1.ticketbookingsystem.User;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.is442g2t1.ticketbookingsystem.security.token.Token;
 
 import lombok.Data;
@@ -58,5 +59,6 @@ public class UserEntity {
     // }
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Token> tokens;
 }

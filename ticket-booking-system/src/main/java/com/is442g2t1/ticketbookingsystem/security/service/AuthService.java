@@ -16,6 +16,7 @@ import com.is442g2t1.ticketbookingsystem.security.token.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -125,7 +126,7 @@ public class AuthService {
             String token = jwtGenerator.extractJwtFromRequest(request);
             String email = jwtGenerator.getEmailFromJWT(token);
     
-            
+            System.out.println("[CHECKPOINT AuthService] VERIFY PASSWORD: " + password);
             UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
     
@@ -223,6 +224,20 @@ public class AuthService {
         });
 
         tokenRepository.saveAll(validUserTokens);
+    }
+
+    public ResponseEntity<?> getUser(int userId) {
+        try {
+            // Optional<UserEntity> user = userRepository.findByEmail("jxchin.2021@scis.smu.edu.sg");
+            userRepository.findAll().forEach(user -> {
+                System.out.println("[CHECKPOINT AuthService] GET USER: " + user.toString());
+            });
+            // System.out.println("[CHECKPOINT UserEntityService] GET USER INFO: " + user.toString());
+            return null;
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

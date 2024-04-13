@@ -1,5 +1,6 @@
 package com.is442g2t1.ticketbookingsystem.security.token;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.is442g2t1.ticketbookingsystem.User.UserEntity;
 
 import jakarta.persistence.Column;
@@ -14,12 +15,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString(exclude = "user")
 public class Token {
 
     @Id
@@ -36,5 +39,6 @@ public class Token {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     public UserEntity user;
 }

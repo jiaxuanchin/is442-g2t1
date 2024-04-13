@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.is442g2t1.ticketbookingsystem.security.jwt.JWTAuthFilter;
@@ -86,7 +87,7 @@ public class SecurityConfig {
                 auth.requestMatchers("/api/auth/**")
                     .permitAll()
                     // .requestMatchers("/booking/**").hasAnyAuthority("event_manager") // for generic filtering
-                    .requestMatchers("/UserEntity/**").hasAnyAuthority("event_manager", "customer")
+                    // .requestMatchers("/UserEntity/**").hasAnyAuthority("event_manager", "customer", "ticketing_officer")
                     .anyRequest()
                     .authenticated()       
             )
@@ -98,9 +99,20 @@ public class SecurityConfig {
                         )
             )
             .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .securityContext(securityContext -> securityContext
+                .securityContextRepository(
+                    securityContextRepository()
+                )
+            );
 
         return http.build();
+    }
+
+    @Bean
+    public HttpSessionSecurityContextRepository securityContextRepository() {
+        return new HttpSessionSecurityContextRepository();
+
     }
 
 }

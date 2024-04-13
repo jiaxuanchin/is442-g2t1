@@ -6,6 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -17,6 +18,7 @@ import org.springframework.lang.NonNull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.val;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
@@ -61,12 +63,18 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(
                         userDetails, 
                         null,
-                        userDetails.getAuthorities());
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        userDetails.getAuthorities()
+                    );
+
+                    authenticationToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
 
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-                    System.out.println("[CHECKPOINT JWTAuthFilter] User authenticated: " + SecurityContextHolder.getContext().getAuthentication());
+                    // RequestAttributeSecurityContextRepository().saveContext(SecurityContextHolder.getContext(), request, response);
+
+                    // System.out.println("[CHECKPOINT JWTAuthFilter] User authenticated: " + SecurityContextHolder.getContext().getAuthentication());
 
                 }
 

@@ -2,6 +2,7 @@ package com.is442g2t1.ticketbookingsystem.ticket;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,9 +49,14 @@ public class TicketController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity createTicket(@RequestBody Ticket ticket) {
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
+    public ResponseEntity createTicket(@RequestBody Booking bookingId) {
+
         // Create a ticket by sending Ticket instance
+        Ticket ticket = new Ticket(bookingId);
+        System.out.println("[CHECKPOINT: CREATE TICKET]: " + ticket.toString());
         ResponseEntity result = this.ticketService.createTicket(ticket);
+        
         return result;
     }
 

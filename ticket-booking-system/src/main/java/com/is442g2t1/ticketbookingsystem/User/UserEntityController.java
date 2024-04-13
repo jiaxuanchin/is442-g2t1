@@ -1,6 +1,9 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,10 +57,8 @@ public class UserEntityController {
 
         try {
             ResponseEntity test = userEntityService.getUserByEmail(email);
-            System.out.println("[CHECKPOINT UserEntityController] GET USER BY EMAIL: " + test);
-    
+
             return test;
-            // return null;
 
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -38,6 +39,7 @@ public class PaymentController {
 
     @CrossOrigin
     @PostMapping("/create-payment-intent")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity createPaymentIntent(@RequestBody PaymentDTO paymentDTO) {
         System.out.println("reach payment intent please");
         System.out.println(stripeSecretKey);
@@ -48,8 +50,10 @@ public class PaymentController {
         System.out.println(totalPrice);
         System.out.println(currency);
 
-        Dotenv dotenv = Dotenv.load();
-        Stripe.apiKey = dotenv.get("STRIPE_SECRET_KEY");
+        // Dotenv dotenv = Dotenv.load();
+        // Stripe.apiKey = dotenv.get("STRIPE_SECRET_KEY");
+
+        Stripe.apiKey = stripeSecretKey;
         try {
             PaymentIntentCreateParams params = new PaymentIntentCreateParams.Builder()
                     .setCurrency(currency)
@@ -59,6 +63,7 @@ public class PaymentController {
                                     .setEnabled(true)
                                     .build())
                     .build();
+            // System.out.println("[CHECKPOINT: SUCCESS]");
             PaymentIntent paymentIntent = PaymentIntent.create(params);
             PaymentDTO response = new PaymentDTO();
             response.setClientSecret(paymentIntent.getClientSecret());

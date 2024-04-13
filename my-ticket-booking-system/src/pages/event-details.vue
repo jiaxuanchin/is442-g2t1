@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute } from "vue-router";
 import { ref } from "vue";
-import axios from 'axios'
+// import axios from 'axios'
 // import { resolveConfig } from "vite";
 
 const { params } = useRoute();
@@ -68,8 +68,12 @@ const goToCheckout = async () => {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
-    });
+    })
+    .then((res) => res.json())
 
+  console.log(response);
+
+  
   if (response.role.name == "customer") {
     router.push({
       name: "CheckoutForm",

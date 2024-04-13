@@ -57,7 +57,10 @@ public class UserEntityService {
         try {
             UserEntity existingUserEntity = (UserEntity) userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+
+            System.out.println("[CHECKPOINT UserEntityService] GET USER INFO: " + existingUserEntity.toString());
             return ResponseEntity.ok(existingUserEntity);
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
@@ -75,6 +78,8 @@ public class UserEntityService {
 
             UserEntity user = userOptional.get();
             return ResponseEntity.ok(user);
+
+            // return null;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }

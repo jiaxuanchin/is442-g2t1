@@ -122,6 +122,7 @@ public class BookingService {
             if (!(user instanceof Customer)) {
                 return ResponseEntity.status(400).body("User is not a customer");
             }
+
             Customer customer = (Customer) user;
 
             // Fetch the event associated with the booking
@@ -157,6 +158,7 @@ public class BookingService {
 
             double totalTicketPrice = calculateTotalTicketPrice(booking);
             if (payType.equals("ewallet")) {
+
                 if (totalTicketPrice > customer.getBalance()) {
                     return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
                 } else {

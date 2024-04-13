@@ -39,11 +39,15 @@ onMounted(async () => {
   // const user = await fetch(`http://localhost:8080/UserEntity/${userId}`).then(
   //   (res) => res.json()
   // );
-  const user = await axios.get(`http://localhost:8080/UserEntity/${userId}`,{
+  const user = await fetch(`http://localhost:8080/UserEntity/${userId}`,{
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
-    });
+  })
+  .then(
+    (res) => res.json()
+  );
+    
   console.log(user.balance);
   balance = user.balance;
   email = user.email;
@@ -57,22 +61,28 @@ onMounted(async () => {
 
   // const response = await this.$http.get(`/searchById/${eventId}`);
   // a;
-  const response = await axios.get(`http://localhost:8080/event/searchById/${eventId}`,{
+  const response = await fetch(`http://localhost:8080/event/searchById/${eventId}`,{
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
-    });
+    })
+    .then(
+      (res) => res.json()
+    );
 
   eventData.value = response.data;
   console.log(response);
 
   totalPrice = numTickets * eventData.value.ticketPrice;
 
-  const { publishableKey } = await axios.get(`http://localhost:8080/api/payments/config`,{
+  const { publishableKey } = await fetch(`http://localhost:8080/api/payments/config`,{
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
-    });
+  })
+  .then(
+    (res) => res.json()
+  );
   
 
   stripe = await loadStripe(publishableKey); // initialize the Stripe object
@@ -156,9 +166,14 @@ const confirmBooking = async (payType) => {
         numOfTickets: numTickets,
       }),
     }
-  ).then((res) => res.json());
+  )
   console.log(bookingResponse);
-  return true;
+  if (bookingResponse.status == 200) {
+    return true;
+    
+  } else {
+    return false;
+  };
 };
 
 const toggleForm = () => {
@@ -182,20 +197,22 @@ const onSubmitWallet = async () => {
     return;
   }
   // check password
-  const response = await axios
-    .get(`http://localhost:8080/api/auth/verify_password/${password}`, {
+  const response = await fetch(`http://localhost:8080/api/auth/verify_password`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
+      method: "POST",
+      body: JSON.stringify({ password }),
     })
     .then((res) => res.json());
   console.log(response);
 
-  if (response.data == false) {
+  if (response == false) {
     alert("Incorrect password");
     return;
-  } else if (response.data == true) {
+  } else if (response == true) {
     const confirmBookingResponse = await confirmBooking("ewallet");
+
     if (confirmBookingResponse) {
       // redirect to success page
       window.location.href = `${window.location.origin}/payment/return`;

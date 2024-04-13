@@ -60,10 +60,11 @@ public class BookingController {
         return result;
     }
 
-    @PostMapping("/new")
+    @PostMapping("/new/{payType}")
     // @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
-    public ResponseEntity createBooking(HttpServletRequest request, @RequestBody Booking booking, @PathVariable String payType) {
+    public ResponseEntity createBooking(HttpServletRequest request, @RequestBody Booking booking, @PathVariable String payType) { 
         
+        // String payType = "stripe";
         String token = jwtGenerator.extractJwtFromRequest(request);
 
         ResponseEntity result = this.bookingService.createBooking(token, booking, payType);
