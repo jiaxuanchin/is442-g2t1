@@ -55,7 +55,7 @@ const handleNavScroll = evt => {
     <div class="nav-header">
       <slot name="nav-header">
         <RouterLink
-          to="/"
+          to="/home"
           class="app-logo d-flex align-center gap-x-3 app-title-wrapper"
         >
           <div
