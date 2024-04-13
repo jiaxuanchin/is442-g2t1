@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import com.is442g2t1.ticketbookingsystem.booking.Booking;
 
 @RestController
-@CrossOrigin(origins = {"http://127.0.0.1:5173", "http://localhost:5173"}) // Allow access from frontend server
+@CrossOrigin(origins = {"http://127.0.0.1:5173", "http://localhost:5173"})
 @RequestMapping("/ticket")
 public class TicketController {
 
