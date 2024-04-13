@@ -91,6 +91,12 @@ const onSubmitWallet = async () => {
     }
   ).then((res) => res.json());
   console.log(customer);
+
+  if (customer.role.name != "customer") {
+    alert("Invalid email. Not a customer.");
+    return;
+  }
+
   userId = customer.id;
   
    // check password
@@ -100,7 +106,8 @@ const onSubmitWallet = async () => {
       },
       method: "POST",
       body: JSON.stringify({
-        password: password
+        password: password.value,
+        email: email.value,
       }),
     })
     .then((res) => res.json());

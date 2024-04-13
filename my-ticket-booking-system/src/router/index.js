@@ -13,10 +13,6 @@ const router = createRouter({
       component: () => import("../layouts/default.vue"),
       children: [
         {
-          path: "dashboard",
-          component: () => import("../pages/dashboard.vue"),
-        },
-        {
           path: "home",
           component: () => import("../pages/home.vue"),
         },

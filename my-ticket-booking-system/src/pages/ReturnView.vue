@@ -9,7 +9,7 @@ import SrMessages from "./SrMessages.vue";
 const messages = ref([]);
 const clientSecret = ref("");
 
-const countdown = ref(10);
+const countdown = ref(5);
 
 // currentRoute is a computed property that returns the query parameters of the current route using 'useRoute().query'
 const currentRoute = computed(() => {
@@ -56,7 +56,7 @@ function startCountdown() {
 
 function redirectToHomepage() {
   // Redirect to homepage
-  window.location.href = "/";
+  window.location.href = "/home";
 }
 </script>
 
@@ -67,7 +67,7 @@ function redirectToHomepage() {
         <h1>Payment was successful!</h1>
         <p>
           A confirmation email regarding your booking details have been sent to
-          your email. Click here to go <a href="/">Home</a>.
+          your email. Click here to go <a href="/home">Home</a>.
         </p>
         <img width="300" src="../assets/email.jpg" alt="Email" />
         <h1>Thank you!</h1>
