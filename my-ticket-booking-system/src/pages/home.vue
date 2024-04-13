@@ -35,11 +35,35 @@ const fetchEventData = async () => {
     // Get the current time
     const currentTime = new Date();
 
+    // Get user role
+    const userId = localStorage.getItem('user_id'); 
+    // console.log(userId)
+    const user = await axios.get(`http://localhost:8080/UserEntity/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    // console.log(user.data.role.name)
+    const userRole = user.data.role.name
+
     // Filter events based on criteria
     eventData.forEach(event => {
       const eventTime = new Date(event.eventDate + 'T' + event.startTime);
       const timeDifference = eventTime.getTime() - currentTime.getTime();
 
+      if (userRole == 'ticketing_officer') {
+        // If the event is within 24 hours, skip it
+        if (timeDifference>=0 && timeDifference <= 24 * 60 * 60 * 1000) {
+          console.log(timeDifference)
+          currentEvents.value.push({
+            title: event.eventTitle,
+            eventId: event.eventId,
+            description: event.eventDesc,
+            date: event.eventDate,
+            time: `${event.startTime} - ${event.endTime}`
+          });
+        }
+      }
       // If the event is within 24 hours, skip it
       if (timeDifference < 24 * 60 * 60 * 1000) {
         return;
