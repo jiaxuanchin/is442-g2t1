@@ -42,7 +42,7 @@ const fetchEvents = async () => {
 onMounted(fetchEvents); 
 
 const truncateDescription = (eventDesc) => {
-  const maxLength = 100; // Set the maximum length of the description
+  const maxLength = 23; // Set the maximum length of the description
   return eventDesc.length > maxLength ? eventDesc.slice(0, maxLength) + '...' : eventDesc;
 };
 
@@ -65,7 +65,7 @@ const truncateDescription = (eventDesc) => {
     <VRow v-if="currentTab === 'view'">
       <VCol v-for="(card, index) in cardList" :key="index" cols="12" sm="4" md="3">
         <VCard>
-          <VImg :src="randomImage()" cover />
+          <VImg :src="randomImage()" cover style="width: 300px; height: 200px;"/>
 
           <VCardItem>
             <VCardTitle>{{ card.eventTitle }}</VCardTitle>
@@ -93,7 +93,7 @@ const truncateDescription = (eventDesc) => {
       <!-- Use v-for to generate cards -->
       <VCol v-for="(card, index) in cardList" :key="index" cols="12" sm="4" md="3">
         <VCard>
-          <VImg :src="randomImage()" />
+          <VImg :src="randomImage()" style="width: 300px; height: 200px;"/>
 
           <VCardItem>
             <VCardTitle>{{ card.eventTitle }}</VCardTitle>

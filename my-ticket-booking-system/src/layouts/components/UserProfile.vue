@@ -1,5 +1,5 @@
 <script setup>
-import avatar1 from '@images/avatars/avatar-1.png'
+import avatar1 from '@images/avatars/pic1.png'
 import axios from 'axios';
 
 let userRole = "Customer"; // Default value

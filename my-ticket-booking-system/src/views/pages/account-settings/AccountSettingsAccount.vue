@@ -6,7 +6,7 @@ import { ref, onMounted} from 'vue';
 // localStorage.setItem('user_id', '1');
 
 // Avatar image
-import avatar1 from '@images/avatars/avatar-1.png'
+import avatar1 from '@images/avatars/pic1.png'
 
 const accountData = {
   avatarImg: avatar1,
@@ -58,6 +58,7 @@ const saveChanges = async () => {
     await updateCustomerInfo(userId, accountDataLocal.value.user_fname,accountDataLocal.value.user_lname,accountDataLocal.value.email);
     await fetchCustomerInfo(userId);
     alert('Changes saved successfully!');
+    window.location.reload();
   } catch (error){
     console.log("Error saving changes: ", error);
     alert('Error saving changes: ' + error.message);
