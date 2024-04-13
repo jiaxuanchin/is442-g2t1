@@ -12,14 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.BufferedWriter;
 import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.MediaType;
 
 
 @Service
@@ -74,14 +78,14 @@ public class EventManagerService {
         Cancel events if necessary
     */
 
-    public ResponseEntity<?> generateSalesStatistics(Integer eventId) {
+    public ResponseEntity<?> generateSalesStatistics(Integer eventId, HttpServletResponse response) {
         
-        ResponseEntity<?> response = eventService.searchById(eventId);
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            return ResponseEntity.status(response.getStatusCode()).body("Event not found or error occurred");
+        ResponseEntity<?> responseEntity = eventService.searchById(eventId);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.status(responseEntity.getStatusCode()).body("Event not found or error occurred");
         }
 
-        Object responseBody = response.getBody();
+        Object responseBody = responseEntity.getBody();
         if (!(responseBody instanceof SuccessResponse)) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected response body type");
         }
@@ -109,15 +113,15 @@ public class EventManagerService {
                 event.getEventTitle(), totalNumTickets, ticketsSold, ticketsAvailable, customerAttendance, revenue
         );
 
-        String fileName = "SalesStatistics_Event_" + eventId + ".csv";
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"SalesStatistics_Event_" + eventId + ".csv\"");
         try {
-            Path path = Paths.get(fileName);
-            try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-                writer.write(csvContent);
-            }
-            return ResponseEntity.ok("Report generated: " + path.toAbsolutePath().toString());
-        } 
-        catch (IOException e) {
+            OutputStream outputStream = response.getOutputStream();
+            outputStream.write(csvContent.getBytes(StandardCharsets.UTF_8));
+            outputStream.flush();
+            outputStream.close();
+            return null; // Return null because response is handled through HttpServletResponse
+        } catch (IOException e) {
             return ResponseEntity.internalServerError().body("Failed to generate report: " + e.getMessage());
         }
     }

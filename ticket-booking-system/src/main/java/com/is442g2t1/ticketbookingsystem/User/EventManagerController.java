@@ -1,6 +1,9 @@
 package com.is442g2t1.ticketbookingsystem.User;
 
 import com.is442g2t1.ticketbookingsystem.event.dto.EventCreateDTO;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,8 +59,8 @@ public class EventManagerController {
 
     @GetMapping("/statistics/{eventId}")
     @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
-    public ResponseEntity<?> generateSalesStatistics(@PathVariable Integer eventId) {
-        return eventManagerService.generateSalesStatistics(eventId);
+    public ResponseEntity<?> generateSalesStatistics(@PathVariable Integer eventId, HttpServletResponse response) {
+        return eventManagerService.generateSalesStatistics(eventId, response);
     }
 
 }
