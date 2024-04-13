@@ -2,6 +2,7 @@
 import AnalyticsEventDetails from '@/views/sales-statistics/AnalyticsEventDetails.vue'
 import AnalyticsEventSales from '@/views/sales-statistics/AnalyticsEventSales.vue'
 import GenerateFile from '@/views/sales-statistics/GenerateFile.vue'
+import axios from 'axios';
 
 // 👉 Images
 import chart from '@images/cards/chart-success.png'
@@ -11,7 +12,7 @@ const router = useRouter();
 const eventId = ref(route.params.eventId);
 const eventDetails = ref({});
 
-const eventManager_URL = 'http://localhost:8080/event'; 
+const BASE_URL = 'http://localhost:8080/event'; 
 
 onMounted(async () => {
   if (!eventId.value) {
@@ -21,7 +22,12 @@ onMounted(async () => {
   
   try {
     console.log('Fetching event details');
-    const response = await axios.get(`${BASE_URL}/searchById/${eventId.value}`);
+    const response = await fetch(`${BASE_URL}/searchById/${eventId.value}`, {
+      method: 'GET',
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      }).then(response => response.json());
     console.log(response.data);
     eventDetails.value = response.data.data;
   } catch (error) {
@@ -50,7 +56,7 @@ onMounted(async () => {
                         title: 'Attendance',
                         image: chart,
                         stats: '60%',
-                        change: 72.80,
+                        change: 0,
                     }" />
                 </VCol>
                 <VCol cols="12" sm="6">
@@ -59,15 +65,8 @@ onMounted(async () => {
                         title: 'Sales',
                         image: wallet,
                         stats: '$4,679',
-                        change: 28.42,
+                        change: 0,
                     }" />
-                </VCol>
-            </VRow>
-
-            <!-- Profit Report -->
-            <VRow>
-                <VCol cols="12">
-                    <AnalyticsEventSales />
                 </VCol>
             </VRow>
         </VCol>
