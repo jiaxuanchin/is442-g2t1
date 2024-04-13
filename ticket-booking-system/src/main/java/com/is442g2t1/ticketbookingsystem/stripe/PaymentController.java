@@ -31,6 +31,7 @@ public class PaymentController {
 
     @CrossOrigin
     @GetMapping("/config")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity getConfig() {
         PaymentDTO response = new PaymentDTO();
         response.setPublishableKey(stripePublishableKey);

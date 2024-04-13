@@ -120,11 +120,14 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<?> verifyPassword(HttpServletRequest request, String password) {
+    public ResponseEntity<?> verifyPassword(HttpServletRequest request, String password, String email) {
 
         try {
+
             String token = jwtGenerator.extractJwtFromRequest(request);
-            String email = jwtGenerator.getEmailFromJWT(token);
+            if (email.equals("")) {
+                email = jwtGenerator.getEmailFromJWT(token);
+            }
     
             System.out.println("[CHECKPOINT AuthService] VERIFY PASSWORD: " + password);
             UserEntity user = userRepository.findByEmail(email)

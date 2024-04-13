@@ -65,14 +65,21 @@ public class AuthController {
         System.out.println("[CHECKPOINT AuthController] PASSWORD: " + password);
 
         ObjectMapper mapper = new ObjectMapper();
+        String email = "";
         try {
             JsonNode rootNode = mapper.readTree(password);
             String pwd = rootNode.get("password").textValue();
-
             System.out.println("Password: " + pwd);
-            return authService.verifyPassword(request, pwd);
+
+            if (rootNode.has("email")) {
+                email = rootNode.get("email").textValue();
+                System.out.println("Email: " + email);
+            }
+
+            return authService.verifyPassword(request, pwd, email);
 
         } catch (Exception e) {
+            System.out.println("[ERROR FOR VERIFY PASSWORD]");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 

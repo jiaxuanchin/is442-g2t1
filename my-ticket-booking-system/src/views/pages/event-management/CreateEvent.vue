@@ -10,7 +10,6 @@ const eventDesc = ref('')
 const eventLoc = ref('')
 const startTime = ref('')
 const endTime = ref('')
-const filled = ref('')
 const capacity = ref('')
 const ticketPrice = ref('')
 const cancelFee = ref('')
@@ -18,7 +17,7 @@ const cancelFee = ref('')
 
 const createEvent = async () => {
   // Check if all fields are filled
-  if (!eventTitle.value || !eventDate.value ||  !eventDesc.value || !eventLoc.value || !startTime.value || !endTime.value || !filled.value || !capacity.value || !ticketPrice.value || !cancelFee.value) {
+  if (!eventTitle.value || !eventDate.value ||  !eventDesc.value || !eventLoc.value || !startTime.value || !endTime.value || !capacity.value || !ticketPrice.value || !cancelFee.value) {
     alert('Please fill in all the fields');
     return;
   }
@@ -31,7 +30,6 @@ const createEvent = async () => {
     eventLoc: eventLoc.value,
     startTime: startTime.value,
     endTime: endTime.value,
-    filled: filled.value,
     capacity: capacity.value,
     cancelFee: cancelFee.value,
     ticketPrice: ticketPrice.value,
@@ -69,7 +67,6 @@ const resetForm = () => {
   eventLoc.value = '';
   startTime.value = '';
   endTime.value = '';
-  filled.value = '';
   capacity.value = '';
   ticketPrice.value = '';
   cancelFee.value = '';
@@ -111,12 +108,6 @@ const resetForm = () => {
           <!-- end time -->
           <VCol cols="12" md="6">
             <VTextField v-model="endTime" label="Event End Time" placeholder="Select End Time" type="time" outlined dense />
-          </VCol>
-          
-          <!-- filled -->
-          <VCol cols="12" md="6">
-            <VTextField v-model="filled" label="Filled" placeholder="Enter filled"  outlined
-              dense type="number" />
           </VCol>
           <!-- capacity -->
           <VCol cols="12" md="6">
