@@ -99,18 +99,16 @@ public class AuthController {
 
     }
 
-    // // /add-ticketing-officer, post method
-    // @PostMapping("/add-ticketing-officer")
-    // @PreAuthorize("hasAnyAuthority('event_manager')")
-    // public ResponseEntity<?> addTicketingOfficer(HttpServletRequest request, @RequestBody RegisterDTO registerDto) {
-    //     return authService.addTicketingOfficer(request, registerDto);
-    // }
-
     @PostMapping("/encode_password")
     @PreAuthorize("hasAnyAuthority('event_manager')")
     public ResponseEntity<?> encodePassword(@RequestBody String password) {
-        return authService.encodePassword(password.substring(1, password.length()-1));
-        
+        System.out.println("[CHECKPOINT AuthController] (ENCODE PASSWORD) PASSWORD: " + password);
+        try {
+            return authService.encodePassword(password);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/user/{userId}")

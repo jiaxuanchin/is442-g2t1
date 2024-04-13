@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 @Service
@@ -88,25 +90,39 @@ public class UserEntityService {
         }
     }
 
-    public ResponseEntity<?> createTicketingOfficer(String user_fname, String user_lname, String email, String password) {
+    public ResponseEntity<?> createTicketingOfficer(String token, String user_fname, String user_lname, String email, String password) {
 
         System.out.println("CHECKPOINT1");
         
         ResponseEntity<?> existingUserResponse = getUserByEmail(email);
+
         if (existingUserResponse.getStatusCode().is2xxSuccessful()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with email " + email + " already exists");
         }
 
+        System.out.println("CHECKPOINT2");
+
         ResponseEntity<?> roleResponse = roleService.getRoleByName("ticketing_officer");
+
         if (!roleResponse.getStatusCode().is2xxSuccessful()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Role 'ticketing_officer' not found");
         }
 
+        System.out.println("CHECKPOINT3");
+
         // Encode the password using the password encoder API
-        ResponseEntity<String> encodeResponse = restTemplate.postForEntity(passwordEncoderUrl, password, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token); // Set authorization header
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(password, headers);
+        ResponseEntity<String> encodeResponse = restTemplate.postForEntity(passwordEncoderUrl, requestEntity, String.class);
+
         if (!encodeResponse.getStatusCode().is2xxSuccessful()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password encoding failed");
         }
+
+        System.out.println("CHECKPOINT4");
+        System.out.println(encodeResponse);
 
         String encodedPassword = encodeResponse.getBody();
 

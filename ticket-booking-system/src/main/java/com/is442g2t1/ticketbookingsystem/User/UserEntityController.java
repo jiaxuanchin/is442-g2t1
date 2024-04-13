@@ -2,6 +2,10 @@ package com.is442g2t1.ticketbookingsystem.User;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import com.is442g2t1.ticketbookingsystem.security.jwt.JWTService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 // import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +20,12 @@ public class UserEntityController {
 
     private UserEntityService userEntityService;
 
+    private JWTService jwtGenerator;
+
     @Autowired
-    public UserEntityController(UserEntityService userEntityService) {
+    public UserEntityController(UserEntityService userEntityService, JWTService jwtGenerator) {
         this.userEntityService = userEntityService;
+        this.jwtGenerator = jwtGenerator;
     }
 
     // Just for testing: Can comment out, register will do this job
@@ -68,17 +75,15 @@ public class UserEntityController {
     }
 
     @PostMapping("/createTicketingOfficer")
-    public ResponseEntity<?> createTicketingOfficer(@RequestParam String user_fname,
-                                                     @RequestParam String user_lname,
-                                                     @RequestParam String email,
-                                                     @RequestParam String password) {
-        return userEntityService.createTicketingOfficer(user_fname, user_lname, email, password);
+    public ResponseEntity<?> createTicketingOfficer(HttpServletRequest request, @RequestBody TicketingOfficer ticketingOfficer) {
+        try {
+            String token = jwtGenerator.extractJwtFromRequest(request);
+            System.out.println("[CHECKPOINT UserEntityController] CREATE TICKETING OFFICER: " + ticketingOfficer.toString());
+
+            return userEntityService.createTicketingOfficer(token, ticketingOfficer.getUser_fname(), ticketingOfficer.getUser_lname(), ticketingOfficer.getEmail(), ticketingOfficer.getPassword());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
     }
-
-    // @PostMapping("/createTicketingOfficer")
-    // public ResponseEntity<?> createTicketingOfficer(@RequestBody TicketingOfficer ticketingOfficer) {
-
-    //     System.out.println("[CHECKPOINT UserEntityController] CREATE TICKETING OFFICER: " + ticketingOfficer.toString());
-    //     return userEntityService.createTicketingOfficer(ticketingOfficer.getUser_fname(), ticketingOfficer.getUser_lname(), ticketingOfficer.getEmail(), ticketingOfficer.getPassword());
-    // }
 }

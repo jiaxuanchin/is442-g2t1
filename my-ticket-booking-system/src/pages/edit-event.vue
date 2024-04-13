@@ -84,8 +84,9 @@ const deleteEvent = async () => {
         }
       }).then(response => response.json());
     console.log('Event deleted');
-    
+
     alert('Event deleted successfully');
+    
     // Route to event-management.vue after deletion
     router.push('/event-management');
   } catch (error) {
