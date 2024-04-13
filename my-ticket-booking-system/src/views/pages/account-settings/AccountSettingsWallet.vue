@@ -3,10 +3,6 @@
 import { VDataTable } from 'vuetify/labs/VDataTable'
 import { ref, onMounted } from 'vue'
 
-// Set the user_id in local storage --> To remove after testing
-// localStorage.setItem('user_id', '1');
-
-
 // Define accountBalance as a ref
 const accountBalance = ref('Loading...')
 
@@ -14,7 +10,7 @@ const fetchAccountBalance = async () => {
   try {
     const userId = localStorage.getItem('user_id') // Todo: replace this with getting from the localstorage
 
-    const response = await fetch(`http://localhost:8080/customers/get-balance/${userId}`,{
+    const response = await fetch(`http://localhost:8080/customers/get-balance/${userId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -32,6 +28,42 @@ const fetchAccountBalance = async () => {
 // Fetch account balance when the component is mounted
 onMounted(fetchAccountBalance)
 
+const cards = ref([])
+
+const fetchUserData = async () => {
+  try {
+    const userId = localStorage.getItem('user_id')
+
+    const response = await fetch(`http://localhost:8080/UserEntity/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+
+    const userData = await response.json()
+    const firstName = userData.user_fname
+    const lastName = userData.user_lname
+
+    // Initialize cards array with the fetched user's first and last name
+    cards.value = [
+      {
+        name: `${firstName} ${lastName}`,
+        number: "1234 1234 1234 1234"
+      },
+      // Add more cards as needed
+    ]
+    console.log("userData")
+    console.log(userData)
+  } catch (error) {
+    console.error('Error fetching user data:', error.message)
+  }
+}
+
+// Fetch user data when the component is mounted
+onMounted(fetchUserData)
+
 
 const cardNumber = ref('0000 0000 0000 0000')
 const isExpiryDateVisible = ref(false)
@@ -45,20 +77,6 @@ const passwordRequirements = [
   'At least one number, symbol, or whitespace character',
 ]
 
-const cards = [
-  {
-    name: 'Goh Kelly',
-    number: '1234 5678 9453'
-  },
-  {
-    name: 'Goh Kelly',
-    number: '1234 1234 1234'
-  },
-  {
-    name: 'Goh Kelly',
-    number: '1234 4325 2352'
-  }
-]
 </script>
 
 <template>
