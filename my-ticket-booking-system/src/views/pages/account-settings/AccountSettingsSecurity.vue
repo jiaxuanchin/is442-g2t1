@@ -58,7 +58,7 @@ const saveChanges = async () => {
 
     if (changePasswordData) {
       alert('Password changed successfully!');
-      resetPasswordFields
+      resetPasswordFields();
     } else {
       alert('Failed to change password.');
     }
