@@ -58,7 +58,7 @@ const saveChanges = async () => {
 
     if (changePasswordData) {
       alert('Password changed successfully!');
-      
+      resetPasswordFields
     } else {
       alert('Failed to change password.');
     }
@@ -66,6 +66,15 @@ const saveChanges = async () => {
     alert('Current password is incorrect.');
   }
 };
+
+
+// Function to reset password fields
+const resetPasswordFields = () => {
+  currentPassword.value = '';
+  newPassword.value = '';
+  confirmPassword.value = '';
+};
+
 
 </script>
 
@@ -160,6 +169,7 @@ const saveChanges = async () => {
               type="reset"
               color="secondary"
               variant="tonal"
+              @click="resetPasswordFields"
             >
               Reset
             </VBtn>
