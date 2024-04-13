@@ -74,4 +74,11 @@ public class UserEntityController {
                                                      @RequestParam String password) {
         return userEntityService.createTicketingOfficer(user_fname, user_lname, email, password);
     }
+
+    // @PostMapping("/createTicketingOfficer")
+    // public ResponseEntity<?> createTicketingOfficer(@RequestBody TicketingOfficer ticketingOfficer) {
+
+    //     System.out.println("[CHECKPOINT UserEntityController] CREATE TICKETING OFFICER: " + ticketingOfficer.toString());
+    //     return userEntityService.createTicketingOfficer(ticketingOfficer.getUser_fname(), ticketingOfficer.getUser_lname(), ticketingOfficer.getEmail(), ticketingOfficer.getPassword());
+    // }
 }

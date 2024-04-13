@@ -1,6 +1,7 @@
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/RoleService.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/security/jwt/JWTAuthFilter.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/security/DTO/AuthResponseDTO.java
+/Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/EventManagerService.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/response/StatusResponse.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/stripe/PaymentController.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/Role.java
@@ -23,17 +24,20 @@
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/TicketingOfficer.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/event/EventMapper.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/security/jwt/JWTAuthEntryPoint.java
+/Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/TicketingOfficerController.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/event/EventController.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/security/jwt/JWTService.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/event/Event.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/EventManager.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/event/EventService.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/booking/BookingController.java
+/Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/TicketingOfficerService.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/event/dto/EventCreateDTO.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/booking/BookingConfig.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/CustomerService.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/security/DTO/LoginDTO.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/ticket/TicketController.java
+/Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/EventManagerController.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/RoleRepository.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/security/SecurityConfig.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/CustomerController.java
@@ -45,6 +49,7 @@
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/UserRepository.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/UserEntityService.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/stripe/PaymentDTO.java
+/Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/User/RestTemplateConfig.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/security/jwt/SecurityConstants.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/security/DTO/RegisterDTO.java
 /Applications/MAMP/htdocs/is442-g2t1/ticket-booking-system/src/main/java/com/is442g2t1/ticketbookingsystem/ticket/Ticket.java

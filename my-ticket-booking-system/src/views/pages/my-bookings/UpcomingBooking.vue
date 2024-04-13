@@ -16,9 +16,9 @@ const cancelEvent = async (index) => {
     });
     events.value.splice(index, 1);
     confirmationDialog.value = false;
-    alert('Booking canceled successfully!');
+    alert('Booking cancelled successfully!');
   } catch (error) {
-    console.error('Error canceling booking:', error);
+    console.error('Error cancelling booking:', error);
     alert('Failed to cancel booking. Please try again later.');
   }
 };

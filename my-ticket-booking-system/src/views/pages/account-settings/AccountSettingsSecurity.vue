@@ -39,7 +39,9 @@ const saveChanges = async () => {
 
   const verifyData = await verifyResponse.json();
 
-  if (verifyData.success) {
+  // console.log(verifyData)
+
+  if (verifyData) {
     const changePasswordResponse = await fetch('http://localhost:8080/api/auth/change_password', {
       method: 'POST',
       headers: {
@@ -50,11 +52,13 @@ const saveChanges = async () => {
         newPassword: newPassword.value
       })
     });
+    // console.log(changePasswordResponse);
 
-    const changePasswordData = await changePasswordResponse.json();
+    const changePasswordData = await changePasswordResponse;
 
-    if (changePasswordData.success) {
+    if (changePasswordData) {
       alert('Password changed successfully!');
+      
     } else {
       alert('Failed to change password.');
     }

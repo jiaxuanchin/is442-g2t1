@@ -159,7 +159,7 @@ INSERT INTO Event (event_id, event_title, event_date, event_description, event_l
 (4, 'Concert', '2024-03-02', 'Disney is coming to town', 'National Stadium', '19:30', '23:00', 0, 25000, 150.00, 20.00),
 (5, 'Play', '2023-11-29', 'Romeo & Juliet', 'Esplanade', '19:00', '22:00', 0, 3000, 78.00, 20.00),
 -- 10 events happening in 2026
-(6, 'Music Festival', '2026-07-18', 'Annual music festival featuring top artists', 'Marina Bay Sands', '15:00', '23:00', 0, 5000, 200.00, 30.00),
+(6, 'Music Festival', '2024-04-14', 'Annual music festival featuring top artists', 'Marina Bay Sands', '09:00', '23:00', 0, 5000, 200.00, 30.00),
 (7, 'Tech Conference', '2026-10-05', 'Explore the latest trends in technology', 'Suntec Convention Centre', '09:00', '17:00', 0, 1000, 300.00, 50.00),
 (8, 'Food Expo', '2026-05-12', 'Sample cuisines from around the world', 'Singapore Expo', '11:00', '20:00', 0, 8000, 50.00, 10.00),
 (9, 'Fashion Show', '2026-08-28', 'Showcasing the latest fashion trends', 'Resorts World Sentosa', '19:00', '22:00', 0, 2000, 100.00, 20.00),

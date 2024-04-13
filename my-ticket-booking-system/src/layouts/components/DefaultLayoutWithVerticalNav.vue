@@ -6,7 +6,7 @@ import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
 import axios from 'axios';
 
-localStorage.setItem('user_id', '3');
+// localStorage.setItem('user_id', '3');
 console.log(localStorage.getItem('user_id'));
 
 

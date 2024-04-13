@@ -50,13 +50,13 @@ public class UserEntity {
         this.password = password;
     }
 
-    // public UserEntity(Role role, String user_fname, String user_lname, String email, String password, double balance){
-    //     this.role = role;
-    //     this.user_fname = user_fname;
-    //     this.user_lname = user_lname;
-    //     this.email = email;
-    //     this.password = password;
-    // }
+    public UserEntity(Role role, String user_fname, String user_lname, String email, String password, double balance){
+        this.role = role;
+        this.user_fname = user_fname;
+        this.user_lname = user_lname;
+        this.email = email;
+        this.password = password;
+    }
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference

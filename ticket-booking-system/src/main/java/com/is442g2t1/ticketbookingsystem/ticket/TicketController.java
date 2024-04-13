@@ -27,6 +27,7 @@ public class TicketController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity getAllTickets() {
 
         ResponseEntity result = this.ticketService.getAllTickets();
@@ -35,6 +36,7 @@ public class TicketController {
     }
 
     @GetMapping("/{ticketId}")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity getTicketById(@PathVariable int ticketId) {
 
         ResponseEntity result = this.ticketService.getTicketById(ticketId);
@@ -42,6 +44,7 @@ public class TicketController {
     }
 
     @GetMapping("/booking/{bookingId}")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity getTicketsByBookingId(@PathVariable int bookingId) {
 
         ResponseEntity result = this.ticketService.getTicketsByBookingId(bookingId);
@@ -61,8 +64,10 @@ public class TicketController {
     }
 
     @PutMapping("/update/attendance/{ticketId}")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity updateTicketAttendance(@PathVariable int ticketId) {
         // Update a ticket by sending Ticket instance
+        System.out.println("[CHECKPOINT: UPDATE TICKET ATTENDANCE]: " + ticketId);
         ResponseEntity result = this.ticketService.updateTicketAttendance(ticketId);
         return result;
 

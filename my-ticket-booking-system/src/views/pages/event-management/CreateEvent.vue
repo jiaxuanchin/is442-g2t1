@@ -40,9 +40,18 @@ const createEvent = async () => {
 
   try {
     // Send a POST request to your API endpoint
-    const response = await axios.post(`${BASE_URL}/createEvent`, eventData);
+    const response = await fetch(`${BASE_URL}/createEvent`,
+    {
+      method: 'POST',
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      body: JSON.stringify(eventData),
+      }).then(response => response.json());
+
     // Handle success
-    console.log(response.data.data);
+    console.log(response);
     alert('Event created successfully!');
     // Reset form after successful creation
     resetForm();

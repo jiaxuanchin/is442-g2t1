@@ -32,12 +32,26 @@ export default {
     async verifyTicket() {
       try {
         const ticketId = this.ticketId.replace(/^0+/, '');
-        const response = await axios.get('http://localhost:8080/ticket/' + ticketId);
+        const response = await axios.get('http://localhost:8080/ticket/' + ticketId,
+          {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
       
         if (response.data.attendance === true) {
           this.verificationResult = 'Ticket has been used.';
         } else if (response.data.attendance === false) {
-          const update = await axios.put('http://localhost:8080/ticket/update/attendance/' + ticketId);
+          console.log('Ticket ID:', ticketId);
+          console.log(localStorage.getItem('token'))
+
+          const update = await fetch('http://localhost:8080/ticket/update/attendance/' + ticketId, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            method: "PUT",
+          })
+
           if (!update) {
             this.verificationResult = 'Error updating attendance status.';
           } else {

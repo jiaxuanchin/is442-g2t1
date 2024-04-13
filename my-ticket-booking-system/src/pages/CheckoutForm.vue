@@ -202,7 +202,9 @@ const onSubmitWallet = async () => {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       method: "POST",
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({
+        password: password.value
+      }),
     })
     .then((res) => res.json());
   console.log(response);
@@ -263,6 +265,7 @@ const onSubmitWallet = async () => {
                       class="mb-2"
                       label="Email"
                       clearable
+                      disabled="true"
                     ></v-text-field>
 
                     <v-text-field

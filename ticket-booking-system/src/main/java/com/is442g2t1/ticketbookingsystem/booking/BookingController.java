@@ -41,6 +41,7 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity getOneBooking(@PathVariable int bookingId) {
 
         ResponseEntity result = this.bookingService.getOneBooking(bookingId);
@@ -48,6 +49,7 @@ public class BookingController {
     }
 
     @GetMapping("/user/{userId}")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity getUserBooking(@PathVariable int userId) {
 
         ResponseEntity result = this.bookingService.getUserBooking(userId);
@@ -55,6 +57,7 @@ public class BookingController {
     }
 
     @GetMapping("/event/{eventId}")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity getEventBooking(@PathVariable int eventId) {
 
         ResponseEntity result = this.bookingService.getEventBooking(eventId);
@@ -62,7 +65,7 @@ public class BookingController {
     }
 
     @PostMapping("/new/{payType}")
-    // @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity createBooking(HttpServletRequest request, @RequestBody Booking booking, @PathVariable String payType) { 
         
         // String payType = "stripe";
@@ -73,7 +76,7 @@ public class BookingController {
     }
 
     @DeleteMapping("/delete/{bookingId}")
-    @PreAuthorize("hasAuthority('event_manager')")
+    @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity cancelBooking(@PathVariable int bookingId) {
 
         ResponseEntity result = this.bookingService.cancelBooking(bookingId);

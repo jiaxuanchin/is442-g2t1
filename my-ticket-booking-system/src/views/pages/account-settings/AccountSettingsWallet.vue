@@ -4,7 +4,7 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
 import { ref, onMounted } from 'vue'
 
 // Set the user_id in local storage --> To remove after testing
-localStorage.setItem('user_id', '1');
+// localStorage.setItem('user_id', '1');
 
 
 // Define accountBalance as a ref

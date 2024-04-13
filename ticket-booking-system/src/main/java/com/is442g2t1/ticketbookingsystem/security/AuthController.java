@@ -62,13 +62,12 @@ public class AuthController {
     @PreAuthorize("hasAnyAuthority('customer', 'event_manager', 'ticketing_officer')")
     public ResponseEntity<?> verifyPassword(HttpServletRequest request, @RequestBody String password) {
 
-        // System.out.println("[CHECKPOINT AuthController] PASSWORD: " + password);
+        System.out.println("[CHECKPOINT AuthController] PASSWORD: " + password);
 
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode rootNode = mapper.readTree(password);
-            JsonNode passwordNode = rootNode.path("password").path("_value");
-            String pwd = passwordNode.asText();
+            String pwd = rootNode.get("password").textValue();
 
             System.out.println("Password: " + pwd);
             return authService.verifyPassword(request, pwd);
@@ -85,11 +84,11 @@ public class AuthController {
     public ResponseEntity<?> changePassword(HttpServletRequest request, @RequestBody String password) {
         // return authService.changePassword(request, password.substring(1, password.length()-1));
 
+        System.out.println("[CHECKPOINT AuthController] (CHANGE PASSWORD) PASSWORD: " + password);
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode rootNode = mapper.readTree(password);
-            JsonNode passwordNode = rootNode.path("password").path("_value");
-            String pwd = passwordNode.asText();
+            String pwd = rootNode.get("newPassword").textValue();
 
             System.out.println("Password: " + pwd);
             return authService.changePassword(request, pwd);

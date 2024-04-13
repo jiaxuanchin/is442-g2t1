@@ -29,7 +29,6 @@ fetchUserData();
 
 // logout
 import { useRouter } from 'vue-router'
-import axios from 'axios'
 
 const router = useRouter()
 

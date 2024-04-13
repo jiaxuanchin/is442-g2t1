@@ -3,7 +3,7 @@ import axios from 'axios';
 import { ref, onMounted} from 'vue';
 
 // Set the user_id in local storage --> To remove after testing
-localStorage.setItem('user_id', '1');
+// localStorage.setItem('user_id', '1');
 
 // Avatar image
 import avatar1 from '@images/avatars/avatar-1.png'

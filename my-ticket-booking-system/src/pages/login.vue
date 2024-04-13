@@ -34,7 +34,7 @@ const handleSubmit = async () => {
     if (response.status === 200) {
       localStorage.setItem('token', response.data.accessToken)
       localStorage.setItem('user_id', response.data.id)
-      router.push('/dashboard') // Redirect on successful login
+      router.push('/home') // Redirect on successful login
     } else {
       errorMessage.value = 'Login failed. Please check your credentials.'
     }

@@ -89,6 +89,9 @@ public class UserEntityService {
     }
 
     public ResponseEntity<?> createTicketingOfficer(String user_fname, String user_lname, String email, String password) {
+
+        System.out.println("CHECKPOINT1");
+        
         ResponseEntity<?> existingUserResponse = getUserByEmail(email);
         if (existingUserResponse.getStatusCode().is2xxSuccessful()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with email " + email + " already exists");
@@ -100,16 +103,16 @@ public class UserEntityService {
         }
 
         // Encode the password using the password encoder API
-        // ResponseEntity<String> encodeResponse = restTemplate.postForEntity(passwordEncoderUrl, password, String.class);
-        // if (!encodeResponse.getStatusCode().is2xxSuccessful()) {
-        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password encoding failed");
-        // }
+        ResponseEntity<String> encodeResponse = restTemplate.postForEntity(passwordEncoderUrl, password, String.class);
+        if (!encodeResponse.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password encoding failed");
+        }
 
-        // String encodedPassword = encodeResponse.getBody();
+        String encodedPassword = encodeResponse.getBody();
 
         Role role = (Role) roleResponse.getBody();
-        // TicketingOfficer newTicketingOfficer = new TicketingOfficer(user_fname, user_lname, email, encodedPassword);
-        TicketingOfficer newTicketingOfficer = new TicketingOfficer(user_fname, user_lname, email, password);
+        TicketingOfficer newTicketingOfficer = new TicketingOfficer(user_fname, user_lname, email, encodedPassword);
+        // TicketingOfficer newTicketingOfficer = new TicketingOfficer(user_fname, user_lname, email, password);
         newTicketingOfficer.setRole(role);
         return ResponseEntity.ok(userRepository.save(newTicketingOfficer));
     }

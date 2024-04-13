@@ -25,7 +25,12 @@ const cardList = ref([]);
 const apiUrl = 'http://localhost:8080/event';
 const fetchEvents = async () => {
   try {
-    const response = await fetch(apiUrl); 
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      })
     if (!response.ok) throw new Error('Failed to fetch');
     const data = await response.json();
     cardList.value = data; 
