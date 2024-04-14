@@ -52,7 +52,7 @@ onMounted(async () => {
             <div class="mb-3"><b>Start Time:</b> {{ eventDetails.startTime }}</div>
             <div class="mb-3"><b>End Time:</b> {{ eventDetails.endTime }}</div>
             <div class="mb-3"><b>Ticket Price:</b> $ {{ eventDetails.ticketPrice }}</div>
-            <div class="mb-3"><b>Filled:</b> {{ eventDetails.filled }}</div>
+            <div class="mb-3"><b>Attendance:</b> {{ eventDetails.filled }}</div>
             <div class="mb-3"><b>Capacity:</b> {{ eventDetails.capacity }}</div>
             <div class="mb-3"><b>Cancel Fee: </b> $ {{ eventDetails.cancelFee }}</div>
           <br>
