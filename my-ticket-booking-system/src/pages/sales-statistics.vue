@@ -32,7 +32,7 @@ onMounted(async () => {
         }
       }).then(response => response.json());
     console.log(response.data);
-    eventDetails.value = response.data.data;
+    eventDetails.value = response.data;
     const filled = eventDetails.value.filled;
     const capacity = eventDetails.value.capacity;
     const ticketPrice = eventDetails.value.ticketPrice;

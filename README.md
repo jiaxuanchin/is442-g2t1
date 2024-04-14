@@ -83,7 +83,7 @@ Alternatively, you can also create a customer profile through the application's 
 
 Ticketing Officer:
 1.
-Email: xxfeng.2021@scis.smu.edu.sg
+Email: kelly.goh.2021@scis.smu.edu.sg
 Password: password
 
 
