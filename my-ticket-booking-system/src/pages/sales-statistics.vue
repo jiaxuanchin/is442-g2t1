@@ -11,6 +11,9 @@ const route = useRoute();
 const router = useRouter();
 const eventId = ref(route.params.eventId);
 const eventDetails = ref({});
+const attendance = ref('');
+const sales = ref('');
+const profit = ref('');
 
 const BASE_URL = 'http://localhost:8080/event'; 
 
@@ -30,7 +33,20 @@ onMounted(async () => {
       }).then(response => response.json());
     console.log(response.data);
     eventDetails.value = response.data.data;
-  } catch (error) {
+    const filled = eventDetails.value.filled;
+    const capacity = eventDetails.value.capacity;
+    const ticketPrice = eventDetails.value.ticketPrice;
+    const cancelFee = eventDetails.value.cancelFee;
+
+      attendance.value = `${(filled / capacity * 100).toFixed(2)}%`;
+      sales.value = `$${(ticketPrice * filled).toFixed(2)}`;
+      profit.value = `$${((ticketPrice * filled)).toFixed(2)}`;
+
+      console.log('Attendance:', attendance.value);
+      console.log('Sales:', sales.value);
+      console.log('Profit:', profit.value);
+  } 
+  catch (error) {
     console.error('Error fetching event details:', error);
   }
 });
@@ -52,11 +68,10 @@ onMounted(async () => {
             <VRow>
                 <VCol cols="12" sm="6">
                     <!-- Attendance -->
-                    <CardStatisticsVertical v-bind="{
+                    <CardStatisticsVertical class="no-indicator" v-bind="{
                         title: 'Attendance',
                         image: chart,
-                        stats: '60%',
-                        change: 0,
+                        stats: attendance,
                     }" />
                 </VCol>
                 <VCol cols="12" sm="6">
@@ -64,8 +79,20 @@ onMounted(async () => {
                     <CardStatisticsVertical v-bind="{
                         title: 'Sales',
                         image: wallet,
-                        stats: '$4,679',
-                        change: 0,
+                        stats: sales,
+
+                    }" />
+                </VCol>
+            </VRow>
+
+            <!-- Profit Report -->
+            <VRow>
+                <VCol cols="12">
+                    <!-- Sales -->
+                    <CardStatisticsVertical v-bind="{
+                        title: 'Total Profit',
+                        image: chart,
+                        stats: profit,
                     }" />
                 </VCol>
             </VRow>
@@ -77,3 +104,5 @@ onMounted(async () => {
         </VCol>
     </VRow>
 </template>
+
+
