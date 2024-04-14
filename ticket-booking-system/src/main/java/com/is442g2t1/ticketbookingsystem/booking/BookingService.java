@@ -203,7 +203,7 @@ public class BookingService {
             }
             UserEntity user = userOptional.get();
 
-            // Check if the user is a customer and has enough balance to purchase tickets
+            // Check if the user is a customer
             if (!(user instanceof Customer)) {
                 return ResponseEntity.status(400).body("User is not a customer");
             }

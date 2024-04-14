@@ -139,33 +139,33 @@ INSERT INTO Users (user_id, role_id, user_fname,user_lname,email, `password`, us
 
 INSERT INTO Event (event_id, event_title, event_date, event_description, event_location, event_start_time, event_end_time, filled, capacity, ticket_price, cancel_fee) VALUES
 (1, 'Musical', '2023-09-15', 'Disney is coming to town', 'The Capitol', '18:00', '21:00', 0, 2000, 150.00, 20.00),
-(2, 'Movie', '2024-06-22', 'Avengers 100', 'Golden Village (Plaza Singapura)', '14:45', '18:00', 0, 2000, 12.00, 20.00),
+(2, 'Movie', '2024-06-22', 'Avengers 100', 'Golden Village (Plaza Singapura)', '14:45', '18:00', 4, 2000, 12.00, 20.00),
 (3, 'Seminar', '2023-12-15', 'How to make use of ChatGPT', 'Singapore Management University', '09:00', '13:00', 0, 40, 500.00, 20.00),
 (4, 'Concert', '2024-03-02', 'Disney is coming to town', 'National Stadium', '19:30', '23:00', 0, 25000, 150.00, 20.00),
 (5, 'Play', '2023-11-29', 'Romeo & Juliet', 'Esplanade', '19:00', '22:00', 0, 3000, 78.00, 20.00),
 -- 10 events happening in 2026
-(6, 'Music Festival', '2026-07-18', 'Annual music festival featuring top artists', 'Marina Bay Sands', '15:00', '23:00', 0, 5000, 200.00, 30.00),
-(7, 'Tech Conference', '2026-10-05', 'Explore the latest trends in technology', 'Suntec Convention Centre', '09:00', '17:00', 0, 1000, 300.00, 50.00),
+(6, 'Music Festival', '2026-07-18', 'Annual music festival featuring top artists', 'Marina Bay Sands', '15:00', '23:00', 5, 5000, 200.00, 30.00),
+(7, 'Tech Conference', '2026-10-05', 'Explore the latest trends in technology', 'Suntec Convention Centre', '09:00', '17:00', 1, 1000, 300.00, 50.00),
 (8, 'Food Expo', '2026-05-12', 'Sample cuisines from around the world', 'Singapore Expo', '11:00', '20:00', 0, 8000, 50.00, 10.00),
 (9, 'Fashion Show', '2026-08-28', 'Showcasing the latest fashion trends', 'Resorts World Sentosa', '19:00', '22:00', 0, 2000, 100.00, 20.00),
 (10, 'Sports Tournament', '2026-09-10', 'National sports tournament', 'Singapore Sports Hub', '10:00', '18:00', 0, 3000, 75.00, 15.00),
 -- 10 past events
-(11, 'Art Exhibition', '2023-03-15', 'Explore contemporary art pieces', 'ArtScience Museum', '10:00', '19:00', 0, 1500, 20.00, 5.00),
-(12, 'Comedy Show', '2023-06-02', 'An evening of laughter with top comedians', 'Capitol Theatre', '20:00', '22:30', 0, 1000, 40.00, 10.00),
-(13, 'Fitness Expo', '2024-02-08', 'Discover the latest in fitness and wellness', 'Singapore Expo', '09:00', '18:00', 0, 5000, 30.00, 5.00),
+(11, 'Art Exhibition', '2023-03-15', 'Explore contemporary art pieces', 'ArtScience Museum', '10:00', '19:00', 2, 1500, 20.00, 5.00),
+(12, 'Comedy Show', '2023-06-02', 'An evening of laughter with top comedians', 'Capitol Theatre', '20:00', '22:30', 3, 1000, 40.00, 10.00),
+(13, 'Fitness Expo', '2024-02-08', 'Discover the latest in fitness and wellness', 'Singapore Expo', '09:00', '18:00', 1, 5000, 30.00, 5.00),
 (14, 'Technology Summit', '2025-09-20', 'Bringing together tech leaders and innovators', 'Marina Bay Sands', '08:30', '17:30', 0, 2000, 250.00, 50.00),
 (15, 'Culinary Workshop', '2024-11-12', 'Learn to cook gourmet dishes from renowned chefs', 'Culinary Academy', '14:00', '17:00', 0, 50, 150.00, 30.00),
 -- 20 events happening in the near 6 months from now
-(16, 'Health Conference', '2024-6-25', 'Exploring latest advancements in healthcare', 'Suntec Convention Centre', '09:00', '18:00', 0, 1500, 200.00, 40.00),
-(17, 'Music Concert', '2024-6-05', 'Live performances by popular bands', 'The Star Performing Arts Centre', '19:30', '23:00', 0, 3000, 80.00, 15.00),
-(18, 'Startup Summit', '2024-6-10', 'Showcasing innovative startups and entrepreneurs', 'Marina Bay Sands', '10:00', '18:00', 0, 2000, 150.00, 30.00),
-(19, 'Art Workshop', '2024-01-15', 'Hands-on art workshop for all skill levels', 'National Gallery Singapore', '11:00', '14:00', 0, 100, 50.00, 10.00),
-(20, 'Fashion Exhibition', '2024-02-20', 'Featuring designers from around the globe', 'Resorts World Sentosa', '12:00', '20:00', 0, 500, 75.00, 15.00),
-(21, 'Film Festival', '2024-03-12', 'Celebrating international cinema', 'Golden Village (VivoCity)', '18:00', '23:00', 0, 1000, 30.00, 5.00),
-(22, 'Science Symposium', '2024-04-18', 'Exploring breakthroughs in science and technology', 'Science Centre Singapore', '09:30', '17:30', 0, 800, 100.00, 20.00),
-(23, 'Literary Festival', '2024-05-22', 'Celebrating literature and authors', 'Singapore Writers Festival', '10:00', '22:00', 0, 200, 25.00, 5.00),
-(24, 'Dance Performance', '2024-06-30', 'An evening of mesmerizing dance performances', 'Esplanade - Theatres on the Bay', '19:00', '21:30', 0, 400, 60.00, 10.00),
-(25, 'Gastronomy Tour', '2024-07-05', 'A culinary journey through the city', 'Various Locations', '11:00', '17:00', 0, 50, 120.00, 20.00);
+(16, 'Health Conference', '2024-6-25', 'Exploring latest advancements in healthcare', 'Suntec Convention Centre', '09:00', '18:00', 3, 1500, 200.00, 40.00),
+(17, 'Music Concert', '2024-6-05', 'Live performances by popular bands', 'The Star Performing Arts Centre', '19:30', '23:00', 2, 3000, 80.00, 15.00),
+(18, 'Startup Summit', '2024-6-10', 'Showcasing innovative startups and entrepreneurs', 'Marina Bay Sands', '10:00', '18:00', 1, 2000, 150.00, 30.00),
+(19, 'Art Workshop', '2024-01-15', 'Hands-on art workshop for all skill levels', 'National Gallery Singapore', '11:00', '14:00', 5, 100, 50.00, 10.00),
+(20, 'Fashion Exhibition', '2024-02-20', 'Featuring designers from around the globe', 'Resorts World Sentosa', '12:00', '20:00', 4, 500, 75.00, 15.00),
+(21, 'Film Festival', '2024-03-12', 'Celebrating international cinema', 'Golden Village (VivoCity)', '18:00', '23:00', 3, 1000, 30.00, 5.00),
+(22, 'Science Symposium', '2024-04-18', 'Exploring breakthroughs in science and technology', 'Science Centre Singapore', '09:30', '17:30', 10, 800, 100.00, 20.00),
+(23, 'Literary Festival', '2024-05-22', 'Celebrating literature and authors', 'Singapore Writers Festival', '10:00', '22:00', 3, 200, 25.00, 5.00),
+(24, 'Dance Performance', '2024-06-30', 'An evening of mesmerizing dance performances', 'Esplanade - Theatres on the Bay', '19:00', '21:30', 6, 400, 60.00, 10.00),
+(25, 'Gastronomy Tour', '2024-07-05', 'A culinary journey through the city', 'Various Locations', '11:00', '17:00', 4, 50, 120.00, 20.00);
 
 
 INSERT INTO Booking (user_id, event_id, number_of_tickets, booking_timestamp) VALUES
