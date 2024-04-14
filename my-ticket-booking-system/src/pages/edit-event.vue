@@ -9,6 +9,7 @@ const route = useRoute();
 const router = useRouter();
 const eventId = ref(route.params.eventId);
 const eventDetails = ref({});
+const originalEventDetails = ref({});
 
 // Tracks if we are in editing mode
 const editing = ref(false);  
@@ -25,6 +26,7 @@ onMounted(async () => {
     const response = await axios.get(`${BASE_URL}/searchById/${eventId.value}`);
     console.log(response.data);
     eventDetails.value = response.data.data;
+    originalEventDetails.value = { ...eventDetails.value }; // Save a copy of the original event details
   } catch (error) {
     console.error('Error fetching event details:', error);
   }
@@ -50,6 +52,7 @@ const saveChanges = async () => {
 
 // Function to cancel changes and exit editing mode
 const cancelEdit = () => {
+  eventDetails.value = { ...originalEventDetails.value }; // Restore the original event details
   toggleEdit();
 };
 
