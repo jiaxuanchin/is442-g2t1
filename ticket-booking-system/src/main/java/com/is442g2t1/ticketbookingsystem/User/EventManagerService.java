@@ -103,7 +103,7 @@ public class EventManagerService {
         }
 
         Integer totalNumTickets = event.getCapacity();
-        Integer ticketsAvailable = event.getFilled();
+        Integer ticketsAvailable = totalNumTickets - event.getFilled();
         Integer ticketsSold = totalNumTickets - ticketsAvailable;
         double revenue = ticketsSold * event.getTicketPrice();
         Integer customerAttendance = ticketsSold;
