@@ -100,6 +100,34 @@ const truncateDescription = (description) => {
   const maxLength = 100;
   return description.length > maxLength ? description.slice(0, maxLength) + '...' : description;
 };
+
+// Check for login
+import jwtDecode from 'jwt-decode';
+
+const router = useRouter()
+
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  if (!token) { 
+    router.push('/login')
+
+  } else if (isTokenExpired(token)) {
+    router.push({ path: '/login', query: { message: 'Token expired, please login again.' } })
+  }
+})
+
+function isTokenExpired(token) {
+  const decodedToken = jwtDecode(token)
+  const currentTime = Date.now() / 1000
+  // console.log(decodedToken)
+
+  if (decodedToken.exp < currentTime) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user_id')
+  }
+
+  return decodedToken.exp < currentTime
+}
 </script>
 
 <template>

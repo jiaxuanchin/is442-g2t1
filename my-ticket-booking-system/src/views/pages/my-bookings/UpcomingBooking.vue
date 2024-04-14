@@ -100,7 +100,7 @@ const isEventCancelable = (event) => {
   const currentTime = new Date();
   const timeDiff = eventStart - currentTime;
   const hoursDiff = timeDiff / (1000 * 60 * 60);
-  return hoursDiff > 48;
+  return hoursDiff > 24;
 };
 
 fetchUserBookings();
@@ -111,7 +111,7 @@ fetchUserBookings();
   <VRow>
     <!-- Booking card -->
     <div class="ms-5">
-      <p>Note: For events happning before 24 hours, cancellation is not allowed.</p>
+      <p>Note: For events in less than 24 hours, cancellation is not allowed.</p>
     </div>
     <VCol
       v-for="(event, index) in events"
