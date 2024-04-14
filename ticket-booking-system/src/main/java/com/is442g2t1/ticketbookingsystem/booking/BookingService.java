@@ -133,18 +133,19 @@ public class BookingService {
             //     return ResponseEntity.status(400).body("Event capacity is full");
             // }
 
+            double totalTicketPrice = calculateTotalTicketPrice(booking);
+            if (payType.equals("ewallet")) {
+                if (totalTicketPrice > customer.getBalance()) {
+                    return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
+                }
+            }
+
             // Calculate the new filled capacity
             int newFilledCapacity = event.getFilled() + booking.getNumOfTickets();
 
             // Update the event filled capacity
             event.setFilled(newFilledCapacity);
             eventRepository.save(event);
-
-            
-            // if (payType.equals("ewallet")) {
-            //     customer.reduceBalance(totalTicketPrice);
-            //     userRepository.save(user);
-            // }
 
             bookingRepository.save(booking);
 
@@ -155,15 +156,9 @@ public class BookingService {
                 return ResponseEntity.status(404).body("Error creating booking");
             }
 
-            double totalTicketPrice = calculateTotalTicketPrice(booking);
             if (payType.equals("ewallet")) {
-                if (totalTicketPrice > customer.getBalance()) {
-                    return ResponseEntity.status(400).body("Insufficient balance to purchase tickets");
-                } else {
-                    // Deduct the ticket price from the customer's balance
-                    customer.reduceBalance(totalTicketPrice);
-                    userRepository.save(user);
-                }
+                customer.reduceBalance(totalTicketPrice);
+                userRepository.save(user);
             }
             
             String bookingId = Integer.toString(booking.getBookingId());
