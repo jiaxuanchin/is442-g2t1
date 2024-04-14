@@ -89,7 +89,7 @@ Password: password
 
 Event Manager:
 1.
-Email: kelly.goh.2021@scis.smu.edu.sg
+Email: jolene.chew.2021@scis.smu.edu.sg
 Password: password
 
 
