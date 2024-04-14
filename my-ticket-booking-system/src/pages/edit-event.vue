@@ -33,7 +33,7 @@ onMounted(async () => {
 
     // console.log(response);
     console.log(response.data);
-    eventDetails.value = response.data.data;
+    eventDetails.value = response.data;
     originalEventDetails.value = { ...eventDetails.value }; // Save a copy of the original event details
   } catch (error) {
     console.error('Error fetching event details:', error);
@@ -47,6 +47,7 @@ const toggleEdit = () => {
 
 const saveChanges = async () => {
   try {
+    console.log(eventDetails.value.eventTitle);
     const response = await fetch(`${BASE_URL}/editEvent/${eventId.value}`,
     {
       method: 'PUT',
