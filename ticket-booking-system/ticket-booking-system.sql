@@ -146,14 +146,14 @@ INSERT INTO Role (role_id, role_name) VALUES
 (2,"event_manager"),
 (3,"ticketing_officer");
 
-INSERT INTO Users (user_id, role_id, user_fname,user_lname,email, `password`, user_type, balance) VALUES
-(1, 1, 'Eunice','Ong','euniceong.2021@scis.smu.edu.sg', '$2a$10$9iPJ9/xQEIJlHzFHcvUEX.3Z8Trj9G/.M4.AKdjsr1zW83iFgpThC', 'customer', 1000),
-(2, 2, 'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', '$2a$10$SQ67EdPDW/yWSbFr065A1O131e1T0iKm6plIclQ8Xf6DhZjCCV80S', 'event_manager', NULL),
-(3, 3, 'Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', '$2a$10$5SAphSHTMrFBiO1sXr3Y3u3ybrqHXDopn2g1jl8u2X.unz2vUkfwu', 'ticketing_officer', NULL);
+INSERT INTO Users (role_id, user_fname,user_lname,email, `password`, user_type, balance) VALUES
+(1, 'Eunice','Ong','euniceong.2021@scis.smu.edu.sg', '$2a$10$9iPJ9/xQEIJlHzFHcvUEX.3Z8Trj9G/.M4.AKdjsr1zW83iFgpThC', 'customer', 1000),
+(2, 'Jolene','Chew','jolene.chew.2021@scis.smu.edu.sg', '$2a$10$SQ67EdPDW/yWSbFr065A1O131e1T0iKm6plIclQ8Xf6DhZjCCV80S', 'event_manager', NULL),
+(3, 'Kelly','Goh','kelly.goh.2021@scis.smu.edu.sg', '$2a$10$5SAphSHTMrFBiO1sXr3Y3u3ybrqHXDopn2g1jl8u2X.unz2vUkfwu', 'ticketing_officer', NULL);
 
 
 INSERT INTO Event (event_id, event_title, event_date, event_description, event_location, event_start_time, event_end_time, filled, capacity, ticket_price, cancel_fee) VALUES
--- 5 events within 24 hours
+-- 5 events within 6 months
 (1, 'Musical', '2024-04-15', "Cats the Musical is coming to town! Cats is a sung-through musical with music by Andrew Lloyd Webber. It is based on the 1939 poetry collection Old Possum\'s Book of Practical Cats by T. S. Eliot.", 'The Capitol', '18:00', '21:00', 93, 100, '150.00', '20.00'),
 (2, 'Movie', '2024-04-14', 'Avengers 100', 'Golden Village (Plaza Singapura)', '14:45', '18:00', 10, 2000, '12.00', '20.00'),
 (3, 'Seminar', '2024-04-16', 'How to make use of ChatGPT', 'Singapore Management University', '09:00', '13:00', 13, 40, '500.00', '20.00'),
@@ -175,13 +175,13 @@ INSERT INTO Event (event_id, event_title, event_date, event_description, event_l
 
 INSERT INTO Booking (user_id, event_id, number_of_tickets, booking_timestamp) VALUES
 -- Bookings within 24 hours
-(1, 3, 3, TIMESTAMP('2024-04-12 14:45:00')),
+(1, 2, 3, TIMESTAMP('2024-04-12 14:45:00')),
 -- Bookings for events that have past
 (1, 11, 3, TIMESTAMP('2023-10-20 17:20:00')),
 (1, 12, 2, TIMESTAMP('2023-10-03 12:35:00')),
-(1, 13, 1, TIMESTAMP('2023-01-08 09:45:00'));
+(1, 13, 1, TIMESTAMP('2023-01-08 09:45:00')),
 -- Bokings within 6 months
-(1, 4, 2, TIMESTAMP('2024-02-15 19:30:00'));
+(1, 4, 2, TIMESTAMP('2024-02-15 19:30:00')),
 (1, 3, 2, TIMESTAMP('2024-01-16 09:00:00'));
 
 
@@ -201,7 +201,7 @@ INSERT INTO Ticket VALUES
 (00000009, 4, false),
 (00000010, 4, false),
 (00000011, 5, false),
-(00000012, 6, false),
+(00000012, 6, false);
 
 INSERT INTO Token VALUES
 (1, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJldW5pY2VvbmcuMjAyMUBzY2lzLnNtdS5lZHUuc2ciLCJ1c2VyX2lkIjoxLCJyb2xlX2lkIjp7ImlkIjoxLCJuYW1lIjoiY3VzdG9tZXIifSwiaWF0IjoxNzExNTEzMjE1LCJleHAiOjE3MTE1OTk2MTV9.zh6RdIoKNMzJa7_yZ-vZHllJI7gAceMpwr1sLacHNB4', true, true, 1),
