@@ -62,13 +62,22 @@ const confirmBooking = async (payType) => {
       }),
     }
   )
+  .then(function (response) {
+      return response.text();
+    })
+    .then(function (data) {
+      console.log(data); // this will be a string
+      if (data != "Booking created") {
+        alert(data);
+        return false;
+      } else {
+        return true;
+      }
+    });
   console.log(bookingResponse);
-  if (bookingResponse.status == 200) {
+  if (bookingResponse) {
     return true;
-    
-  } else {
-    return false;
-  };
+  }
 };
 const required = (v) => !!v || "Field is required";
 

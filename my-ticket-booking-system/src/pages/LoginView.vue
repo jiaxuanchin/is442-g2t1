@@ -29,7 +29,7 @@
       login() {
         // Dispatch action to login the user
         this.$store.dispatch('login', this.credentials).then(() => {
-          this.$router.push('/dashboard');
+          this.$router.push('/login');
         }).catch(error => {
           console.error('Login error:', error);
         });

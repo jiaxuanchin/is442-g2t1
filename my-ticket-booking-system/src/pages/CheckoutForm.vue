@@ -161,19 +161,28 @@ const confirmBooking = async (payType) => {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify({
-        userId: userId, // NOTE
+        userId: userId, 
         eventId: eventData.value.eventId,
         numOfTickets: numTickets,
       }),
     }
   )
+  .then(function (response) {
+      return response.text();
+    })
+    .then(function (data) {
+      console.log(data); // this will be a string
+      if (data != "Booking created") {
+        alert(data);
+        return false;
+      } else {
+        return true;
+      }
+    });
   console.log(bookingResponse);
-  if (bookingResponse.status == 200) {
+  if (bookingResponse) {
     return true;
-    
-  } else {
-    return false;
-  };
+  }
 };
 
 const toggleForm = () => {

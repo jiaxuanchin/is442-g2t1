@@ -157,8 +157,8 @@ INSERT INTO Event (event_id, event_title, event_date, event_description, event_l
 (1, 'Musical', '2024-04-15', "Cats the Musical is coming to town! Cats is a sung-through musical with music by Andrew Lloyd Webber. It is based on the 1939 poetry collection Old Possum's Book of Practical Cats by T. S. Eliot.", 'The Capitol', '18:00', '21:00', 0, 2000, 150.00, 20.00),
 (2, 'Movie', '2024-04-15', 'Avengers 100', 'Golden Village (Plaza Singapura)', '14:45', '18:00', 0, 2000, 12.00, 20.00),
 (3, 'Seminar', '2024-04-15', 'How to make use of ChatGPT', 'Singapore Management University', '09:00', '13:00', 0, 40, 500.00, 20.00),
-(4, 'Concert', '2024-04-15', 'Disney is coming to town! Meet Mickey, Minney, Else, Anna and more', 'National Stadium', '19:30', '23:00', 0, 25000, 150.00, 20.00),
-(5, 'Play', '2024-04-15', 'Romeo & Juliet is a tragedy written by William Shakespeare early in his career about the romance between two Italian youths from feuding families.', 'Esplanade', '19:00', '22:00', 0, 3000, 78.00, 20.00),
+(4, 'Concert', '2024-04-15', 'Disney is coming to town! Meet Mickey, Minney, Else, Anna and more', 'National Stadium', '19:30', '23:00', 498, 500, 150.00, 20.00),
+(5, 'Play', '2024-04-15', 'Romeo & Juliet is a tragedy written by William Shakespeare early in his career about the romance between two Italian youths from feuding families.', 'Esplanade', '19:00', '22:00', 276, 300, 78.00, 20.00),
 -- 5 events after 6 months
 (6, 'Music Festival', '2025-04-14', 'Annual music festival featuring top artists', 'Marina Bay Sands', '09:00', '23:00', 0, 5000, 200.00, 30.00),
 (7, 'Tech Conference', '2026-10-05', 'Explore the latest trends in technology', 'Suntec Convention Centre', '09:00', '17:00', 0, 1000, 300.00, 50.00),
